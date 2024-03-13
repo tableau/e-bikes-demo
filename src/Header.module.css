@@ -1,15 +1,19 @@
 /* CSS file */
 .header {
+  top: 0;
+}
+
+nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  top: 0;
 }
 
 nav ul {
   list-style-type: none;
   display: flex;
   gap: 30px;
+  align-items: center;
 }
 
 nav li {
@@ -21,6 +25,11 @@ nav li {
   font-weight: bold;
 }
 
-img {
+.logo {
   width: 40px;
+}
+
+.avatar {
+  border-radius: 50%;
+  width: 70%;
 }
