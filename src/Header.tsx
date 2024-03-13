@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './Header.module.css'
-import { Pages } from './App';
+import { Pages, useUser } from './App';
 
 interface HeaderProps {
   page: string;
@@ -8,13 +8,23 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ page, onPageChange }) => {
+
+  const {user, login} = useUser();
+
+  const logo = (() => {
+    switch (user) {
+      case 'Mario': return 'ebikes-logo.png';
+      case 'McKenzie': return 'Wheelworks-logo.png';
+    }
+  })
+
   return (
     <div className={styles.header}>
       <nav>
         <div >
           <ul>
             <li>
-              <img className={styles.logo} src='src/assets/ebikes-logo.png' />
+              <img className={styles.logo} src={`src/assets/${logo()}`} />
             </li>
             {(['Home', 'Analytics', 'Pulse'] as Pages[]).map((pageBuilder) => {
               return (
@@ -31,7 +41,7 @@ const Header: React.FC<HeaderProps> = ({ page, onPageChange }) => {
         <div >
           <ul>
             <li>
-            <img className={styles.avatar} src='src/assets/MacKinzie.png' />
+            <img className={styles.avatar} src={`src/assets/${user}.png`} onClick={() => login(undefined)} />
             </li>
           </ul>
         </div>
