@@ -26,7 +26,7 @@ const Header: React.FC<HeaderProps> = ({ page, onPageChange }) => {
             <li>
               <img className={styles.logo} src={`src/assets/${logo()}`} />
             </li>
-            {(['Home', 'Analytics', 'Pulse'] as Pages[]).map((pageBuilder) => {
+            {(['Home', 'Catalog', 'Analytics', 'Pulse'] as Pages[]).map((pageBuilder) => {
               return (
                 <li
                   className={page === pageBuilder ? styles.active : ''}

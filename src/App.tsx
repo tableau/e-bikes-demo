@@ -5,6 +5,7 @@ import Home from './Home';
 import Analytics from './Analytics';
 import Pulse from './Pulse';
 import Login from './Login';
+import Catalog from './Catalog';
 
 export type User = 'McKenzie' | 'Mario' | undefined;
 interface UserContextType {
@@ -28,7 +29,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   )
 }
 
-export type Pages = 'Home' | 'Analytics' | 'Pulse'
+export type Pages = 'Home' | 'Catalog' | 'Analytics' | 'Pulse';
 
 function App() {
 
@@ -46,6 +47,7 @@ function App() {
         <Header page={page} onPageChange={(e) => setPage(e.newPage)} />
 
         {page === 'Home' && <Home />}
+        {page === 'Catalog' && <Catalog />}
         {page === 'Analytics' && <Analytics />}
         {page === 'Pulse' && <Pulse />}
       </div>
