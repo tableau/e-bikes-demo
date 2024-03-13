@@ -24,12 +24,13 @@ const Header: React.FC<HeaderProps> = ({ page, onPageChange }) => {
         <div >
           <ul>
             <li>
-              <img className={styles.logo} src={`src/assets/${logo()}`} />
+              <img className={styles.logo} src={`${logo()}`} />
             </li>
             {(['Home', 'Catalog', 'Analytics', 'Pulse'] as Pages[]).map((pageBuilder) => {
               return (
                 <li
-                  className={page === pageBuilder ? styles.active : ''}
+                key={pageBuilder}  
+                className={page === pageBuilder ? styles.active : ''}
                   onClick={() => onPageChange({ newPage: pageBuilder })}
                 >
                   {pageBuilder}
@@ -41,7 +42,7 @@ const Header: React.FC<HeaderProps> = ({ page, onPageChange }) => {
         <div >
           <ul>
             <li>
-            <img className={styles.avatar} src={`src/assets/${user}.png`} onClick={() => login(undefined)} />
+            <img key={'Avatar'} className={styles.avatar} src={`${user}.png`} onClick={() => login(undefined)} />
             </li>
           </ul>
         </div>

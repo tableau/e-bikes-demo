@@ -10,28 +10,28 @@
 .heroDynamo, .heroElectra {
     display: flex;
     flex-direction: column;
-    position: absolute;
     align-items: center;
 }
 
 .heroDynamo {
+    position: absolute;
     top: 180px;
     left: 100px;
 }
 
 .heroElectra {
-    top: 620px;
-    right: 100px;
+    position: relative;
+    top: -200px;
 }
 
-h1, h2, p {
+.title, .subtitle, .action {
     font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: white;
     margin: 0;
     text-align: center;
 }
 
-p {
+.action {
     margin-top: 20px;
     background-color: rgb(57, 75, 133);
     cursor: pointer;

@@ -5,7 +5,7 @@ import Home from './Home';
 import Analytics from './Analytics';
 import Pulse from './Pulse';
 import Login from './Login';
-import Catalog from './Catalog';
+import ProductCatalog from './ProductCatalog';
 
 export type User = 'McKenzie' | 'Mario' | undefined;
 interface UserContextType {
@@ -47,7 +47,7 @@ function App() {
         <Header page={page} onPageChange={(e) => setPage(e.newPage)} />
 
         {page === 'Home' && <Home />}
-        {page === 'Catalog' && <Catalog />}
+        {page === 'Catalog' && <ProductCatalog />}
         {page === 'Analytics' && <Analytics />}
         {page === 'Pulse' && <Pulse />}
       </div>
