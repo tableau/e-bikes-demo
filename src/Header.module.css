@@ -1,0 +1,26 @@
+/* CSS file */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  top: 0;
+}
+
+nav ul {
+  list-style-type: none;
+  display: flex;
+  gap: 30px;
+}
+
+nav li {
+  margin-right: 20px;
+  cursor: pointer;
+}
+
+.active {
+  font-weight: bold;
+}
+
+img {
+  width: 40px;
+}
