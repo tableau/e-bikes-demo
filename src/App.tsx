@@ -1,11 +1,12 @@
 import { useState, createContext, useContext, ReactNode } from 'react'
 import styles from './App.module.css';
 import Header from './Header';
-import Home from './Home';
-import Analytics from './Analytics';
-import Pulse from './Pulse';
+import Home from './Pages/Home';
+import Analytics from './Pages/Analytics';
+import Pulse from './Pages/Pulse';
 import Login from './Login';
-import ProductCatalog from './ProductCatalog';
+import ProductCatalog from './Pages/ProductCatalog';
+import Copilot from './Pages/Copilot';
 
 export type User = 'McKenzie' | 'Mario' | undefined;
 interface UserContextType {
@@ -29,7 +30,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   )
 }
 
-export type Pages = 'Home' | 'Catalog' | 'Analytics' | 'Pulse';
+export type Pages = 'Home' | 'Catalog' | 'Analytics' | 'Pulse' | 'Co-pilot';
 
 function App() {
 
@@ -50,6 +51,7 @@ function App() {
         {page === 'Catalog' && <ProductCatalog />}
         {page === 'Analytics' && <Analytics />}
         {page === 'Pulse' && <Pulse />}
+        {page === 'Co-pilot' && <Copilot />}
       </div>
     )
 
