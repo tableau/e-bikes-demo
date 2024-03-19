@@ -19,14 +19,6 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-
-    /* Shadcn.com */
-    "baseUrl": ".",
-    "paths": {
-      "@/*": [
-        "./src/*"
-      ]
-    }
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]

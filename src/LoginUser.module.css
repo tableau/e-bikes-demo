@@ -8,6 +8,8 @@
     border: solid 2px grey;
     border-radius: 20px;
     background-color: white;
+    cursor: pointer;
+    color: black;
 }
 .root:hover {
     background-color: grey;
