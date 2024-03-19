@@ -1,4 +1,4 @@
-import Product from '../Components/Product';
+import Product from './Product';
 import styles from './ProductCatalog.module.css';
 
 export interface ProductInfo {

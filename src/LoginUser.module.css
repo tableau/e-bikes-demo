@@ -1,0 +1,37 @@
+.root {
+    width: 400px;
+    padding: 25px;
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    align-items: center;
+    border: solid 2px grey;
+    border-radius: 20px;
+    background-color: white;
+}
+.root:hover {
+    background-color: grey;
+    color: white;
+}
+
+.loginImage {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+}
+
+.profile {
+    display: flex;
+    flex-direction: column;
+}
+
+.user {
+    font-weight: bold;
+    font-size:x-large;
+}
+
+.role {
+}
+
+.company {
+}

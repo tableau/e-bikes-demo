@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import styles from './Product.module.css';
-import { ProductInfo } from '../Pages/ProductCatalog';
+import { ProductInfo } from './ProductCatalog';
 
 interface ProductProps {
   product: ProductInfo;
