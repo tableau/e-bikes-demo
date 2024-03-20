@@ -8,23 +8,35 @@ import Login from './Login';
 import ProductCatalog from './Pages/ProductCatalog';
 import Copilot from './Pages/Copilot';
 
-export type User = 'McKenzie' | 'Mario' | undefined;
+export interface User {
+  username: 'McKenzie' | 'Mario';
+  retailer: 'Wheelworks' | null;
+  hasPremiumLicense: boolean;
+}
 interface UserContextType {
-  user: User;
-  login: (user: User) => void;
+  user: User | undefined;
+  login: (user?: User ) => void;
+  upgradeLicense: (user: User) => void;
 }
 
-const UserContext = createContext<UserContextType>({user:undefined, login: () => {}});
+const UserContext = createContext<UserContextType>({ user: undefined, login: () => { } , upgradeLicense: () => { } });
 export const useUser = () => useContext(UserContext);
 export const UserProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User>(undefined);
+  const [user, setUser] = useState<User | undefined>(undefined);
 
-  const login = (user: User) => {
+  const login = (user?: User) => {
     setUser(user);
   }
 
+  const upgradeLicense = (user: User) => {
+    setUser({
+      ...user,
+      hasPremiumLicense: true,
+    });
+  }
+
   return (
-    <UserContext.Provider value={{ user, login }}>
+    <UserContext.Provider value={{ user, login, upgradeLicense }}>
       {children}
     </UserContext.Provider>
   )

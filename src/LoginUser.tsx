@@ -1,8 +1,7 @@
-import { User } from './App';
 import styles from './LoginUser.module.css';
 
 export interface LoginUserProps {
-  user: User;
+  user: string;
   role: string;
   company: string;
   onClick: () => void;

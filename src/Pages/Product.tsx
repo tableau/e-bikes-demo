@@ -11,7 +11,10 @@ const Product: React.FC<ProductProps> = ({ product }) => {
   const [quickViewOpen, setQuickViewOpen] = useState<boolean>(false);
 
   return (
-    <div className={styles.root}>
+    <div
+      key={product.id}
+      className={styles.root}
+    >
       <div
         key={product.id}
         className={styles.productCard}

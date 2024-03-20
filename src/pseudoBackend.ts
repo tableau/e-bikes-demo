@@ -3,6 +3,7 @@ import Utf8 from 'crypto-js/enc-utf8';
 import hmacSHA256 from 'crypto-js/hmac-sha256';
 import WordArray from 'crypto-js/lib-typedarrays';
 import { v4 as uuidv4 } from 'uuid';
+import { User } from './App';
 
 function base64url(source: WordArray) {
   // Encode in classical base64
@@ -18,20 +19,14 @@ function base64url(source: WordArray) {
   return encodedSource;
 }
 
-export function getJwt(userAttributes?: string) {
+export function getJwt(user: User) {
 
-  // RCGSE
-  // const secretValue = "iezaXkKCwBz6b1TuHNMpFBiAzJtu3IPQKmIZtWEhy6w=";
-  // const secretId = "27120afd-225c-40eb-b2ef-960770256b41";
-  // const clientId = "0964b96e-654e-47ea-81d1-598469435e5c";
-
-  // EHOFMAN
   const secretValue = 'atZ7HITCyV4nwi3gLzPsZt6+haXfjiYauu1lj4i0GDA=';
   const secretId = '30baa038-146e-44f7-8d31-9f5d6bea1b13'
   const clientId = '25c68ec4-3600-40a3-aaed-26a748e29fb3';
 
-  const scopes = ["tableau:views:embed", "tableau:views:embed_authoring"];
-  const username = "ehofman@salesforce.com";
+  const scopes = ["tableau:views:embed", "tableau:views:embed_authoring", "tableau:insights:embed"];
+  const username = "embedded@ebikes.com";
 
 
   const header = {
@@ -41,15 +36,6 @@ export function getJwt(userAttributes?: string) {
     iss: clientId,
   };
 
-  let additionalJwtDataObject = {};
-  if (userAttributes) {
-    try {
-      additionalJwtDataObject = JSON.parse(userAttributes);
-    } catch {
-      alert('Invalid additional JWT data. Not valid JSON');
-    }
-  }
-
   const data = {
     jti: uuidv4(),
     iss: clientId,
@@ -58,7 +44,8 @@ export function getJwt(userAttributes?: string) {
     scp: scopes,
     iat: Math.floor(Date.now() / 1000) - 5,
     exp: Math.floor(Date.now() / 1000) + 10 * 60,
-    ...additionalJwtDataObject,
+    retailer: user.retailer,
+    license: user.hasPremiumLicense ? "Premium" : "Basic",
   };
 
   const encodedHeader = base64url(Utf8.parse(JSON.stringify(header)));

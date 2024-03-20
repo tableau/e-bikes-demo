@@ -1,29 +1,44 @@
-import { useEffect } from 'react';
 import styles from './Analytics.module.css';
-import { TableauViz, Toolbar} from '@tableau/embedding-api';
-import { getJwt } from '../pseudoBackend';
 import { useUser } from '../App';
+import EmbeddedDashboard from './EmbeddedDashboard';
+import { getJwt } from '../pseudoBackend';
+import { useState } from 'react';
 
 function Analytics() {
 
-  const {user} = useUser();
+  const { user, upgradeLicense } = useUser();
+  const [refreshDashboard, setRefreshDashboard] = useState<boolean>(false);
 
-  useEffect(() => {
-    const viz = new TableauViz();
+  if (!user) {
+    return null;
+  }
 
-    if (document.getElementById('tableauViz')?.children.length === 0) {
-      viz.src = 'https://10ay.online.tableau.com/t/ehofman/views/eBikeSalesAnalysis/SalesAnalysis';
-      viz.toolbar = Toolbar.Hidden;
-      viz.token = getJwt();
-
-      document.getElementById('tableauViz')!.appendChild(viz);
-    }
-  }, [])
+  const upgradeUserLicense = () => {
+    upgradeLicense(user);
+    setRefreshDashboard(!refreshDashboard);
+  }
 
   return (
     <div className={styles.root}>
-      <h1>Welcome {user}</h1>
-      <div id="tableauViz" className={styles.viz}></div>
+      {user.hasPremiumLicense && user.username === 'McKenzie' &&
+        <p>Enjoy your premium analytics subscription.</p>
+      }
+      {!user.hasPremiumLicense && user.username === 'McKenzie' &&
+        <div className={styles.upsellMessage}>
+          <p>You have access to basic operational data. </p>
+          <p><a href='#' onClick={upgradeUserLicense}>Upgrade to premium</a> for $9.99 /month to see period comparisons.</p>
+        </div>
+      }
+      {refreshDashboard && <EmbeddedDashboard />}
+      {!refreshDashboard && <EmbeddedDashboard />}
+      <p className={styles.footer}>
+        This page was created with the <a href='https://developer.salesforce.com/tools/tableau/embedding-playground' target='_blank'>Tableau Embedding Playground</a>.
+        <br />
+        See the <a href='https://tableau.github.io/embedding-playbook/' target='_blank'>Tableau Embedding Analytics Playbook</a> for more information how to embed Tableau in your applications and products.
+        <br />
+        <br />
+        Inspect the JWT of the dashboard with <a href={`https://jwt.io/#debugger-io?token=${getJwt(user)}`} target='_blank'>jwt.io</a>
+      </p>
     </div>
   )
 }

@@ -12,7 +12,7 @@ const Header: React.FC<HeaderProps> = ({ page, onPageChange }) => {
   const {user, login} = useUser();
 
   const logo = (() => {
-    switch (user) {
+    switch (user?.username) {
       case 'Mario': return 'ebikes-logo.png';
       case 'McKenzie': return 'Wheelworks-logo.png';
     }
@@ -42,7 +42,7 @@ const Header: React.FC<HeaderProps> = ({ page, onPageChange }) => {
         <div >
           <ul>
             <li>
-            <img key={'Avatar'} className={styles.avatar} src={`${user}.png`} onClick={() => login(undefined)} />
+            <img key={'Avatar'} className={styles.avatar} src={`${user?.username}.png`} onClick={() => login(undefined)} />
             </li>
           </ul>
         </div>

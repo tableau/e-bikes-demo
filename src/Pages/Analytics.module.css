@@ -1,5 +1,18 @@
-.root, .viz {
+.root {
     width: 100%;
     height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
 }
 
+.footer {
+    text-align: center;
+    font-size: smaller;
+}
+
+.upsellMessage {
+    text-align: center;
+}
