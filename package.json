@@ -5,19 +5,28 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "server": "npx vite-node ./src/server/server.ts",
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
   "dependencies": {
     "@tableau/embedding-api": "^3.9.0",
+    "cors": "^2.8.5",
     "crypto-js": "^4.2.0",
+    "express": "^4.19.1",
+    "node-fetch": "^3.3.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "uuid": "^9.0.1"
+    "ts-results": "^3.3.0",
+    "uuid": "^9.0.1",
+    "vite-express": "^0.15.0",
+    "vite-node": "^1.4.0"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.17",
     "@types/crypto-js": "^4.2.2",
+    "@types/express": "^4.17.21",
     "@types/node": "^20.11.29",
     "@types/react": "^18.2.64",
     "@types/react-dom": "^18.2.21",
