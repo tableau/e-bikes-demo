@@ -1,18 +1,22 @@
 import React from 'react';
 import styles from './Header.module.css'
-import { Pages, useUser } from './App';
+import { Pages, useAppContext, userPages } from './App';
 
 interface HeaderProps {
-  page: string;
+  selectedPage: string;
   onPageChange: (e: { newPage: Pages }) => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ page, onPageChange }) => {
+const Header: React.FC<HeaderProps> = ({ selectedPage, onPageChange }) => {
 
-  const {user, login} = useUser();
+  const { user, login } = useAppContext();
+
+  if (!user) {
+    return null;
+  }
 
   const logo = (() => {
-    switch (user?.username) {
+    switch (user.username) {
       case 'Mario': return 'ebikes-logo.png';
       case 'McKenzie': return 'Wheelworks-logo.png';
     }
@@ -26,14 +30,14 @@ const Header: React.FC<HeaderProps> = ({ page, onPageChange }) => {
             <li>
               <img className={styles.logo} src={`${logo()}`} />
             </li>
-            {(['Home', 'Catalog', 'Analytics', 'Pulse', 'Co-pilot'] as Pages[]).map((pageBuilder) => {
+            {userPages(user).map((page) => {
               return (
                 <li
-                key={pageBuilder}  
-                className={page === pageBuilder ? styles.active : ''}
-                  onClick={() => onPageChange({ newPage: pageBuilder })}
+                  key={page}
+                  className={page === selectedPage ? styles.active : ''}
+                  onClick={() => onPageChange({ newPage: page })}
                 >
-                  {pageBuilder}
+                  {page}
                 </li>
               )
             })}
@@ -42,7 +46,7 @@ const Header: React.FC<HeaderProps> = ({ page, onPageChange }) => {
         <div >
           <ul>
             <li>
-            <img key={'Avatar'} className={styles.avatar} src={`${user?.username}.png`} onClick={() => login(undefined)} />
+              <img key={'Avatar'} className={styles.avatar} src={`${user?.username}.png`} onClick={() => login(undefined)} />
             </li>
           </ul>
         </div>

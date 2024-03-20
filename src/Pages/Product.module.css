@@ -5,6 +5,15 @@
     background-color: white;
     width: 230px;
     border-radius: 10px;
+    border: solid 2px white;
+}
+.root:hover {
+    border-color:  grey;
+    background-color: lightgrey;
+}
+
+.selected {
+    border-color:  red;
 }
 
 .productCard {

@@ -1,10 +1,10 @@
-import { User, useUser } from './App';
+import { User, useAppContext } from './App';
 import styles from './Login.module.css';
 import LoginUser from './LoginUser';
 
 function Login() {
 
-  const { login } = useUser();
+  const { login } = useAppContext();
 
   return (
     <div className={styles.root}>

@@ -13,19 +13,41 @@ export interface User {
   retailer: 'Wheelworks' | null;
   hasPremiumLicense: boolean;
 }
-interface UserContextType {
+interface AppContextType {
   user: User | undefined;
-  login: (user?: User ) => void;
+  selectedPage: Pages;
+  login: (user?: User) => void;
+  navigate: (page: Pages) => void;
   upgradeLicense: (user: User) => void;
 }
 
-const UserContext = createContext<UserContextType>({ user: undefined, login: () => { } , upgradeLicense: () => { } });
-export const useUser = () => useContext(UserContext);
+export type Pages = 'Home' | 'Product Catalog' | 'Analytics' | 'Get insights' | 'Self-service analytics';
+
+export const userPages = ((user: User): Pages[] => {
+  switch (user?.username) {
+    case 'Mario':
+      return ['Home', 'Analytics', 'Self-service analytics'];
+    case 'McKenzie':
+      return ['Home', 'Product Catalog', 'Get insights'];
+    default:
+      return [];
+  }
+});
+
+
+const AppContext = createContext<AppContextType>({ user: undefined, selectedPage: 'Home', login: () => { }, navigate: () => { }, upgradeLicense: () => { } });
+export const useAppContext = () => useContext(AppContext);
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | undefined>(undefined);
+  const [selectedPage, setSelectedPage] = useState<Pages>('Home');
 
   const login = (user?: User) => {
     setUser(user);
+    setSelectedPage('Home');
+  }
+
+  const navigate = (page: Pages) => {
+    setSelectedPage(page);
   }
 
   const upgradeLicense = (user: User) => {
@@ -36,18 +58,15 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   }
 
   return (
-    <UserContext.Provider value={{ user, login, upgradeLicense }}>
+    <AppContext.Provider value={{ user, selectedPage, login, navigate, upgradeLicense }}>
       {children}
-    </UserContext.Provider>
+    </AppContext.Provider>
   )
 }
 
-export type Pages = 'Home' | 'Catalog' | 'Analytics' | 'Pulse' | 'Co-pilot';
-
 function App() {
 
-  const [page, setPage] = useState<Pages>('Home');
-  const { user } = useUser();
+  const { user, selectedPage, navigate } = useAppContext();
 
   if (!user) {
 
@@ -57,13 +76,13 @@ function App() {
 
     return (
       <div className={styles.root}>
-        <Header page={page} onPageChange={(e) => setPage(e.newPage)} />
+        <Header selectedPage={selectedPage} onPageChange={(e) => navigate(e.newPage)} />
 
-        {page === 'Home' && <Home />}
-        {page === 'Catalog' && <ProductCatalog />}
-        {page === 'Analytics' && <Analytics />}
-        {page === 'Pulse' && <Pulse />}
-        {page === 'Co-pilot' && <Copilot />}
+        {selectedPage === 'Home' && <Home />}
+        {selectedPage === 'Product Catalog' && <ProductCatalog />}
+        {selectedPage === 'Analytics' && <Analytics />}
+        {selectedPage === 'Get insights' && <Pulse />}
+        {selectedPage === 'Self-service analytics' && <Copilot />}
       </div>
     )
 

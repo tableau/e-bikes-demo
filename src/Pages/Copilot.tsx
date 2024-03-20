@@ -2,11 +2,11 @@ import { useEffect } from 'react';
 import styles from './Copilot.module.css';
 import { TableauAuthoringViz } from '@tableau/embedding-api';
 import { getJwt } from '../pseudoBackend';
-import { useUser } from '../App';
+import { useAppContext } from '../App';
 
 function Copilot() {
 
-  const {user} = useUser();
+  const {user} = useAppContext();
 
   useEffect(() => {
 

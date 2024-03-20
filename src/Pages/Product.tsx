@@ -1,30 +1,28 @@
-import { useState } from 'react';
 import styles from './Product.module.css';
 import { ProductInfo } from './ProductCatalog';
 
 interface ProductProps {
   product: ProductInfo;
+  selected: boolean;
+  selectProduct: () => void;
 }
 
-const Product: React.FC<ProductProps> = ({ product }) => {
-
-  const [quickViewOpen, setQuickViewOpen] = useState<boolean>(false);
+const Product: React.FC<ProductProps> = ({ product, selected, selectProduct }) => {
 
   return (
     <div
       key={product.id}
-      className={styles.root}
+      className={`${styles.root} ${selected ? styles.selected : ''}`}
     >
       <div
         key={product.id}
         className={styles.productCard}
-        onClick={() => { setQuickViewOpen(true) }}
+        onClick={selectProduct}
       >
         <div className={styles.productImage}>
           <img
             className={styles.productImage}
             src={product.imageSrc}
-            alt={product.imageAlt}
           />
         </div>
         <div className={styles.productDescription}>

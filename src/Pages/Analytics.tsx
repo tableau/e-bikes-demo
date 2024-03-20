@@ -1,36 +1,19 @@
 import styles from './Analytics.module.css';
-import { useUser } from '../App';
 import EmbeddedDashboard from './EmbeddedDashboard';
 import { getJwt } from '../pseudoBackend';
-import { useState } from 'react';
+import { useAppContext } from '../App';
 
 function Analytics() {
 
-  const { user, upgradeLicense } = useUser();
-  const [refreshDashboard, setRefreshDashboard] = useState<boolean>(false);
+  const {user} = useAppContext();
 
   if (!user) {
     return null;
   }
 
-  const upgradeUserLicense = () => {
-    upgradeLicense(user);
-    setRefreshDashboard(!refreshDashboard);
-  }
-
   return (
     <div className={styles.root}>
-      {user.hasPremiumLicense && user.username === 'McKenzie' &&
-        <p>Enjoy your premium analytics subscription.</p>
-      }
-      {!user.hasPremiumLicense && user.username === 'McKenzie' &&
-        <div className={styles.upsellMessage}>
-          <p>You have access to basic operational data. </p>
-          <p><a href='#' onClick={upgradeUserLicense}>Upgrade to premium</a> for $9.99 /month to see period comparisons.</p>
-        </div>
-      }
-      {refreshDashboard && <EmbeddedDashboard />}
-      {!refreshDashboard && <EmbeddedDashboard />}
+      <EmbeddedDashboard width={1000}/>
       <p className={styles.footer}>
         This page was created with the <a href='https://developer.salesforce.com/tools/tableau/embedding-playground' target='_blank'>Tableau Embedding Playground</a>.
         <br />

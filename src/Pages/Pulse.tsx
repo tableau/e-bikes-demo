@@ -2,11 +2,11 @@ import { useEffect } from 'react';
 import styles from './Pulse.module.css';
 import { TableauPulse } from '@tableau/embedding-api';
 import { getJwt } from '../pseudoBackend';
-import { useUser } from '../App';
+import { useAppContext } from '../App';
 
 function Pulse() {
 
-  const {user} = useUser();
+  const {user} = useAppContext();
 
   useEffect(() => {
 
