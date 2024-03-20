@@ -16,6 +16,7 @@ function Login() {
         ]).map(({user, role, company}) => {
           return <LoginUser 
             user={user}
+            key={user}
             role={role}
             company={company}
             onClick={() => login({

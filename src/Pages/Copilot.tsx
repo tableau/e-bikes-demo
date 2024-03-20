@@ -2,15 +2,25 @@ import { useEffect } from 'react';
 import styles from './Copilot.module.css';
 import { TableauAuthoringViz } from '@tableau/embedding-api';
 import { getJwt } from '../pseudoBackend';
+import { useUser } from '../App';
 
 function Copilot() {
 
+  const {user} = useUser();
+
   useEffect(() => {
-    const viz = new TableauAuthoringViz();
+
+    if (!user){
+      return ;
+    }
 
     if (document.getElementById('TableauAuthoringViz')?.children.length === 0) {
-      viz.src = 'https://10ay.online.tableau.com/t/ehofman/views/Superstore1_16648177645910/Sheet1';
-      viz.token = getJwt();
+      const viz = new TableauAuthoringViz();
+
+      const guid = crypto.randomUUID();
+      //viz.src = `https://10ay.online.tableau.com/t/ehofman/newWorkbook/${guid}`;
+      viz.src = `https://10ay.online.tableau.com/t/ehofman/authoringNewWorkbook/${guid}/eBikesInventoryandSales`;
+      viz.token = getJwt(user);
 
       document.getElementById('TableauAuthoringViz')!.appendChild(viz);
     }
