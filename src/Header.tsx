@@ -1,6 +1,7 @@
 import React from 'react';
 import styles from './Header.module.css'
 import { Pages, useAppContext, userPages } from './App';
+import NotificationBell from './NotificationBell';
 
 interface HeaderProps {
   selectedPage: string;
@@ -9,7 +10,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ selectedPage, onPageChange }) => {
 
-  const { user, login, notificationCount } = useAppContext();
+  const { user, login } = useAppContext();
 
   if (!user) {
     return null;
@@ -46,14 +47,7 @@ const Header: React.FC<HeaderProps> = ({ selectedPage, onPageChange }) => {
         <div >
           <ul>
             <li>
-              <div className={styles.notificationContainer}>
-                <div className={styles.notificationIcon}>
-                  <img key={'Notification'} className={styles.notification} src={`notification.png`} onClick={() => login(undefined)} />
-                </div>
-                {notificationCount > 0 &&
-                  <div className={styles.notificationCount}>{notificationCount}</div>
-                }
-              </div>
+              <NotificationBell />
             </li>
             <li>
               <img key={'Avatar'} className={styles.avatar} src={`${user?.username}.png`} onClick={() => login(undefined)} />

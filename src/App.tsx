@@ -7,6 +7,7 @@ import Pulse from './Pages/Pulse';
 import Login from './Login';
 import ProductCatalog from './Pages/ProductCatalog';
 import Copilot from './Pages/Copilot';
+import { NotificationItem } from './NotificationWindow';
 
 export interface User {
   username: 'McKenzie' | 'Mario';
@@ -15,11 +16,11 @@ export interface User {
 }
 interface AppContextType {
   user: User | undefined;
-  notificationCount: number;
+  notifications: NotificationItem[];
   selectedPage: Pages;
   login: (user?: User) => void;
   navigate: (page: Pages) => void;
-  notificationReceived: (notifications: number) => void;
+  notificationReceived: (notifications: NotificationItem[]) => void;
   upgradeLicense: (user: User) => void;
 }
 
@@ -40,7 +41,7 @@ export const userPages = ((user: User): Pages[] => {
 const AppContext = createContext<AppContextType>({ 
   user: undefined,
   selectedPage: 'Home', 
-  notificationCount: 0, 
+  notifications: [], 
   login: () => { }, 
   navigate: () => { }, 
   notificationReceived: () => {},
@@ -50,7 +51,10 @@ export const useAppContext = () => useContext(AppContext);
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | undefined>(undefined);
   const [selectedPage, setSelectedPage] = useState<Pages>('Home');
-  const [ notificationCount, setNotificationCount] = useState<number>(2);
+  const [ notifications, setNotifications] = useState<NotificationItem[]>([
+    {title: 'High returns: Wheelworks', message: 'Your partner Wheelworks has returned 25% of their Fuse X2 bikes in the last month. Please reach out to them as soon as possible.'},
+    {title: 'High returns: Wheelworks', message: 'Your partner Wheelworks has returned 25% of their Fuse X2 bikes in the last month. Please reach out to them as soon as possible.'},
+  ]);
 
   const login = (user?: User) => {
     setUser(user);
@@ -61,8 +65,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     setSelectedPage(page);
   }
 
-  const notificationReceived = (notificationCount: number) => {
-    setNotificationCount(notificationCount);
+  const notificationReceived = (notifications: NotificationItem[]) => {
+    setNotifications(notifications);
   }
 
   const upgradeLicense = (user: User) => {
@@ -73,7 +77,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   }
 
   return (
-    <AppContext.Provider value={{ user, selectedPage, notificationCount, login, navigate, notificationReceived, upgradeLicense }}>
+    <AppContext.Provider value={{ user, selectedPage, notifications, login, navigate, notificationReceived, upgradeLicense }}>
       {children}
     </AppContext.Provider>
   )

@@ -1,0 +1,32 @@
+.container {
+    position: absolute;
+    transform: translate(-300px, 10px);
+    width: 300px;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    cursor: default;
+}
+
+.notifcation {
+    display: flex;
+    font: 16px;
+    flex-direction: column;
+}
+
+.title {
+    font-weight: bold;
+}
+.message {
+
+}
+
+.dismiss {
+    align-self: flex-end;
+    cursor: pointer;
+}
