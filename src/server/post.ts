@@ -1,12 +1,15 @@
 import { Request as ExpressRequest, Response as ExpressResponse } from 'express';
 import fetch, { RequestInit } from 'node-fetch';
 import { Err, Ok, Result } from 'ts-results';
+import { signinAsync } from './signin';
 
 export type RequestData = {
   server: string;
+  site: string;
   apiVersion: string;
   apiPath: string;
   body: string;
+  jwt: string;
 };
 
 export async function post(request: ExpressRequest, response: ExpressResponse) {
@@ -17,14 +20,30 @@ export async function post(request: ExpressRequest, response: ExpressResponse) {
       return;
     }
 
-    const { server, apiVersion, apiPath, body } = requestResult.val;
+    const { server, site, apiVersion, apiPath, body, jwt } = requestResult.val;
+    let token = '';
+    if (jwt) {
+      const signinResult = await signinAsync({ server, apiVersion, site, jwt })
+      if (signinResult.err) {
+        response.status(400).send(signinResult.val);
+        return;
+      }
+
+      token = signinResult.val;
+    }
+
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    }
+
+    if (token) {
+      headers['X-Tableau-Auth'] = token;
+    }
+
     const init: RequestInit = {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-        'X-Tableau-Auth': `${request.headers['x-tableau-auth']}`,
-      },
+      headers,
     };
 
     if (body) {
@@ -54,7 +73,9 @@ function validateRequest(request: ExpressRequest): Result<RequestData, void> {
 
   const server = `${request.query.server || ''}`;
   const apiVersion = `${params.apiVersion || ''}`;
+  const site = `${request.query.site || ''}`;
   const apiPath = `${params.apiPath || ''}${params[0] || ''}`;
+  const jwt = `${request.query.jwt || ''}`;
 
   const bodyStr = `${JSON.stringify(request.body) || ''}`;
   const body = bodyStr === '{}' ? '' : bodyStr;
@@ -62,5 +83,9 @@ function validateRequest(request: ExpressRequest): Result<RequestData, void> {
     return Err.EMPTY;
   }
 
-  return new Ok({ server, apiVersion, apiPath, body });
+  if (jwt && !site) {
+    return Err.EMPTY;
+  }
+
+  return new Ok({ server, apiVersion, site, apiPath, body, jwt });
 }
