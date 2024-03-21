@@ -25,7 +25,7 @@ export function getJwt(user: User) {
   const secretId = '30baa038-146e-44f7-8d31-9f5d6bea1b13'
   const clientId = '25c68ec4-3600-40a3-aaed-26a748e29fb3';
 
-  const scopes = ["tableau:views:embed", "tableau:views:embed_authoring", "tableau:insights:embed"];
+  const scopes = ["tableau:views:embed", "tableau:views:embed_authoring", "tableau:insights:embed", "tableau:insight_metrics:read", "tableau:insights:read"];
   const username = "embedded@ebikes.com";
 
 
