@@ -1,7 +1,7 @@
 import styles from './Analytics.module.css';
 import EmbeddedDashboard from './EmbeddedDashboard';
-import { getJwt } from '../pseudoBackend';
-import { useAppContext } from '../App';
+import { getJwt } from '../../pseudoBackend';
+import { useAppContext } from '../../App';
 
 function Analytics() {
 

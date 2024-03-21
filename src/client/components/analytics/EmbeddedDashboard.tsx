@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import styles from './EmbeddedDashboard.module.css';
 import { Dashboard, FilterUpdateType, TableauEventType, TableauViz, Toolbar } from '@tableau/embedding-api';
-import { getJwt } from '../pseudoBackend';
-import { useAppContext } from '../App';
-import { ProductInfo } from './ProductCatalog';
+import { getJwt } from '../../pseudoBackend';
+import { useAppContext } from '../../App';
+import { ProductInfo } from '../productCatalog/ProductCatalog';
 
 const EmbeddedDashboard: React.FC<{ width: number, selectedProduct?: ProductInfo | null }> = ({ width, selectedProduct }) => {
 

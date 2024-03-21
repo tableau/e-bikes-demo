@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import styles from './Pulse.module.css';
 import { TableauPulse } from '@tableau/embedding-api';
-import { getJwt } from '../pseudoBackend';
-import { useAppContext } from '../App';
+import { getJwt } from '../../pseudoBackend';
+import { useAppContext } from '../../App';
 
 function Pulse() {
 

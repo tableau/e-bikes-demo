@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import styles from './Copilot.module.css';
 import { TableauAuthoringViz } from '@tableau/embedding-api';
-import { getJwt } from '../pseudoBackend';
-import { useAppContext } from '../App';
+import { getJwt } from '../../pseudoBackend';
+import { useAppContext } from '../../App';
 
 function Copilot() {
 

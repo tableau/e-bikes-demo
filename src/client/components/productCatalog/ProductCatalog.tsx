@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import EmbeddedDashboardUpsellable from './EmbeddedDashboardUpsellable';
+import EmbeddedDashboardUpsellable from '../analytics/EmbeddedDashboardUpsellable';
 import Product from './Product';
 import styles from './ProductCatalog.module.css';
 import { productlist } from './productlist';

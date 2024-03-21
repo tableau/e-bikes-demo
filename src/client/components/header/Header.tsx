@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './Header.module.css'
-import { Pages, useAppContext, userPages } from './App';
+import { Pages, useAppContext, userPages } from '../../App';
 import NotificationBell from './NotificationBell';
 
 interface HeaderProps {

@@ -1,13 +1,13 @@
 import { useState, createContext, useContext, ReactNode } from 'react'
 import styles from './App.module.css';
-import Header from './Header';
-import Home from './Pages/Home';
-import Analytics from './Pages/Analytics';
-import Pulse from './Pages/Pulse';
-import Login from './Login';
-import ProductCatalog from './Pages/ProductCatalog';
-import Copilot from './Pages/Copilot';
-import { NotificationItem } from './NotificationWindow';
+import Header from './components/header/Header';
+import Home from './components/home/Home';
+import Analytics from './components/analytics/Analytics';
+import Pulse from './components/analytics/Pulse';
+import Login from './components/login/Login';
+import ProductCatalog from './components/productCatalog/ProductCatalog';
+import Copilot from './components/analytics/Copilot';
+import { NotificationItem } from './components/header/NotificationWindow';
 
 export interface User {
   username: 'McKenzie' | 'Mario';

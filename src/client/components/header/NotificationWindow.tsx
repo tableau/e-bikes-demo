@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import styles from './NotificationWindow.module.css';
-import { useAppContext } from './App';
+import { useAppContext } from '../../App';
 
 export type NotificationItem = { title: string, message: string };
 

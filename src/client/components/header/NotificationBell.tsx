@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from 'react';
 import styles from './NotificationBell.module.css';
-import { useAppContext } from './App';
+import { useAppContext } from '../../App';
 import NotificationWindow from './NotificationWindow';
 
 const NotificationBell: React.FC = () => {

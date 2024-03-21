@@ -1,8 +1,8 @@
 import styles from './EmbeddedDashboardUpsellable.module.css';
-import { useAppContext } from '../App';
+import { useAppContext } from '../../App';
 import EmbeddedDashboard from './EmbeddedDashboard';
 import { useState } from 'react';
-import { ProductInfo } from './ProductCatalog';
+import { ProductInfo } from '../productCatalog/ProductCatalog';
 
 const EmbeddedDashboardUpsellable: React.FC<{selectedProduct: ProductInfo | null}>  = ({selectedProduct}) => {
 
