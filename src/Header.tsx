@@ -47,7 +47,7 @@ const Header: React.FC<HeaderProps> = ({ selectedPage, onPageChange }) => {
         <div >
           <ul>
             <li>
-              <NotificationBell />
+              {user.username === 'Mario' && <NotificationBell />}
             </li>
             <li>
               <img key={'Avatar'} className={styles.avatar} src={`${user?.username}.png`} onClick={() => login(undefined)} />

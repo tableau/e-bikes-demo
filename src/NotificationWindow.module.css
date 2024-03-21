@@ -26,7 +26,12 @@
 
 }
 
-.dismiss {
+.actions {
     align-self: flex-end;
+    display: flex;
+    gap: 10px;
+}
+
+.analyze {
     cursor: pointer;
 }

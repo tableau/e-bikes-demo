@@ -1,9 +1,17 @@
 import React, { useEffect } from 'react';
 import styles from './NotificationWindow.module.css';
+import { useAppContext } from './App';
 
 export type NotificationItem = { title: string, message: string };
 
 const NotificationWindow: React.FC<{ notifications: NotificationItem[], onClose: () => void }> = ({ notifications, onClose }) => {
+
+    const {navigate} = useAppContext();
+
+    const analyze = () => {
+        navigate('Analyze');
+        onClose();
+    }
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -34,7 +42,9 @@ const NotificationWindow: React.FC<{ notifications: NotificationItem[], onClose:
                     <div className={styles.notifcation}>
                         <div className={styles.title}>{notification.title}</div>
                         <div className={styles.message}>{notification.message}</div>
-                        <a className={styles.dismiss}>Dismiss</a>
+                        <div className={styles.actions}>
+                            <a className={styles.analyze} onClick={analyze}>Analyze</a>
+                        </div>
                     </div>
                 ))
             }

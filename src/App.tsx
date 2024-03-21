@@ -24,14 +24,14 @@ interface AppContextType {
   upgradeLicense: (user: User) => void;
 }
 
-export type Pages = 'Home' | 'Product Catalog' | 'Analytics' | 'Get insights' | 'Self-service analytics';
+export type Pages = 'Home' | 'Product Catalog' | 'Performance' | 'Analyze';
 
 export const userPages = ((user: User): Pages[] => {
   switch (user?.username) {
     case 'Mario':
-      return ['Home', 'Analytics', 'Self-service analytics'];
+      return ['Home', 'Performance', 'Analyze'];
     case 'McKenzie':
-      return ['Home', 'Product Catalog', 'Get insights'];
+      return ['Home', 'Product Catalog', 'Analyze'];
     default:
       return [];
   }
@@ -99,9 +99,9 @@ function App() {
 
         {selectedPage === 'Home' && <Home />}
         {selectedPage === 'Product Catalog' && <ProductCatalog />}
-        {selectedPage === 'Analytics' && <Analytics />}
-        {selectedPage === 'Get insights' && <Pulse />}
-        {selectedPage === 'Self-service analytics' && <Copilot />}
+        {selectedPage === 'Performance' && <Analytics />}
+        {selectedPage === 'Analyze' && user.username === 'McKenzie' && <Pulse />}
+        {selectedPage === 'Analyze' && user.username === 'Mario' && <Copilot />}
       </div>
     )
 

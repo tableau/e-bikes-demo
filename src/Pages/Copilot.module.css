@@ -1,5 +1,9 @@
 .root, .viz {
-    width: 100%;
+    width: calc(100% - 20px);
     height: 100%;
+}
+
+.root {
+    margin: 0 20px 20px 20px;
 }
 
