@@ -15,9 +15,11 @@ export interface User {
 }
 interface AppContextType {
   user: User | undefined;
+  notificationCount: number;
   selectedPage: Pages;
   login: (user?: User) => void;
   navigate: (page: Pages) => void;
+  notificationReceived: (notifications: number) => void;
   upgradeLicense: (user: User) => void;
 }
 
@@ -35,11 +37,20 @@ export const userPages = ((user: User): Pages[] => {
 });
 
 
-const AppContext = createContext<AppContextType>({ user: undefined, selectedPage: 'Home', login: () => { }, navigate: () => { }, upgradeLicense: () => { } });
+const AppContext = createContext<AppContextType>({ 
+  user: undefined,
+  selectedPage: 'Home', 
+  notificationCount: 0, 
+  login: () => { }, 
+  navigate: () => { }, 
+  notificationReceived: () => {},
+  upgradeLicense: () => { } 
+});
 export const useAppContext = () => useContext(AppContext);
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | undefined>(undefined);
   const [selectedPage, setSelectedPage] = useState<Pages>('Home');
+  const [ notificationCount, setNotificationCount] = useState<number>(2);
 
   const login = (user?: User) => {
     setUser(user);
@@ -50,6 +61,10 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     setSelectedPage(page);
   }
 
+  const notificationReceived = (notificationCount: number) => {
+    setNotificationCount(notificationCount);
+  }
+
   const upgradeLicense = (user: User) => {
     setUser({
       ...user,
@@ -58,7 +73,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   }
 
   return (
-    <AppContext.Provider value={{ user, selectedPage, login, navigate, upgradeLicense }}>
+    <AppContext.Provider value={{ user, selectedPage, notificationCount, login, navigate, notificationReceived, upgradeLicense }}>
       {children}
     </AppContext.Provider>
   )

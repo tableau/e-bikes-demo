@@ -9,7 +9,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ selectedPage, onPageChange }) => {
 
-  const { user, login } = useAppContext();
+  const { user, login, notificationCount } = useAppContext();
 
   if (!user) {
     return null;
@@ -45,6 +45,16 @@ const Header: React.FC<HeaderProps> = ({ selectedPage, onPageChange }) => {
         </div>
         <div >
           <ul>
+            <li>
+              <div className={styles.notificationContainer}>
+                <div className={styles.notificationIcon}>
+                  <img key={'Notification'} className={styles.notification} src={`notification.png`} onClick={() => login(undefined)} />
+                </div>
+                {notificationCount > 0 &&
+                  <div className={styles.notificationCount}>{notificationCount}</div>
+                }
+              </div>
+            </li>
             <li>
               <img key={'Avatar'} className={styles.avatar} src={`${user?.username}.png`} onClick={() => login(undefined)} />
             </li>

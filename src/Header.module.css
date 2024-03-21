@@ -34,3 +34,28 @@ nav li {
   border-radius: 50%;
   width: 40px;
 }
+
+.notification {
+  width: 40px;
+}
+
+.notificationContainer {
+  position: relative;
+}
+
+.notificationIcon {
+  display: inline-block;
+}
+
+.notificationCount {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: red;
+  color: white;
+  font-size: 12px;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+}
