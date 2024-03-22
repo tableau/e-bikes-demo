@@ -2,6 +2,7 @@ import { Request as ExpressRequest, Response as ExpressResponse } from 'express'
 import fetch, { RequestInit } from 'node-fetch';
 import { Err, Ok, Result } from 'ts-results';
 import { signinAsync } from './signin';
+import { callHBI } from './hbi';
 
 export type RequestData = {
   server: string;
@@ -14,6 +15,16 @@ export type RequestData = {
 
 export async function post(request: ExpressRequest, response: ExpressResponse) {
   try {
+    // Glueing HBI POST into here
+    if (request.originalUrl.startsWith('/api/-/hbi-query')) {
+      const queryResult = await callHBI(request.body)
+      try {
+        response.send(queryResult);
+      } catch (e: unknown) {
+        response.send({ error: `${e}`, queryResult });
+      }
+      return;
+    }
     const requestResult = validateRequest(request);
     if (requestResult.err) {
       response.status(400).send({ error: 'invalid_request' });
