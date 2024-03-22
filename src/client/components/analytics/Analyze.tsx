@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import styles from './Analyze.module.css';
 import { TableauAuthoringViz } from '@tableau/embedding-api';
 import { useAppContext } from '../../App';
-import { getJwtFromServer } from '../../jwt';
+import { getJwtFromServer } from './jwt';
 
 function Copilot() {
 

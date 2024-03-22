@@ -2,7 +2,7 @@ import styles from './Performance.module.css';
 import EmbeddedDashboard from './EmbeddedDashboard';
 import { useAppContext } from '../../App';
 import { useEffect, useState } from 'react';
-import { getJwtFromServer } from '../../jwt';
+import { getJwtFromServer } from './jwt';
 
 function Analytics() {
 

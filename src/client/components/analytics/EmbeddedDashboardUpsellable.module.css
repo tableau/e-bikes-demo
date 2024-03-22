@@ -5,3 +5,11 @@
 .upsellMessage {
     text-align: center;
 }
+
+.insights {
+    border: 1px red solid;
+    margin: 0 20px;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #f59999;
+}
