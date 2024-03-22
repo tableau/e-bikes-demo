@@ -44,10 +44,7 @@ export const useAppContext = () => useContext(AppContext);
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | undefined>(undefined);
   const [selectedPage, setSelectedPage] = useState<Pages>('Home');
-  const [notifications, setNotifications] = useState<NotificationItem[]>([
-    { title: 'High returns: Wheelworks', message: 'Your partner Wheelworks has returned 25% of their Fuse X2 bikes in the last month. Please reach out to them as soon as possible.' },
-    { title: 'High returns: Wheelworks', message: 'Your partner Wheelworks has returned 25% of their Fuse X2 bikes in the last month. Please reach out to them as soon as possible.' },
-  ]);
+  const [ notifications, setNotifications] = useState<NotificationItem[]>([]);
 
   const login = (user?: User) => {
     setUser(user);
