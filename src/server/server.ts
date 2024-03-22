@@ -6,6 +6,7 @@ import ViteExpress from 'vite-express';
 
 import { get } from './get';
 import { post } from './post';
+import { getJwt } from './getJwt';
 
 const port = (process.env.PORT && parseInt(process.env.PORT, 10)) || 5001;
 
@@ -14,6 +15,7 @@ const root = path.join(__dirname, '../dist');
 const app = express();
 app.use('/', express.static(root)).use(cors()).use(bodyParser.json());
 
+app.get('/getJwt', getJwt);
 app.get('/api/:apiVersion/:apiPath*', get);
 app.post('/api/:apiVersion/:apiPath*', post);
 

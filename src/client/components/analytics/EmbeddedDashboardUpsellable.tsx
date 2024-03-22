@@ -20,7 +20,7 @@ const EmbeddedDashboardUpsellable: React.FC<{selectedProduct: ProductInfo | null
 
   return (
     <div className={styles.root}>
-      {!user.hasPremiumLicense &&
+      {user.license === 'Basic' &&
         <div className={styles.upsellMessage}>
           <p>You have access to basic operational data. </p>
           <p><a href='#' onClick={upgradeUserLicense}>Upgrade to premium</a> for $9.99 /month to see period comparisons.</p>

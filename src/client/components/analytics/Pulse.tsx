@@ -1,12 +1,14 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './Pulse.module.css';
 import { TableauPulse } from '@tableau/embedding-api';
-import { getJwt } from '../../pseudoBackend';
 import { useAppContext } from '../../App';
+import { getJwtFromServer } from '../../jwt';
 
 function Pulse() {
 
-  const {user} = useAppContext();
+  const { user } = useAppContext();
+  const [jwt, setJwt] = useState<string | null>(null);
+
 
   useEffect(() => {
 
@@ -14,17 +16,30 @@ function Pulse() {
       return;
     }
 
-    const pulse = new TableauPulse();
-
-    if (document.getElementById('tableauPulse')?.children.length === 0) {
-      pulse.src = 'https://10ay.online.tableau.com/pulse/site/ehofman/metrics/7d8fe39a-7bf9-424c-bdd3-2676a5598c50';
-      pulse.token = getJwt(user);
-
-      document.getElementById('tableauPulse')!.appendChild(pulse);
-
-      banAsync(pulse.token);
-    }
+    (async () => {
+      setJwt(await getJwtFromServer(user));
+    })();
   }, []);
+
+  useEffect(() => {
+
+    if (!jwt) {
+      return;
+    }
+  
+      const pulse = new TableauPulse();
+
+      if (document.getElementById('tableauPulse')?.children.length === 0) {
+        pulse.src = 'https://10ay.online.tableau.com/pulse/site/ehofman/metrics/7d8fe39a-7bf9-424c-bdd3-2676a5598c50';
+        pulse.token = jwt;
+
+        document.getElementById('tableauPulse')!.appendChild(pulse);
+
+        if (pulse.token) {
+          banAsync(pulse.token);
+        }
+      }
+    })
 
   async function banAsync(jwt: string) {
     const body = {
