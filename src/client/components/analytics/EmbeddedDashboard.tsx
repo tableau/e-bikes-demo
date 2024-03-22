@@ -3,7 +3,7 @@ import styles from './EmbeddedDashboard.module.css';
 import { Dashboard, FilterUpdateType, TableauEventType, TableauViz, Toolbar } from '@tableau/embedding-api';
 import { useAppContext } from '../../App';
 import { ProductInfo } from '../productCatalog/ProductCatalog';
-import { getJwtFromServer } from '../../jwt';
+import { getJwtFromServer } from './jwt';
 
 const EmbeddedDashboard: React.FC<{ width: number, selectedProduct?: ProductInfo | null }> = ({ width, selectedProduct }) => {
 
