@@ -2,22 +2,18 @@ import { useState, createContext, useContext, ReactNode } from 'react'
 import styles from './App.module.css';
 import Header from './components/header/Header';
 import Home from './components/home/Home';
-import Analytics from './components/analytics/Analytics';
+import Analytics from './components/analytics/Performance';
 import Pulse from './components/analytics/Pulse';
 import Login from './components/login/Login';
 import ProductCatalog from './components/productCatalog/ProductCatalog';
-import Copilot from './components/analytics/Copilot';
+import Copilot from './components/analytics/Analyze';
 import { NotificationItem } from './components/header/NotificationWindow';
+import { User } from '../db/users';
 
-export interface User {
-  username: 'McKenzie' | 'Mario';
-  retailer: 'Wheelworks' | null;
-  hasPremiumLicense: boolean;
-}
 interface AppContextType {
   user: User | undefined;
-  notifications: NotificationItem[];
   selectedPage: Pages;
+  notifications: NotificationItem[];
   login: (user?: User) => void;
   navigate: (page: Pages) => void;
   notificationReceived: (notifications: NotificationItem[]) => void;
@@ -27,33 +23,30 @@ interface AppContextType {
 export type Pages = 'Home' | 'Product Catalog' | 'Performance' | 'Analyze';
 
 export const userPages = ((user: User): Pages[] => {
-  switch (user?.username) {
-    case 'Mario':
-      return ['Home', 'Performance', 'Analyze'];
-    case 'McKenzie':
-      return ['Home', 'Product Catalog', 'Analyze'];
-    default:
-      return [];
+  if (user.isRetailer) {
+    return ['Home', 'Product Catalog', 'Analyze'];
+  } else {
+    return ['Home', 'Performance', 'Analyze'];
   }
 });
 
 
-const AppContext = createContext<AppContextType>({ 
+const AppContext = createContext<AppContextType>({
   user: undefined,
-  selectedPage: 'Home', 
-  notifications: [], 
-  login: () => { }, 
-  navigate: () => { }, 
-  notificationReceived: () => {},
-  upgradeLicense: () => { } 
+  selectedPage: 'Home',
+  notifications: [],
+  login: () => { },
+  navigate: () => { },
+  notificationReceived: () => { },
+  upgradeLicense: () => { }
 });
 export const useAppContext = () => useContext(AppContext);
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | undefined>(undefined);
   const [selectedPage, setSelectedPage] = useState<Pages>('Home');
-  const [ notifications, setNotifications] = useState<NotificationItem[]>([
-    {title: 'High returns: Wheelworks', message: 'Your partner Wheelworks has returned 25% of their Fuse X2 bikes in the last month. Please reach out to them as soon as possible.'},
-    {title: 'High returns: Wheelworks', message: 'Your partner Wheelworks has returned 25% of their Fuse X2 bikes in the last month. Please reach out to them as soon as possible.'},
+  const [notifications, setNotifications] = useState<NotificationItem[]>([
+    { title: 'High returns: Wheelworks', message: 'Your partner Wheelworks has returned 25% of their Fuse X2 bikes in the last month. Please reach out to them as soon as possible.' },
+    { title: 'High returns: Wheelworks', message: 'Your partner Wheelworks has returned 25% of their Fuse X2 bikes in the last month. Please reach out to them as soon as possible.' },
   ]);
 
   const login = (user?: User) => {
@@ -70,14 +63,22 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   }
 
   const upgradeLicense = (user: User) => {
-    setUser({
-      ...user,
-      hasPremiumLicense: true,
-    });
+setUser({
+  ...user,
+  license: 'Premium'
+})
   }
 
   return (
-    <AppContext.Provider value={{ user, selectedPage, notifications, login, navigate, notificationReceived, upgradeLicense }}>
+    <AppContext.Provider value={{
+      user,
+      selectedPage,
+      notifications,
+      login,
+      navigate,
+      notificationReceived,
+      upgradeLicense
+    }}>
       {children}
     </AppContext.Provider>
   )
@@ -100,8 +101,8 @@ function App() {
         {selectedPage === 'Home' && <Home />}
         {selectedPage === 'Product Catalog' && <ProductCatalog />}
         {selectedPage === 'Performance' && <Analytics />}
-        {selectedPage === 'Analyze' && user.username === 'McKenzie' && <Pulse />}
-        {selectedPage === 'Analyze' && user.username === 'Mario' && <Copilot />}
+        {selectedPage === 'Analyze' && user.isRetailer && <Pulse />}
+        {selectedPage === 'Analyze' && !user.isRetailer && <Copilot />}
       </div>
     )
 

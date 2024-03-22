@@ -16,20 +16,13 @@ const Header: React.FC<HeaderProps> = ({ selectedPage, onPageChange }) => {
     return null;
   }
 
-  const logo = (() => {
-    switch (user.username) {
-      case 'Mario': return 'ebikes-logo.png';
-      case 'McKenzie': return 'Wheelworks-logo.png';
-    }
-  })
-
   return (
     <div className={styles.header}>
       <nav>
         <div >
           <ul>
             <li>
-              <img className={styles.logo} src={`${logo()}`} />
+              <img className={styles.logo} src={`${user.companyLogo}`} />
             </li>
             {userPages(user).map((page) => {
               return (
@@ -47,7 +40,7 @@ const Header: React.FC<HeaderProps> = ({ selectedPage, onPageChange }) => {
         <div >
           <ul>
             <li>
-              {user.username === 'Mario' && <NotificationBell />}
+              {!user.isRetailer && <NotificationBell />}
             </li>
             <li>
               <img key={'Avatar'} className={styles.avatar} src={`${user?.username}.png`} onClick={() => login(undefined)} />
