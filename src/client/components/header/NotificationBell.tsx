@@ -7,103 +7,114 @@ import { Query } from '../../../server/hbi'
 
 // Our HBI Query to get return percentages
 const query: Query = {
-    connection: {
-        tableauServerName: 'us-west-2a.online.tableau.com',
-        siteId: 'ehofmanvds',
-        datasource: 'eBikesInventoryandSales'
-    },
-    query: {
-        columns: [
-            {
-                columnName: "Account Name",
-                columnAlias: "accountName",
-                sortPriority: 1
-            },
-            {
-                columnName: "Product Name",
-                columnAlias: "productName",
-                sortPriority: 2
-            },
-            {
-                columnName: "returnPercentage",
-                // Note that for "Migrated Data" we have to use the name of the column as the
-                // underlying Tableau PDS knows it (count). Not the human created name.
-                calculation: "SUM(IF [Return Flag] = 'Yes' THEN 1 END) / COUNT([count])"
-            }
-        ],
-        filters: [
-          {
-            filterType: "DATE",
-            columnName: "Order Placed Date",
-            periodType: "DAY",
-            // Note that to get the last 30 days, it's actually -29 for the value. Thinking about fixing that
-            // but currently that's how it works. We can also put an anchor date in here if needed. Right
-            // Now it's the last 30 days from now.
-            firstPeriod: -29,
-            lastPeriod: 0
-          }
-        ]
-    }
-  };
-  
-  // We should get back these objects as data
-  export type AccountReturns = {
-    accountName: string,
-    productName: string,
-    returnPercentage: number
+  connection: {
+    tableauServerName: 'us-west-2a.online.tableau.com',
+    siteId: 'ehofmanvds',
+    datasource: 'eBikesInventoryandSales'
+  },
+  query: {
+    columns: [
+      {
+        columnName: "Account Name",
+        columnAlias: "accountName",
+        sortPriority: 1
+      },
+      {
+        columnName: "Product Name",
+        columnAlias: "productName",
+        sortPriority: 2
+      },
+      {
+        columnName: "returnPercentage",
+        // Note that for "Migrated Data" we have to use the name of the column as the
+        // underlying Tableau PDS knows it (count). Not the human created name.
+        calculation: "SUM(IF [Return Flag] = 'Yes' THEN 1 END) / COUNT([count])"
+      }
+    ],
+    filters: [
+      {
+        filterType: "DATE",
+        columnName: "Order Placed Date",
+        periodType: "DAY",
+        // Note that to get the last 30 days, it's actually -29 for the value. Thinking about fixing that
+        // but currently that's how it works. We can also put an anchor date in here if needed. Right
+        // Now it's the last 30 days from now.
+        firstPeriod: -29,
+        lastPeriod: 0
+      }
+    ]
   }
+};
+
+// We should get back these objects as data
+export type AccountReturns = {
+  accountName: string,
+  productName: string,
+  returnPercentage: number
+}
 
 const NotificationBell: React.FC = () => {
 
-    const { notifications,  notificationReceived } = useAppContext();
-    const [showPopup, setShowPopup] = useState(false);
+  const { notifications, notificationReceived } = useAppContext();
+  const [showPopup, setShowPopup] = useState(false);
 
-    useEffect(() => {
-        if (notifications.length > 0) {
-          return;
+  useEffect(() => {
+    if (notifications.length > 0) {
+      return;
+    }
+
+    (async () => {
+      const post = {
+        method: 'post',
+        body: JSON.stringify(query),
+        headers: {
+          'Content-Type': 'application/json'
         }
-        const post = {
-          method: 'post',
-          body: JSON.stringify(query),
-          headers: {
-            'Content-Type': 'application/json'
+      }
+
+      const response = await fetch('http://localhost:5001/api/-/hbi-query', post);
+      const json = await response.json();
+      const results = await json.data[0] as AccountReturns[];
+
+      if (results?.length) {
+
+        const notifications = results
+        .sort((account1, account2) => account2.returnPercentage - account1.returnPercentage)
+        .filter(account => {
+          switch(account.accountName) {
+            case 'Northern Trail Cycling': return account.productName === 'FUSE X2'
+            case 'Trailblazers': return account.productName === 'VOLT X1'
+            case 'Wheelworks': return account.productName === 'ELECTRA X4'
           }
-        }
-        fetch('http://localhost:5001/api/-/hbi-query', post)
-          .then(response => response.json())
-          .then(response => response.data)
-          .then((results: object[]) => results[0])
-          .then(results => {
-            const resultsList = results as object[];
-            if (resultsList !== null && resultsList !== undefined && resultsList.length > 0) {
-                const notifications = resultsList.map(value => {
-                    const ar: AccountReturns = value as AccountReturns;
-                    console.log(ar);
-                    const p = ar.returnPercentage.toLocaleString('en-US', {style: 'percent', minimumFractionDigits:2}); 
-                    const item = {
-                    title: `High returns: ${ar.accountName}`,
-                    message: `Your partner ${ar.accountName} has returned ${p} of their ${ar.productName} bikes in the last month. Please reach out to them as soon as possible.`
-                    } as NotificationItem;
-                    return item;
-                });
-                notificationReceived(notifications);
-            }
-          });
-      })
+        })
+        .map(account => {
+          const returnPercentage = account.returnPercentage.toLocaleString('en-US', { style: 'percent', minimumFractionDigits: 2 });
 
-    return (
-        <Fragment>
-            <div id={'notificationBell'} className={styles.notificationContainer}>
-                <div className={styles.notificationIcon}>
-                    <img key={'Notification'} className={styles.notification} src={`notification.png`} onClick={() => setShowPopup(prevShowPopup => !prevShowPopup)} />
-                </div>
-                {notifications.length > 0 &&
-                    <div className={styles.notificationCount}>{notifications.length}</div>
-                }
-            {showPopup && <NotificationWindow notifications={notifications} onClose={() => setShowPopup(false)} />}
-            </div>
-        </Fragment>
-    );
+          return {
+            title: `High returns: ${account.accountName}`,
+            message: `${returnPercentage} of the product ${account.productName} was returned in the last month.`
+          } as NotificationItem;
+        });
+
+        notificationReceived(notifications);
+      }
+
+    })();
+  }, [])
+
+  return (
+    <Fragment>
+      <div id={'notificationBell'} className={styles.notificationContainer}>
+        <div className={styles.notificationIcon}>
+          <img key={'Notification'} className={styles.notification} src={`notification.png`} onClick={() => setShowPopup(prevShowPopup => !prevShowPopup)} />
+        </div>
+        {notifications.length > 0 &&
+          <div className={styles.notificationCount}>{notifications.length}</div>
+        }
+        {showPopup && <NotificationWindow notifications={notifications} onClose={() => setShowPopup(false)} />}
+      </div>
+    </Fragment>
+  );
 }
 
 export default NotificationBell;
