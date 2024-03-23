@@ -4,10 +4,11 @@ import { ProductInfo } from './ProductCatalog';
 interface ProductProps {
   product: ProductInfo;
   selected: boolean;
+  salesPerformance: number | undefined;
   selectProduct: () => void;
 }
 
-const Product: React.FC<ProductProps> = ({ product, selected, selectProduct }) => {
+const Product: React.FC<ProductProps> = ({ product, selected, salesPerformance, selectProduct }) => {
 
   return (
     <div
@@ -27,7 +28,10 @@ const Product: React.FC<ProductProps> = ({ product, selected, selectProduct }) =
         </div>
         <div className={styles.productDescription}>
           <h3>{product.name}</h3>
-          <p>MSRP: ${product.price}</p>
+          <p>MSRP: ${product.price}  {salesPerformance}</p>
+        </div>
+        <div className={`${styles.sales} q${salesPerformance}`}>
+          {(salesPerformance && '$'.repeat(salesPerformance))}
         </div>
       </div>
     </div>

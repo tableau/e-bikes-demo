@@ -22,6 +22,7 @@
     align-items: center;
     margin: 8px;
     cursor: pointer;
+    position: relative;
 }
 
 .productImage {
@@ -36,4 +37,23 @@
 
 .productDescription h3, .productDescription p {
     margin: 0;
+}
+
+.sales {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    font-size: 20px;
+}
+
+:global(.q1) {
+    color: red;
+}
+
+:global(.q2) {
+    color: orange;
+}
+
+:global(.q3) {
+    color: green;
 }
