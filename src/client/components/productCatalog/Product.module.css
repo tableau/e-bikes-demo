@@ -9,7 +9,6 @@
 }
 .root:hover {
     border-color:  grey;
-    background-color: lightgrey;
 }
 
 .selected {
