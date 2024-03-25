@@ -74,7 +74,7 @@ const NotificationBell: React.FC = () => {
 
       const response = await fetch('http://localhost:5001/api/-/hbi-query', post);
       const json = await response.json();
-      const results = ((json.data && json.data[0]) ?? []) as AccountReturns[];
+      const results = (json.data ?? []) as AccountReturns[];
 
       if (results?.length) {
 
