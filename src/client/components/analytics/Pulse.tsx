@@ -3,12 +3,15 @@ import styles from './Pulse.module.css';
 import { TableauPulse } from '@tableau/embedding-api';
 import { useAppContext } from '../../App';
 import { getJwtFromServer } from './jwt';
+import { usePulseApi } from './usePulseAPI';
 
 function Pulse() {
 
   const { user } = useAppContext();
   const [jwt, setJwt] = useState<string | null>(null);
+  const {getMetricDefinitionsForSubscriber} = usePulseApi();
 
+  const [metricIds, setMetricIds] = useState<string[]>([]); 
 
   useEffect(() => {
 
@@ -18,6 +21,11 @@ function Pulse() {
 
     (async () => {
       setJwt(await getJwtFromServer(user));
+    })();
+
+    (async () => {
+      const metricDefinitions = await getMetricDefinitionsForSubscriber();
+      setMetricIds(metricDefinitions.map(metricDefinition => metricDefinition.name));
     })();
   }, []);
 
@@ -36,7 +44,7 @@ function Pulse() {
         document.getElementById('tableauPulse')!.appendChild(pulse);
 
         if (pulse.token) {
-          banAsync(pulse.token);
+          //banAsync(pulse.token);
         }
       }
     })
@@ -142,6 +150,8 @@ function Pulse() {
     let response = await fetch(url);
     console.log('BatchGetMetrics', await response.json());
 
+    //{{baseUrl}}/api/-/pulse/definitions:batchGet?definition_ids={{batch_definition_ids}}
+
     url = `http://localhost:5001/api/-/pulse/metrics/${metric}?server=${server}&site=${site}&jwt=${jwt}`
     response = await fetch(url);
     console.log('GetMetric', await response.json());
@@ -161,6 +171,7 @@ function Pulse() {
   return (
 
     <div className={styles.root}>
+      <div>{metricIds.join(', ')}</div>
       <div className={styles.pulse} id="tableauPulse" ></div>
     </div>
   )

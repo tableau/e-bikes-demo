@@ -63,7 +63,7 @@ export function useProductSales() {
 
     const response = await fetch('http://localhost:5001/api/-/hbi-query', post);
     const json = await response.json();
-    const results = ((json.data && json.data[0]) ?? []) as ProductSales[];
+    const results = (json.data ?? []) as ProductSales[];
 
     return results;
 
