@@ -4,7 +4,7 @@ import Header from './components/header/Header';
 import Home from './components/home/Home';
 import Analytics from './components/analytics/Performance';
 import Pulse from './components/analytics/Pulse';
-import Login from './components/login/Login';
+import Login from './components/auth/Login';
 import ProductCatalog from './components/productCatalog/ProductCatalog';
 import Copilot from './components/analytics/Analyze';
 import { NotificationItem } from './components/header/NotificationWindow';

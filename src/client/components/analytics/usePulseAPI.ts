@@ -1,41 +1,57 @@
-import { useAppContext } from '../../App';
-import { getJwtFromServer } from './jwt';
+import { useAuth } from "../auth/useAuth";
 
-export interface MetricDefinition {
+interface MetricDefinition {
   metric_id: string,
   definition_id: string,
   name: string,
+  url: string,
   metric_specification: string,
   definition_specification: string,
   extension_options: string,
-  representation_options: String,
+  representation_options: string,
   insights_options: string,
+}
+
+export interface BanInsight {
+  metricDefinition: MetricDefinition;
+  period: string;
+  markup: string;
+  value: number;
+  direction: 'up' | 'down';
+  sentiment: 'negative' | 'positive';
 }
 
 export function usePulseApi() {
 
-  const { user } = useAppContext();
+  const { getJwtFromServer } = useAuth()
 
   const baseUrl = 'http://localhost:5001';
   const server = 'https://10ay.online.tableau.com';
   const site = 'ehofman';
   const subscriber = '8988c285-bb3a-47cd-b570-168a830abc04'; //'embedded@ebikes.com';
 
+  async function getHeaders() {
+
+    return {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+      jwt: await getJwtFromServer(),
+      server: server,
+      site: site,
+    } as HeadersInit;
+
+  }
+
   /** returns the list of metric_ids the subscriber has a subscription to */
   async function getSubscribedMetrics(): Promise<{
     metric_id: string
   }[]> {
 
-    if (!user) {
-      return [];
-    }
-
-    const jwt = await getJwtFromServer(user);
-
     const query = encodeURIComponent(`user_id=${subscriber}`);
-    const url = `${baseUrl}/api/-/pulse/subscriptions?server=${server}&site=${site}&jwt=${jwt}&query=${query}`;
+    const url = `${baseUrl}/api/-/pulse/subscriptions?query=${query}`;
     const response = await fetch(url, {
       method: 'GET',
+      headers: await getHeaders(),
     });
 
     const json = await response.json();
@@ -47,8 +63,8 @@ export function usePulseApi() {
 
     } else {
 
-      return json.subscriptions.map((s: { metric_id: string; }) => ({
-        metric_id: s.metric_id,
+      return json.subscriptions.map((subscription_response: { metric_id: string; }) => ({
+        metric_id: subscription_response.metric_id,
       }));
 
     }
@@ -62,16 +78,11 @@ export function usePulseApi() {
     definition_id: string,
   }[]> {
 
-    if (!user) {
-      return [];
-    }
-
-    const jwt = await getJwtFromServer(user);
-
     const query = encodeURIComponent(`enable_sorting=true&metric_ids=${metric_ids.join(',')}`);
-    const url = `${baseUrl}/api/-/pulse/metrics:batchGet?server=${server}&site=${site}&query=${query}&jwt=${jwt}`;
+    const url = `${baseUrl}/api/-/pulse/metrics:batchGet?query=${query}`;
     const response = await fetch(url, {
       method: 'GET',
+      headers: await getHeaders(),
     });
 
     const json = await response.json();
@@ -83,10 +94,10 @@ export function usePulseApi() {
 
     } else {
 
-      return json.metrics.map((s: any) => ({
-        metric_id: s.id,
-        metric_specification: s.specification,
-        definition_id: s.definition_id,
+      return json.metrics.map((metric_response: any) => ({
+        metric_id: metric_response.id,
+        metric_specification: metric_response.specification,
+        definition_id: metric_response.definition_id,
       }));
 
     }
@@ -94,21 +105,16 @@ export function usePulseApi() {
   }
 
   /** returns the list of definitions the subscriber has a subscription to */
-  async function getMetricDefinitionsForSubscriber(): Promise<MetricDefinition[]> {
-
-    if (!user) {
-      return [];
-    }
-
-    const jwt = await getJwtFromServer(user);
+  async function getSubscribedMetricDefinitions(): Promise<MetricDefinition[]> {
 
     const subscriptions = await getSubscribedMetrics();
     const definitions = await getDefinitions(subscriptions.map(subscription => subscription.metric_id));
 
     const query = encodeURIComponent(`definition_ids=${definitions.map(definition => definition.definition_id)}`);
-    const url = `${baseUrl}/api/-/pulse/definitions:batchGet?server=${server}&site=${site}&jwt=${jwt}&query=${query}`;
+    const url = `${baseUrl}/api/-/pulse/definitions:batchGet?query=${query}`;
     const response = await fetch(url, {
       method: 'GET',
+      headers: await getHeaders(),
     });
 
     const json = await response.json();
@@ -120,30 +126,79 @@ export function usePulseApi() {
 
     } else {
 
-      return json.definitions.map((s: any) => {
+      return json.definitions.map((definition_response: any) => {
 
-        const definition = definitions.find(definition => definition.definition_id === s.metadata.id)!;
+        const definition = definitions.find(definition => definition.definition_id === definition_response.metadata.id)!;
 
         return {
-          metricId: s.id,
-          definitionId: s.definition_id,
-          name: s.metadata.name,
+          metric_id: definition.metric_id,
+          definition_id: definition.definition_id,
+          name: definition_response.metadata.name,
+          url: `${server}/pulse/site/${site}/metrics/${definition.metric_id}`,
           metric_specification: definition.metric_specification,
-          definition_specifiction: s.specification,
-          extension_options: s.extension_options,
-          representation_options: s.representation_options,
-          insights_options: s.insights_options,
-        }
+          definition_specification: definition_response.specification,
+          extension_options: definition_response.extension_options,
+          representation_options: definition_response.representation_options,
+          insights_options: definition_response.insights_options,
+        } as MetricDefinition
       });
 
     }
 
   }
 
-  async function ban(metricDefinition: MetricDefinition) {
-    
+  async function getSubscribedBanInsights(): Promise<BanInsight[]> {
+
+    const metricDefinitions = await getSubscribedMetricDefinitions();
+
+    const promises = metricDefinitions.map(async (metricDefinition) => {
+
+      const url = `${baseUrl}/api/-/pulse/insights/ban`;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: await getHeaders(),
+        body: JSON.stringify({
+          bundle_request: {
+            version: '1',
+            options: {
+              output_format: 'OUTPUT_FORMAT_TEXT',
+            },
+            input: {
+              metadata: {
+                name: metricDefinition.name,
+                metric_id: metricDefinition.metric_id,
+                definition_id: metricDefinition.definition_id,
+              },
+              metric: {
+                definition: metricDefinition.definition_specification,
+                metric_specification: metricDefinition.metric_specification,
+                extension_options: metricDefinition.extension_options,
+                representation_options: metricDefinition.representation_options,
+                insights_options: metricDefinition.insights_options,
+              },
+            }
+          }
+        })
+      });
+
+      const json = await response.json();
+      const insight = json.bundle_response.result.insight_groups[0].insights[0].result
+
+      return {
+        metricDefinition,
+        period: insight.facts.target_time_period.label,
+        markup: insight.markup,
+        value: insight.facts.target_period_value.formatted,
+        direction: insight.facts.difference.direction,
+        sentiment: insight.facts.sentiment,
+      } as BanInsight;
+
+    });
+
+    return await Promise.all(promises);
   }
 
-  return { getMetricDefinitionsForSubscriber };
+
+  return { getSubscribedBanInsights };
 
 }

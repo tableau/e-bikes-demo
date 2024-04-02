@@ -1,23 +1,18 @@
 import { useEffect, useState } from 'react';
 import styles from './Analyze.module.css';
 import { TableauAuthoringViz } from '@tableau/embedding-api';
-import { useAppContext } from '../../App';
-import { getJwtFromServer } from './jwt';
+import { useAuth } from '../auth/useAuth';
 
 function Copilot() {
 
-  const { user } = useAppContext();
+  const { getJwtFromServer } = useAuth()
   const [jwt, setJwt] = useState<string | null>(null);
 
 
   useEffect(() => {
 
-    if (!user) {
-      return;
-    }
-
     (async () => {
-      setJwt(await getJwtFromServer(user));
+      setJwt(await getJwtFromServer());
     })();
   }, []);
 
@@ -31,7 +26,6 @@ function Copilot() {
       const viz = new TableauAuthoringViz();
 
       const guid = crypto.randomUUID();
-      //viz.src = `https://10ay.online.tableau.com/t/ehofman/newWorkbook/${guid}`;
       viz.src = `https://10ay.online.tableau.com/t/ehofman/authoringNewWorkbook/${guid}/eBikesInventoryandSales`;
       viz.token = jwt
   

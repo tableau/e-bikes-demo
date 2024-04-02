@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react';
 import styles from './EmbeddedDashboard.module.css';
 import { Dashboard, FilterUpdateType, TableauEventType, TableauViz, Toolbar } from '@tableau/embedding-api';
-import { useAppContext } from '../../App';
 import { ProductInfo } from '../productCatalog/ProductCatalog';
-import { getJwtFromServer } from './jwt';
+import { useAuth } from '../auth/useAuth';
 
 const EmbeddedDashboard: React.FC<{ width: number, selectedProduct?: ProductInfo | null }> = ({ width, selectedProduct }) => {
 
-  const { user } = useAppContext();
+  const { getJwtFromServer } = useAuth()
   const [vizIsInteractive, setVizIsInteractive] = useState<boolean>(false);
   const [jwt, setJwt] = useState<string | null>(null);
 
@@ -29,13 +28,10 @@ const EmbeddedDashboard: React.FC<{ width: number, selectedProduct?: ProductInfo
 
   useEffect(() => {
 
-    if (!user) {
-      return;
-    }
-
     (async () => {
-      setJwt(await getJwtFromServer(user));
+      setJwt(await getJwtFromServer());
     })();
+
   }, []);
 
   useEffect(() => {

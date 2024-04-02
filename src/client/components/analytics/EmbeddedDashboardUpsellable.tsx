@@ -8,7 +8,7 @@ import { usePulseApi } from './usePulseAPI';
 const EmbeddedDashboardUpsellable: React.FC<{ selectedProduct: ProductInfo | null }> = ({ selectedProduct }) => {
 
   const { user, upgradeLicense } = useAppContext();
-  const { getInsightMarkup } = usePulseApi();
+//  const { getInsightMarkup } = usePulseApi();
 
   const [refreshDashboard, setRefreshDashboard] = useState<boolean>(false);
   const [insights, setInsights] = useState<string | null>(null);
@@ -16,7 +16,7 @@ const EmbeddedDashboardUpsellable: React.FC<{ selectedProduct: ProductInfo | nul
   useEffect(() => {
 
     if (user?.license === 'Premium') {
-      (async () => setInsights(await getInsightMarkup()))();
+  //    (async () => setInsights(await getInsightMarkup()))();
     }
 
   }, [user?.license])

@@ -1,22 +1,17 @@
 import styles from './Performance.module.css';
 import EmbeddedDashboard from './EmbeddedDashboard';
-import { useAppContext } from '../../App';
 import { useEffect, useState } from 'react';
-import { getJwtFromServer } from './jwt';
+import { useAuth } from '../auth/useAuth';
 
 function Analytics() {
 
-  const { user } = useAppContext();
+  const { getJwtFromServer } = useAuth()
   const [jwt, setJwt] = useState<string | null>(null);
 
   useEffect(() => {
 
     (async () => {
-      if (!user) {
-        return;
-      }
-
-      setJwt(await getJwtFromServer(user));
+      setJwt(await getJwtFromServer());
     })();
 
   }, [])

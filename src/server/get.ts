@@ -65,12 +65,13 @@ export async function get(request: ExpressRequest, response: ExpressResponse) {
 function validateRequest(request: ExpressRequest): Result<RequestData, void> {
   const params = request.params;
 
-  const server = `${request.query.server || ''}`;
+  const server = request.header('server') ?? '';
+  const site = request.header('site') ?? '';
+  const jwt = request.header('jwt') ?? '';
+
   const apiVersion = `${params.apiVersion || ''}`;
-  const site = `${request.query.site || ''}`;
   const apiPath = `${params.apiPath || ''}${params[0] || ''}`;
   const query = `${request.query.query || ''}`;
-  const jwt = `${request.query.jwt || ''}`;
   if (!server || !apiVersion || !apiPath) {
     return Err.EMPTY;
   }
