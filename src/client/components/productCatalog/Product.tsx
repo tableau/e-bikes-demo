@@ -28,7 +28,7 @@ const Product: React.FC<ProductProps> = ({ product, selected, salesPerformance, 
         </div>
         <div className={styles.productDescription}>
           <h3>{product.name}</h3>
-          <p>MSRP: ${product.price}  {salesPerformance}</p>
+          <p>MSRP: ${product.price}</p>
         </div>
         <div className={`${styles.sales} q${salesPerformance}`}>
           {(salesPerformance && '$'.repeat(salesPerformance))}

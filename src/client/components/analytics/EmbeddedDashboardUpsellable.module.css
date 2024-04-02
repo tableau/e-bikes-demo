@@ -6,6 +6,15 @@
     text-align: center;
 }
 
+.actions {
+    cursor: pointer;
+}
+
+.analyze {
+    display: flex;
+    justify-content: end;
+}
+
 .insights {
     border: 1px red solid;
     margin: 0 20px;

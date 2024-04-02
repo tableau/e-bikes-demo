@@ -39,7 +39,7 @@ const NotificationWindow: React.FC<{ notifications: NotificationItem[], onClose:
         <div className={styles.container}>
             {
                 notifications.map(notification => (
-                    <div className={styles.notifcation}>
+                    <div className={styles.notifcation} key={notification.message}>
                         <div className={styles.title}>{notification.title}</div>
                         <div className={styles.message}>{notification.message}</div>
                         <div className={styles.actions}>

@@ -90,8 +90,11 @@ function Pulse() {
           )
         })}</div>
         {
-          selectedMetricId &&
-          <div className={styles.pulse} id="tableauPulse" ></div>
+          selectedMetricId 
+          ?<div className={styles.pulse} id="tableauPulse" ></div>
+          : <div className={styles.selectMetricMessageContainer}>
+              <div className={styles.selectMetricMessage}>Select a metric card to see its detailed info</div>
+            </div>
         }
       </div>
     )

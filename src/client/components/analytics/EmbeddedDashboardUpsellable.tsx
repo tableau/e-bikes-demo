@@ -7,16 +7,25 @@ import { usePulseApi } from './usePulseAPI';
 
 const EmbeddedDashboardUpsellable: React.FC<{ selectedProduct: ProductInfo | null }> = ({ selectedProduct }) => {
 
-  const { user, upgradeLicense } = useAppContext();
-//  const { getInsightMarkup } = usePulseApi();
+  const { user, navigate, upgradeLicense } = useAppContext();
 
   const [refreshDashboard, setRefreshDashboard] = useState<boolean>(false);
   const [insights, setInsights] = useState<string | null>(null);
+  const { getSubscribedBanInsights } = usePulseApi();
+
 
   useEffect(() => {
 
     if (user?.license === 'Premium') {
-  //    (async () => setInsights(await getInsightMarkup()))();
+      (async () => {
+        const banInsights = await getSubscribedBanInsights();
+        const firstNegativeBanInsight = banInsights.find(banInsight => banInsight.sentiment === 'negative');
+        if (firstNegativeBanInsight) {
+          setInsights(`${firstNegativeBanInsight.metricDefinition.name}: ${firstNegativeBanInsight.markup}`);
+        } else {
+          setInsights(null);
+        }
+      })();
     }
 
   }, [user?.license])
@@ -38,7 +47,15 @@ const EmbeddedDashboardUpsellable: React.FC<{ selectedProduct: ProductInfo | nul
           <p><a href='#' onClick={upgradeUserLicense}>Upgrade to premium</a> for $9.99 /month.</p>
         </div>
       }
-      {insights && <div className={styles.insights} dangerouslySetInnerHTML={{__html: insights}} /> }
+      {
+        insights &&
+        <div className={styles.insights}>
+          {insights}
+            <div className={styles.actions}>
+              <a className={styles.analyze} onClick={() => navigate('Analyze')}>Analyze</a>
+            </div>
+        </div>
+      }
       {refreshDashboard && <EmbeddedDashboard width={520} selectedProduct={selectedProduct} />}
       {!refreshDashboard && <EmbeddedDashboard width={520} selectedProduct={selectedProduct} />}
     </div>
