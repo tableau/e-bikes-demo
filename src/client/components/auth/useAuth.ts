@@ -8,10 +8,10 @@ export function useAuth() {
         if (!user) {
             throw new Error('User is not defined');
         }
-
         const url = `http://localhost:5001/getJwt?username=${user.username}&license=${user.license}`
         const response = await fetch(url);
         const json = await response.json();
+        console.log(`jwt: ${json.jwt}`)
         return json.jwt;
     }
 

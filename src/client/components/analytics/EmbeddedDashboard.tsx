@@ -45,8 +45,10 @@ const EmbeddedDashboard: React.FC<{ width: number, selectedProduct?: ProductInfo
     if (vizElement?.children.length === 0) {
 
       const viz = new TableauViz();
-      viz.src = 'https://10ay.online.tableau.com/t/ehofman/views/eBikeSalesAnalysis/SalesAnalysis';
+      // viz.src = 'https://10ay.online.tableau.com/t/ehofman/views/eBikeSalesAnalysis/SalesAnalysis';
+      viz.src = 'https://us-west-2a.online.tableau.com/t/ehofmanvds/views/eBikeSalesAnalysis/SalesAnalysis';
       viz.toolbar = Toolbar.Hidden;
+      viz.hideTabs = true;
       viz.token = jwt;
       viz.width = `${width}px`;
 
@@ -55,7 +57,7 @@ const EmbeddedDashboard: React.FC<{ width: number, selectedProduct?: ProductInfo
       });
 
       vizElement.appendChild(viz);
-    };
+    }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [jwt])

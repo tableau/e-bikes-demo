@@ -26,9 +26,14 @@ export function usePulseApi() {
   const { getJwtFromServer } = useAuth()
 
   const baseUrl = 'http://localhost:5001';
-  const server = 'https://10ay.online.tableau.com';
-  const site = 'ehofman';
-  const subscriber = '8988c285-bb3a-47cd-b570-168a830abc04'; //'embedded@ebikes.com';
+  // const server = 'https://10ay.online.tableau.com';
+  // const site = 'ehofman';
+  // const subscriber = '8988c285-bb3a-47cd-b570-168a830abc04'; //'embedded@ebikes.com';
+
+  const server = 'https://us-west-2a.online.tableau.com';
+  const site = 'ehofmanvds';
+  const subscriber = '1d0085ab-48d4-4c71-ba8d-1068d7339dff'; // 'embedded@ebikes.com'
+  // const subscriber = '7596ab9c-d422-4e47-b925-567fcd4064ea' //aeskinasy@salesforce.com
 
   async function getHeaders() {
 
@@ -46,16 +51,18 @@ export function usePulseApi() {
   async function getSubscribedMetrics(): Promise<{
     metric_id: string
   }[]> {
-
+    
     const query = encodeURIComponent(`user_id=${subscriber}`);
     const url = `${baseUrl}/api/-/pulse/subscriptions?query=${query}`;
+    const headers = await getHeaders()
+    console.log(headers)
     const response = await fetch(url, {
       method: 'GET',
-      headers: await getHeaders(),
+      // headers: await getHeaders(),
+      headers: headers,
     });
 
     const json = await response.json();
-
     if (json.errors?.length) {
 
       console.error(json.errors);
