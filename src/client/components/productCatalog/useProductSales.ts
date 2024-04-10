@@ -30,10 +30,14 @@ export function useProductSales() {
             columnAlias: "productName",
             sortPriority: 1
           },
+          // {
+          //   columnName: "sales",
+          //   calculation: "SUM([Sales])"
+          //   // calculation: "SUM([Sales]) / TOTAL(SUM([Sales]))"
+          // },
           {
-            columnName: "sales",
-            calculation: "SUM([Sales])"
-            // calculation: "SUM([Sales]) / TOTAL(SUM([Sales]))"
+            columnName: "Sales",
+            function: "SUM"
           }
         ],
         filters: [
