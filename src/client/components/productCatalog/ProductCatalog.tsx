@@ -41,6 +41,7 @@ function ProductCatalog() {
               selected={product.id === selectedProduct?.id}
               salesPerformance={(() => {
                 if (sales?.length) {
+                  // Looks like this will either return 1, 2, or 3 depending on the relative position of the product within the sales array
                   return Math.floor( sales.map(item => item.productName).indexOf(product.name) / sales.length * 3) + 1;
                 } else {
                   return undefined;
