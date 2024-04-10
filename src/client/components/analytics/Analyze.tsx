@@ -28,6 +28,7 @@ function Copilot() {
       const guid = crypto.randomUUID();
       viz.src = `https://10ay.online.tableau.com/t/ehofman/authoringNewWorkbook/${guid}/eBikesInventoryandSales`;
       viz.token = jwt
+      viz.hideCloseButton = true;
   
       document.getElementById('TableauAuthoringViz')!.appendChild(viz);
     }
