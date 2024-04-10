@@ -15,10 +15,10 @@ export interface ProductInfo {
 function ProductCatalog() {
 
   const [selectedProduct, setSelectedProduct] = useState<ProductInfo | null>(null);
-  const [sales, setSales] = useState<ProductSales[]>([]);
+  const [sales, setSales] = useState<ProductSales[]>([]); // here we use react state to set the sales 
 
   const products: ProductInfo[] = productlist();
-  const { getSalesPerProduct } = useProductSales();
+  const { getSalesPerProduct } = useProductSales(); // this is the function where we get the sales
 
   useEffect(() => {
 

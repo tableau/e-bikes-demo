@@ -16,6 +16,7 @@ export function useProductSales() {
       return [] as ProductSales[];
     }
 
+    // Headless bi query
     const query: Query = {
       connection: {
         tableauServerName: 'us-west-2a.online.tableau.com',
