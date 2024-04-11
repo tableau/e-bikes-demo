@@ -3,17 +3,17 @@
     gap: 10px;
     margin: 8px;
     background-color: white;
-    width: 230px;
+    width: 100%;
     border-radius: 10px;
-    border: solid 2px white;
+    border: solid 1px white;
 }
 
 .root:hover {
-    border-color: grey;
+    border-color: lightgray;
 }
 
 .selected {
-    border-color: darkblue;
+    border-color: blue;
 }
 
 .productCard {

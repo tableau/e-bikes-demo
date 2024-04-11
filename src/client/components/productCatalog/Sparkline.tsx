@@ -14,7 +14,7 @@ const Sparkline: React.FC<SparklineProps> = ({ salesData, totalSalesVolume, tota
     return <div className="spinner"></div>; 
   }
 
-  const productName = salesData.length > 0 ? salesData[0].productName : 'Product Name';
+  const productName = salesData.length > 0 ? salesData[0].productName : '';
 
   const dataWithCumulativeReturns = salesData.map((item, index, arr) => ({
     ...item,
