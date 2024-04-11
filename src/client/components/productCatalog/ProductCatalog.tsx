@@ -94,7 +94,7 @@ function ProductCatalog() {
                   <div className={styles.cardFront}>
                     <Product
                       product={product}
-                      selectProduct={() => {}} // This is now handled by the onMouseEnter
+                      selectProduct={() => setSelectedProduct(product)} 
                       selected={product.id === selectedProduct?.id}
                       salesPerformance={sales?.length ? Math.floor(sales.map(item => item.productName).indexOf(product.name) / sales.length * 3) + 1 : undefined}
                     />
