@@ -1,5 +1,5 @@
 import React from 'react';
-import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, ComposedChart, Bar, Area, Tooltip } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, ComposedChart, Bar, Area } from 'recharts';
 import { ProductSales } from './useProductSales';
 
 interface SparklineProps {
@@ -9,7 +9,7 @@ interface SparklineProps {
   isLoading: boolean;
 }
 
-const Sparkline: React.FC<SparklineProps> = ({ salesData, totalSalesVolume, totalReturns, isLoading }) => {
+const Sparkline: React.FC<SparklineProps> = ({ salesData, isLoading }) => {
 
   if (isLoading) {
     return <div className="spinner"></div>; 
