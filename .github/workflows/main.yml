@@ -16,11 +16,9 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
-      - name: "Install npm dependencies"
-        run: npm ci
       - name: "Run build"
         run: npm run build
-      - name: Deploy to Heroku (testing 7)
+      - name: Deploy to Heroku (testing 8)
         env:
           HEROKU_API_TOKEN: ${{ secrets.HEROKU_API_TOKEN }}
           HEROKU_APP_NAME: "e-bikes-demo-tc2024"
