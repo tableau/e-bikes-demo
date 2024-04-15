@@ -9,10 +9,10 @@ jobs:
       matrix:
         node-version: [18.x]
     steps:
-      - name: "Checkout source code"
       - uses: actions/checkout@v4
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: "Checkout source code"
         uses: actions/setup-node@v4
+      - name: Use Node.js ${{ matrix.node-version }}
         with:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
@@ -20,7 +20,7 @@ jobs:
       - run: npm ci
       - name: "Run build"
       - run: npm run build
-      - name: Deploy to Heroku (testing 5)
+      - name: Deploy to Heroku (testing 6)
         env:
           HEROKU_API_TOKEN: ${{ secrets.HEROKU_API_TOKEN }}
           HEROKU_APP_NAME: "e-bikes-demo-tc2024"
