@@ -6,23 +6,23 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-        - name: Checkout source code
-          uses: actions/checkout@v2
-        - name: Restore node_modules cache
-          id: cache-npm
-          uses: actions/cache@v1
-          with:
-              path: node_modules
-              key: npm-${{ hashFiles('**/package-lock.json') }}
-              restore-keys: |
-                  npm-${{ env.cache-name }}-
-                  npm-
-        - name: Install npm dependencies
-          if: steps.cache-npm.outputs.cache-hit != 'true'
-          run: npm ci
+      - name: Checkout source code
+        uses: actions/checkout@v2
+      - name: Restore node_modules cache
+        id: cache-npm
+        uses: actions/cache@v1
+        with:
+          path: node_modules
+          key: npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            npm-${{ env.cache-name }}-
+            npm-
+      - name: Install npm dependencies
+        if: steps.cache-npm.outputs.cache-hit != 'true'
+        run: npm ci
       - name: Run build
         run: npm run build
-      - name: Deploy to Heroku (testing 10)
+      - name: Deploy to Heroku (testing 11)
         env:
           HEROKU_API_TOKEN: ${{ secrets.HEROKU_API_TOKEN }}
           HEROKU_APP_NAME: "e-bikes-demo-tc2024"
