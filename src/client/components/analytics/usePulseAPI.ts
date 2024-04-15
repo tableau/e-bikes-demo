@@ -25,7 +25,6 @@ export function usePulseApi() {
 
   const { getJwtFromServer } = useAuth()
 
-  const baseUrl = 'http://localhost:5001';
   const server = 'https://10ay.online.tableau.com';
   const site = 'ehofman';
   const subscriber = '8988c285-bb3a-47cd-b570-168a830abc04'; //'embedded@ebikes.com';
@@ -48,7 +47,7 @@ export function usePulseApi() {
   }[]> {
 
     const query = encodeURIComponent(`user_id=${subscriber}`);
-    const url = `${baseUrl}/api/-/pulse/subscriptions?query=${query}`;
+    const url = `/api/-/pulse/subscriptions?query=${query}`;
     const response = await fetch(url, {
       method: 'GET',
       headers: await getHeaders(),
@@ -79,7 +78,7 @@ export function usePulseApi() {
   }[]> {
 
     const query = encodeURIComponent(`enable_sorting=true&metric_ids=${metric_ids.join(',')}`);
-    const url = `${baseUrl}/api/-/pulse/metrics:batchGet?query=${query}`;
+    const url = `/api/-/pulse/metrics:batchGet?query=${query}`;
     const response = await fetch(url, {
       method: 'GET',
       headers: await getHeaders(),
@@ -111,7 +110,7 @@ export function usePulseApi() {
     const definitions = await getDefinitions(subscriptions.map(subscription => subscription.metric_id));
 
     const query = encodeURIComponent(`definition_ids=${definitions.map(definition => definition.definition_id)}`);
-    const url = `${baseUrl}/api/-/pulse/definitions:batchGet?query=${query}`;
+    const url = `/api/-/pulse/definitions:batchGet?query=${query}`;
     const response = await fetch(url, {
       method: 'GET',
       headers: await getHeaders(),
@@ -153,7 +152,7 @@ export function usePulseApi() {
 
     const promises = metricDefinitions.map(async (metricDefinition) => {
 
-      const url = `${baseUrl}/api/-/pulse/insights/ban`;
+      const url = `/api/-/pulse/insights/ban`;
       const response = await fetch(url, {
         method: 'POST',
         headers: await getHeaders(),
