@@ -1,0 +1,37 @@
+name: Deploy To Heroku
+on:
+  push:
+    branches: ["anyoung/heroku"]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: "npm"
+      - name: Install dependencies
+        run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Deploy to Heroku
+        env:
+          HEROKU_API_TOKEN: ${{ secrets.HEROKU_API_TOKEN }}
+          HEROKU_APP_NAME: "e-bikes-demo-tc2024"
+          DEPLOY_PATH: "../deploy-demo"
+        run: |
+          rm -rf $DEPLOY_PATH
+          mkdir $DEPLOY_PATH
+          mv package.json $DEPLOY_PATH/package.json
+          cp -a dist/. $DEPLOY_PATH/dist
+          cd $DEPLOY_PATH
+          git init
+          git config --global user.email "devplat.heroku@salesforce.com"
+          git config --global user.name "DevPlat Heroku"
+          git add .
+          git commit -m "Production deploy commit"
+          git remote add heroku https://heroku:$HEROKU_API_TOKEN@git.heroku.com/$HEROKU_APP_NAME.git
+          git push -f heroku HEAD:master
