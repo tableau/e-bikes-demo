@@ -21,14 +21,16 @@ function Copilot() {
       return;
     }
   
-    
-    if (document.getElementById('TableauAuthoringViz')?.children.length === 0) {
-      loadVizAsync();
-    }
+    loadVizAsync();
   
   }, [jwt])
 
   async function loadVizAsync() {
+    const vizElement = document.getElementById('TableauAuthoringViz')!;
+    if (vizElement.children.length) {
+      return;
+    }
+
     // @ts-expect-error hack because GitHub runner can't install @tableau/embedding-api ¯\_(ツ)_/¯
     const { TableauAuthoringViz } = await import('https://10ay.online.tableau.com/javascripts/api/tableau.embedding.3.latest.js?url');
 
@@ -39,7 +41,9 @@ function Copilot() {
     viz.token = jwt
     viz.hideCloseButton = true;
 
-    document.getElementById('TableauAuthoringViz')!.appendChild(viz);
+    if (!vizElement.children.length) {
+      vizElement.appendChild(viz);
+    }
   }
 
   return (
