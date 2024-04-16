@@ -2,7 +2,7 @@ name: Build and deploy to Heroku
 
 on:
   push:
-    branches: ["anyoung/heroku"]
+    branches: [main]
 
 jobs:
   build:
