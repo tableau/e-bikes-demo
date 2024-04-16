@@ -20,6 +20,7 @@ jobs:
           cache: "npm"
       - run: npm ci
       - run: npm run build
+      - name: Deploy to Heroku
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
           HEROKU_APP_NAME: "e-bikes-demo-tc2024"
