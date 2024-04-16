@@ -23,13 +23,12 @@ jobs:
           cache: "npm"
       - run: npm ci
       - run: npm run build
-      - name: Deploy to Heroku (testing 18)
+      - name: Deploy to Heroku (testing 20)
         env:
-          HEROKU_API_TOKEN: ${{ secrets.HEROKU_API_TOKEN }}
+          HEROKU_API_TOKEN: ${{ secrets.HEROKU_API_KEY }}
           HEROKU_APP_NAME: "e-bikes-demo-tc2024"
           DEPLOY_PATH: "../deploy-demo"
         run: |
-          echo $HEROKU_API_TOKEN
           rm -rf $DEPLOY_PATH
           mkdir $DEPLOY_PATH
           mkdir $DEPLOY_PATH/src
@@ -46,5 +45,5 @@ jobs:
           git config --global user.name "DevPlat Heroku"
           git add .
           git commit -m "Production deploy commit"
-          git remote add heroku https://heroku:$HEROKU_API_TOKEN@git.heroku.com/$HEROKU_APP_NAME.git
+          git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git
           git push -f heroku HEAD:master
