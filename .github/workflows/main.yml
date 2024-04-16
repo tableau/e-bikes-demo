@@ -21,22 +21,10 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
-      - run: npm run install-and-build
-      - name: Deploy to Heroku (testing 12)
+      - run: npm --version
+      - name: Deploy to Heroku (testing 13)
         env:
           HEROKU_API_TOKEN: ${{ secrets.HEROKU_API_TOKEN }}
           HEROKU_APP_NAME: "e-bikes-demo-tc2024"
           DEPLOY_PATH: "../deploy-demo"
-        run: |
-          rm -rf $DEPLOY_PATH
-          mkdir $DEPLOY_PATH
-          mv package.json $DEPLOY_PATH/package.json
-          cp -a dist/. $DEPLOY_PATH/dist
-          cd $DEPLOY_PATH
-          git init
-          git config --global user.email "devplat.heroku@salesforce.com"
-          git config --global user.name "DevPlat Heroku"
-          git add .
-          git commit -m "Production deploy commit"
-          git remote add heroku https://heroku:$HEROKU_API_TOKEN@git.heroku.com/$HEROKU_APP_NAME.git
-          git push -f heroku HEAD:master
+        run: echo hi
