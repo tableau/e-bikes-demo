@@ -6,7 +6,6 @@
   "scripts": {
     "dev": "cross-env PORT=4001 npx vite-node ./src/server/server.ts",
     "start": "cross-env NODE_ENV=production npx vite-node ./src/server/server.ts",
-    "install-and-build": "npm install --no-save && npm run build",
     "build": "vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
