@@ -1,3 +1,30 @@
+<<<<<<< HEAD
+name: Build and deploy to Heroku
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+      - run: npm ci
+      - run: npm run build
+      - name: Deploy to Heroku
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+=======
 name: Deploy To Heroku
 on:
   push:
@@ -20,18 +47,34 @@ jobs:
       - name: Deploy to Heroku
         env:
           HEROKU_API_TOKEN: ${{ secrets.HEROKU_API_TOKEN }}
+>>>>>>> 3d76861 (Rename folder)
           HEROKU_APP_NAME: "e-bikes-demo-tc2024"
           DEPLOY_PATH: "../deploy-demo"
         run: |
           rm -rf $DEPLOY_PATH
           mkdir $DEPLOY_PATH
+<<<<<<< HEAD
+          mkdir $DEPLOY_PATH/src
+          mkdir $DEPLOY_PATH/src/db
+          mkdir $DEPLOY_PATH/src/server
+          mv prod-package.json $DEPLOY_PATH/package.json
+          rm -rf dist/data
+          cp -a dist/. $DEPLOY_PATH/dist
+          cp -a src/db/. $DEPLOY_PATH/src/db
+          cp -a src/server/. $DEPLOY_PATH/src/server
+=======
           mv package.json $DEPLOY_PATH/package.json
           cp -a dist/. $DEPLOY_PATH/dist
+>>>>>>> 3d76861 (Rename folder)
           cd $DEPLOY_PATH
           git init
           git config --global user.email "devplat.heroku@salesforce.com"
           git config --global user.name "DevPlat Heroku"
           git add .
           git commit -m "Production deploy commit"
+<<<<<<< HEAD
+          git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git
+=======
           git remote add heroku https://heroku:$HEROKU_API_TOKEN@git.heroku.com/$HEROKU_APP_NAME.git
+>>>>>>> 3d76861 (Rename folder)
           git push -f heroku HEAD:master
