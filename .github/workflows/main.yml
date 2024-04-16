@@ -23,16 +23,23 @@ jobs:
           cache: "npm"
       - run: npm ci
       - run: npm run build
-      - name: Deploy to Heroku (testing 17)
+      - name: Deploy to Heroku (testing 18)
         env:
           HEROKU_API_TOKEN: ${{ secrets.HEROKU_API_TOKEN }}
           HEROKU_APP_NAME: "e-bikes-demo-tc2024"
           DEPLOY_PATH: "../deploy-demo"
         run: |
+          echo $HEROKU_API_TOKEN
           rm -rf $DEPLOY_PATH
           mkdir $DEPLOY_PATH
-          mv package.json $DEPLOY_PATH/package.json
+          mkdir $DEPLOY_PATH/src
+          mkdir $DEPLOY_PATH/src/db
+          mkdir $DEPLOY_PATH/src/server
+          mv prod-package.json $DEPLOY_PATH/package.json
+          rm -rf dist/data
           cp -a dist/. $DEPLOY_PATH/dist
+          cp -a src/db/. $DEPLOY_PATH/src/db
+          cp -a src/server/. $DEPLOY_PATH/src/server
           cd $DEPLOY_PATH
           git init
           git config --global user.email "devplat.heroku@salesforce.com"

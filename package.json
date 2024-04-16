@@ -11,6 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "body-parser": "^1.20.2",
     "classnames": "^2.5.1",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
