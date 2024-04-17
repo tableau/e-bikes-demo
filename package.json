@@ -11,14 +11,17 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@popperjs/core": "^2.11.8",
     "@tableau/embedding-api": "^3.9.0",
     "classnames": "^2.5.1",
     "cors": "^2.8.5",
     "crypto-js": "^4.2.0",
+    "d3-array": "^3.2.4",
     "express": "^4.19.1",
     "node-fetch": "^3.3.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "recharts": "^2.12.4",
     "ts-results": "^3.3.0",
     "uuid": "^9.0.1",
     "vite-express": "^0.15.0",
