@@ -132,7 +132,7 @@ export function useProductSales() {
     };
 
     try {
-      const response = await fetch('http://localhost:5001/api/-/hbi-query', post);
+      const response = await fetch('/api/-/hbi-query', post);
       const json = await response.json();
 
        console.log('Hbi data:' , json)

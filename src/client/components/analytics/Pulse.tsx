@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import styles from './Pulse.module.css';
-import { TableauPulse } from '@tableau/embedding-api';
 import { BanInsight, usePulseApi } from './usePulseAPI';
 import { useAuth } from '../auth/useAuth';
 import classNames from 'classnames';
@@ -52,14 +51,22 @@ function Pulse() {
       return;
     }
 
-    const pulse = new TableauPulse();
-    pulse.src = banInsights.find(banInsight => banInsight.metricDefinition.metric_id === selectedMetricId)!.metricDefinition.url;
-    pulse.token = jwt;
-
-    pulseElt.innerHTML = '';
-    pulseElt.appendChild(pulse);
+    loadVizAsync();
 
   }, [jwt, selectedMetricId])
+
+  async function loadVizAsync() {
+    // @ts-expect-error hack because GitHub runner can't install @tableau/embedding-api ¯\_(ツ)_/¯
+    const { TableauPulse } = await import('https://10ay.online.tableau.com/javascripts/api/tableau.embedding.3.latest.js?url');
+
+    const pulse = new TableauPulse();
+    pulse.src = banInsights!.find(banInsight => banInsight.metricDefinition.metric_id === selectedMetricId)!.metricDefinition.url;
+    pulse.token = jwt;
+
+    const pulseElt = document.getElementById('tableauPulse')!;
+    pulseElt.innerHTML = '';
+    pulseElt.appendChild(pulse);
+  }
 
   if (!banInsights) {
 

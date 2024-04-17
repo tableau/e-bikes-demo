@@ -20,6 +20,10 @@ app.get('/api/:apiVersion/:apiPath*', get);
 app.post('/api/:apiVersion/:apiPath*', post);
 
 if (process.env.NODE_ENV !== 'test') {
+  if (process.env.NODE_ENV === 'production') {
+    ViteExpress.config({ mode: "production" })
+  }
+  
   ViteExpress.listen(app, port, () => {
     console.log(`Navigate to http://localhost:${port}`);
   });

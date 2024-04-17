@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAppContext } from '../../App';
 import EmbeddedDashboardUpsellable from '../analytics/EmbeddedDashboardUpsellable';
 import Product from './Product';

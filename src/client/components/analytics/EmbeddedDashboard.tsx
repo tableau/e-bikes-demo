@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import styles from './EmbeddedDashboard.module.css';
-import { Dashboard, FilterUpdateType, TableauEventType, TableauViz, Toolbar } from '@tableau/embedding-api';
 import { ProductInfo } from '../productCatalog/ProductCatalog';
 import { useAuth } from '../auth/useAuth';
 
@@ -16,13 +15,7 @@ const EmbeddedDashboard: React.FC<{ width: number, selectedProduct?: ProductInfo
     }
 
     if (selectedProduct) {
-
-      const viz = document.querySelector('tableau-viz') as TableauViz;
-
-      const dashboard = viz.workbook.activeSheet as Dashboard;
-      const worksheet = dashboard.worksheets.find(ws => ws.name === 'sales_BAN')!;
-
-      worksheet.applyFilterAsync("Product Name", [selectedProduct.name], FilterUpdateType.Replace, { isExcludeMode: false });
+      applyFilterAsync(selectedProduct);
     }
   }
 
@@ -43,19 +36,8 @@ const EmbeddedDashboard: React.FC<{ width: number, selectedProduct?: ProductInfo
     const vizElement = document.getElementById('tableauViz');
 
     if (vizElement?.children.length === 0) {
-
-      const viz = new TableauViz();
-      viz.src = 'https://10ay.online.tableau.com/t/ehofman/views/eBikeSalesAnalysis/SalesAnalysis';
-      viz.toolbar = Toolbar.Hidden;
-      viz.token = jwt;
-      viz.width = `${width}px`;
-
-      viz.addEventListener(TableauEventType.FirstInteractive, () => {
-        setVizIsInteractive(true);
-      });
-
-      vizElement.appendChild(viz);
-    };
+      loadVizAsync();
+    }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [jwt])
@@ -66,6 +48,41 @@ const EmbeddedDashboard: React.FC<{ width: number, selectedProduct?: ProductInfo
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedProduct, vizIsInteractive])
+
+  async function loadVizAsync() {
+    const vizElement = document.getElementById('tableauViz')!;
+    if (vizElement.children.length) {
+      return;
+    }
+
+    // @ts-expect-error hack because GitHub runner can't install @tableau/embedding-api ¯\_(ツ)_/¯
+    const { TableauEventType, TableauViz, Toolbar } = await import('https://10ay.online.tableau.com/javascripts/api/tableau.embedding.3.latest.js?url');
+
+    const viz = new TableauViz();
+    viz.src = 'https://10ay.online.tableau.com/t/ehofman/views/eBikeSalesAnalysis/SalesAnalysis';
+    viz.toolbar = Toolbar.Hidden;
+    viz.token = jwt;
+    viz.width = `${width}px`;
+
+    viz.addEventListener(TableauEventType.FirstInteractive, () => {
+      setVizIsInteractive(true);
+    });
+
+    if (!vizElement.children.length) {
+      vizElement.appendChild(viz);
+    }
+  }
+
+  async function applyFilterAsync(selectedProduct: ProductInfo) {
+    // @ts-expect-error hack because GitHub runner can't install @tableau/embedding-api ¯\_(ツ)_/¯
+    const { FilterUpdateType, TableauViz } = await import('https://10ay.online.tableau.com/javascripts/api/tableau.embedding.3.latest.js?url');
+    const viz = document.querySelector('tableau-viz') as typeof TableauViz;
+
+    const dashboard = viz.workbook.activeSheet;
+    const worksheet = dashboard.worksheets.find(ws => ws.name === 'sales_BAN')!;
+
+    worksheet.applyFilterAsync("Product Name", [selectedProduct.name], FilterUpdateType.Replace, { isExcludeMode: false });
+  }
 
   return (
     <div id="tableauViz" className={styles.viz}></div>

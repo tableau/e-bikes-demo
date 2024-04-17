@@ -1,37 +1,46 @@
-name: Deploy To Heroku
+name: Build and deploy to Heroku
+
 on:
   push:
-    branches: ["anyoung/heroku"]
+    branches: [main]
+
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x]
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Set up Node
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: ${{ matrix.node-version }}
           cache: "npm"
-      - name: Install dependencies
-        run: npm ci
-      - name: Build
-        run: npm run build
+      - run: npm ci
+      - run: npm run build
       - name: Deploy to Heroku
         env:
-          HEROKU_API_TOKEN: ${{ secrets.HEROKU_API_TOKEN }}
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
           HEROKU_APP_NAME: "e-bikes-demo-tc2024"
           DEPLOY_PATH: "../deploy-demo"
         run: |
           rm -rf $DEPLOY_PATH
           mkdir $DEPLOY_PATH
-          mv package.json $DEPLOY_PATH/package.json
+          mkdir $DEPLOY_PATH/src
+          mkdir $DEPLOY_PATH/src/db
+          mkdir $DEPLOY_PATH/src/server
+          mv prod-package.json $DEPLOY_PATH/package.json
+          rm -rf dist/data
           cp -a dist/. $DEPLOY_PATH/dist
+          cp -a src/db/. $DEPLOY_PATH/src/db
+          cp -a src/server/. $DEPLOY_PATH/src/server
           cd $DEPLOY_PATH
           git init
           git config --global user.email "devplat.heroku@salesforce.com"
           git config --global user.name "DevPlat Heroku"
           git add .
           git commit -m "Production deploy commit"
-          git remote add heroku https://heroku:$HEROKU_API_TOKEN@git.heroku.com/$HEROKU_APP_NAME.git
+          git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git
           git push -f heroku HEAD:master

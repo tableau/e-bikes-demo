@@ -4,16 +4,17 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "client": "vite",
-    "server": "npx vite-node ./src/server/server.ts",
-    "build": "tsc && vite build",
+    "dev": "cross-env PORT=4001 npx vite-node ./src/server/server.ts",
+    "start": "cross-env NODE_ENV=production npx vite-node ./src/server/server.ts",
+    "build": "vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tableau/embedding-api": "^3.9.0",
+    "body-parser": "^1.20.2",
     "classnames": "^2.5.1",
     "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
     "crypto-js": "^4.2.0",
     "express": "^4.19.1",
     "node-fetch": "^3.3.2",
@@ -22,6 +23,7 @@
     "recharts": "^2.12.4",
     "ts-results": "^3.3.0",
     "uuid": "^9.0.1",
+    "vite": "^5.2.8",
     "vite-express": "^0.15.0",
     "vite-node": "^1.4.0"
   },
@@ -39,7 +41,6 @@
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
-    "typescript": "^5.2.2",
-    "vite": "^5.1.6"
+    "typescript": "^5.2.2"
   }
 }

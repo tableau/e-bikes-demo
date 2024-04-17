@@ -59,7 +59,9 @@ export async function post(request: ExpressRequest, response: ExpressResponse) {
 
     if (body) {
       init.body = body;
-      console.log(body)
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(body);
+      }
     }
 
     const fetchResponse = await fetch(`${server}/api/${apiVersion}/${apiPath}`, init);
