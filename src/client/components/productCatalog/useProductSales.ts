@@ -68,22 +68,12 @@ export function useProductSales() {
             sortPriority: 1
           },
           {
-            columnName: "sales",
-            calculation: "SUM([Sales])"
+            columnName: "Sales",
+            function: "SUM"
           },
-          // {
-          //   columnName: "InventoryUnits",
-          //   function: "SUM",
-          // },
-          // {
-          //   columnName: "OrderID",
-          //   // columnAlias: "orders",
-          //   function: "COUNT_DIST",
-          // },
           {
-            columnName: "returns",
+            columnName: "Returns",
             calculation: `SUM(if [Return Flag] = "Yes" then [Units] else 0 end)`
-            // calculation: `SUM(if [Return Flag] = "Yes" AND [Current vs Previous] = "Current" then [Units] else 0 end)`, //this isn't working yet because hbi doesn't support LOD, which is used in one of these fields
           },
           
         ],

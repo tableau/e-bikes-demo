@@ -26,8 +26,6 @@ const query: Query = {
       },
       {
         columnName: "returnPercentage",
-        // Note that for "Migrated Data" we have to use the name of the column as the
-        // underlying Tableau PDS knows it (count). Not the human created name.
         calculation: "SUM(IF [Return Flag] = 'Yes' THEN 1 END) / COUNT([count])"
       }
     ],
@@ -36,9 +34,6 @@ const query: Query = {
         filterType: "DATE",
         columnName: "Order Placed Date",
         periodType: "DAY",
-        // Note that to get the last 30 days, it's actually -29 for the value. Thinking about fixing that
-        // but currently that's how it works. We can also put an anchor date in here if needed. Right
-        // Now it's the last 30 days from now.
         firstPeriod: -29,
         lastPeriod: 0
       }
