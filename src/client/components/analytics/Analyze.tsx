@@ -26,9 +26,12 @@ function Copilot() {
       const viz = new TableauAuthoringViz();
 
       const guid = crypto.randomUUID();
-      viz.src = `https://10ay.online.tableau.com/t/ehofman/authoringNewWorkbook/${guid}/eBikesInventoryandSales`;
+      // viz.src = `https://10ay.online.tableau.com/t/ehofman/authoringNewWorkbook/${guid}/eBikesInventoryandSales`;
+      // viz.src = `https://us-west-2a.online.tableau.com/t/ehofmanvds/authoringNewWorkbook/${guid}/ebikes_inventory_and_sales`; //web auth to data source broken?
+      viz.src = `https://us-west-2a.online.tableau.com/t/ehofmanvds/views/ebikes_inventory_and_sales_wb/Sheet1`;
       viz.token = jwt
-  
+      viz.hideCloseButton = true;
+
       document.getElementById('TableauAuthoringViz')!.appendChild(viz);
     }
   

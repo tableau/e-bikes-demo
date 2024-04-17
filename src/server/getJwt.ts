@@ -67,12 +67,19 @@ function base64url(source: WordArray) {
 
 export function createJwt(user: User, license: string) {
 
-  const secretValue = 'atZ7HITCyV4nwi3gLzPsZt6+haXfjiYauu1lj4i0GDA=';
-  const secretId = '30baa038-146e-44f7-8d31-9f5d6bea1b13'
-  const clientId = '25c68ec4-3600-40a3-aaed-26a748e29fb3';
+  // CA from https://10ay.online.tableau.com/t/ehofman
+  // const secretValue = 'atZ7HITCyV4nwi3gLzPsZt6+haXfjiYauu1lj4i0GDA=';
+  // const secretId = '30baa038-146e-44f7-8d31-9f5d6bea1b13'
+  // const clientId = '25c68ec4-3600-40a3-aaed-26a748e29fb3';
+
+  // CA from https://us-west-2a.online.tableau.com/t/ehofmanvds
+  const secretValue = 'dJ7Zh620Jh0ioiFtRuDke1/nkHwVaed2obFOOOsXnJU=';
+  const secretId = 'd3719179-3647-4f66-9940-a2dd4f885e54'
+  const clientId = 'b09d0a87-1696-4cd3-adb0-3c25aad0354e';
 
   const scopes = ["tableau:views:embed", "tableau:views:embed_authoring", "tableau:insights:embed", "tableau:insight_metrics:read", "tableau:insights:read"];
   const username = "embedded@ebikes.com";
+  // const username = 'aeskinasy@salesforce.com'
 
 
   const header = {

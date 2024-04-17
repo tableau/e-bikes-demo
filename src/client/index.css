@@ -72,3 +72,9 @@ button:focus-visible {
 
   }
 }
+
+.tippy-box[data-theme~='custom-theme'] {
+  background-color: lightgray !important;
+  color: black !important;
+  /* border: 0px solid #ccc !important; */
+}

@@ -10,7 +10,10 @@ const query: Query = {
   connection: {
     tableauServerName: 'us-west-2a.online.tableau.com',
     siteId: 'ehofmanvds',
-    datasource: 'eBikesInventoryandSales'
+    // datasource: 'eBikesInventoryandSales'
+    // had to move away from hyper to a (underpowered) postgres db due to bug with v249 and hyper:
+    // https://salesforce-internal.slack.com/archives/C065CFMBVHS/p1710497927103569?thread_ts=1710327040.509159&cid=C065CFMBVHS 
+    datasource: 'ebikes_inventory_and_sales'
   },
   query: {
     columns: [
@@ -100,7 +103,7 @@ const NotificationBell: React.FC = () => {
       }
 
     })();
-  }, [])
+  }, [notificationReceived, notifications.length])
 
   return (
     <Fragment>
