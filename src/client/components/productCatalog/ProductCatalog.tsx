@@ -16,12 +16,6 @@ export interface ProductInfo {
 
 function ProductCatalog() {
   const [selectedProduct, setSelectedProduct] = useState<ProductInfo | null>(null);
-<<<<<<< HEAD
-  const [sales, setSales] = useState<ProductSales[]>([]); // here we use react state to set the sales 
-
-  const products: ProductInfo[] = productlist();
-  const { getSalesPerProduct } = useProductSales(); // this is the function where we get the sales
-=======
   const [sales, setSales] = useState<ProductSales[]>([]);
   const products: ProductInfo[] = productlist();
   const [hoveredProductName, setHoveredProductName] = useState<string | null>(null);
@@ -31,7 +25,6 @@ function ProductCatalog() {
   const { user } = useAppContext();
   const { getSalesPerProduct } = useProductSales();
   const [isLoading, setIsLoading] = useState(false);
->>>>>>> origin/dev-eski-d34hbi-uaf4pds
 
   useEffect(() => {
     (async () => {
@@ -87,19 +80,6 @@ function ProductCatalog() {
             <div 
               className={styles.cardContainer} 
               key={product.id}
-<<<<<<< HEAD
-              selectProduct={() => setSelectedProduct(product)}
-              selected={product.id === selectedProduct?.id}
-              salesPerformance={(() => {
-                if (sales?.length) {
-                  // Looks like this will either return 1, 2, or 3 depending on the relative position of the product within the sales array
-                  return Math.floor( sales.map(item => item.productName).indexOf(product.name) / sales.length * 3) + 1;
-                } else {
-                  return undefined;
-                }
-              })()}
-            />
-=======
               onMouseEnter={() => handleMouseEnter(product)}
               onMouseLeave={() => setHoveredProductName(null)}
             >
@@ -122,7 +102,6 @@ function ProductCatalog() {
                 )}
               </div>
             </div>
->>>>>>> origin/dev-eski-d34hbi-uaf4pds
           ))}
         </div>
       </div>

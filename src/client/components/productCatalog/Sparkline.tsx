@@ -1,5 +1,6 @@
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, ComposedChart, Bar, Area, Tooltip } from 'recharts';
+import { ProductSales } from './useProductSales';
 
 interface SparklineProps {
   salesData: ProductSales[];
