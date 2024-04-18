@@ -70,21 +70,9 @@ export function useProductSales() {
           {
             columnName: "Sales",
             function: "SUM"
-          },
-          {
-            columnName: "Returns",
-            calculation: `SUM(if [Return Flag] = "Yes" then [Units] else 0 end)`
-          },
-          
+          }
         ],
         filters: [
-          {
-            filterType: "DATE",
-            columnName: "Order Placed Date",
-            periodType: "DAY",
-            firstPeriod: -29,
-            lastPeriod: 0
-          },
           {
             columnName: "Account Name",
             filterType: "SET",
