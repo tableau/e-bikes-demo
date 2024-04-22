@@ -23,9 +23,9 @@ interface QueryFilter {
   columnName: string;
   values?: string[];
   exclude?: boolean;
-  periodType?: string;
-  firstPeriod?: number;
-  lastPeriod?: number;
+  units?: string;
+  pastCount?: number;
+  futureCount?: number;
 }
 
 interface QueryStructure {
@@ -91,9 +91,9 @@ export function useProductSales() {
           {
             filterType: "DATE",
             columnName: "Order Placed Date",
-            periodType: "DAY",
-            firstPeriod: -29,
-            lastPeriod: 0
+            units: "DAY",
+            pastCount: 30,
+            futureCount: 0
           },
           {
             columnName: "Account Name",

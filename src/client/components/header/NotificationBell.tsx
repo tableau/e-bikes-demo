@@ -35,12 +35,12 @@ const query: Query = {
       {
         filterType: "DATE",
         columnName: "Order Placed Date",
-        periodType: "DAY",
+        units: "DAY",
         // Note that to get the last 30 days, it's actually -29 for the value. Thinking about fixing that
         // but currently that's how it works. We can also put an anchor date in here if needed. Right
         // Now it's the last 30 days from now.
-        firstPeriod: -29,
-        lastPeriod: 0
+        pastCount: 30,
+        futureCount: 0
       }
     ]
   }
