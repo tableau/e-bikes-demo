@@ -5,7 +5,7 @@ import NotificationWindow from './NotificationWindow';
 import { NotificationItem } from './NotificationWindow';
 import { Query } from '../../../server/hbi'
 
-// Our HBI Query to get return percentages
+// Get Return percentages for accounts and products
 const query: Query = {
   connection: {
     tableauServerName: 'us-west-2a.online.tableau.com',
@@ -25,17 +25,20 @@ const query: Query = {
         sortPriority: 2
       },
       {
+        // Custom Calculation- Percent of products returned
         columnName: "returnPercentage",
-        calculation: "SUM(IF [Return Flag] = 'Yes' THEN 1 END) / COUNT([count])"
+        calculation: "SUM(IF [Return Flag] = 'Yes' THEN 1 END)"
+        + "/ COUNT([count])"
       }
     ],
     filters: [
+      // Filter by only the last 30 days
       {
         filterType: "DATE",
         columnName: "Order Placed Date",
-        periodType: "DAY",
-        firstPeriod: -29,
-        lastPeriod: 0
+        units: "DAY",
+        pastCount: 30,
+        futureCount: 0
       }
     ]
   }

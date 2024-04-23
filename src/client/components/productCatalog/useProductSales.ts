@@ -23,9 +23,9 @@ interface QueryFilter {
   columnName: string;
   values?: string[];
   exclude?: boolean;
-  periodType?: string;
-  firstPeriod?: number;
-  lastPeriod?: number;
+  units?: string;
+  pastCount?: number;
+  futureCount?: number;
 }
 
 interface QueryStructure {
@@ -53,14 +53,15 @@ export function useProductSales() {
       return [] as ProductSales[];
     }
 
-    // Define the basic query structure with type assertion for TypeScript
     const query: QueryStructure = {
+      // Connect to the published datasource on specified site
       connection: {
         tableauServerName: 'us-west-2a.online.tableau.com',
         siteId: 'ehofmanvds',
         datasource: 'eBikesInventoryandSales'
       },
       query: {
+        // Show Sum of Sales for each Product Name
         columns: [
           {
             columnName: "Product Name",
@@ -72,6 +73,7 @@ export function useProductSales() {
             function: "SUM"
           }
         ],
+        // Only Show products for currently logged in account
         filters: [
           {
             columnName: "Account Name",
