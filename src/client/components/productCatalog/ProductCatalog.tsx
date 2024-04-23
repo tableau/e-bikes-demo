@@ -105,7 +105,6 @@ function ProductCatalog() {
           ))}
         </div>
       </div>
-      <EmbeddedDashboardUpsellable selectedProduct={selectedProduct} />
     </div>
   );
 }
