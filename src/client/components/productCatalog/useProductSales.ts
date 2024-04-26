@@ -64,8 +64,7 @@ export function useProductSales() {
         columns: [
           {
             columnName: "Product Name",
-            columnAlias: "productName",
-            sortPriority: 1
+            columnAlias: "productName"
           },
           {
             columnName: "sales",
@@ -110,6 +109,7 @@ export function useProductSales() {
       query.query.columns.push({
         columnName: "Order Placed Date",
         columnAlias: "orderPlacedDate",
+        sortPriority: 1
       });
     }
 
