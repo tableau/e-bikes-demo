@@ -10,6 +10,7 @@ function Pulse() {
   const [jwt, setJwt] = useState<string | null>(null);
   const { getSubscribedBanInsights } = usePulseApi();
   const [selectedMetricId, setSelectedMetricId] = useState<string | null>(null);
+  const [selectedLayout, setSelectedLayout] = useState<'default' | 'card' | 'ban'>('card');
 
   const [banInsights, setBanInsights] = useState<BanInsight[] | null>((() => {
     const previous = localStorage.getItem('ban');
@@ -53,15 +54,21 @@ function Pulse() {
 
     loadVizAsync();
 
-  }, [jwt, selectedMetricId])
+  }, [jwt, selectedMetricId, selectedLayout])
 
   async function loadVizAsync() {
     // @ts-expect-error hack because GitHub runner can't install @tableau/embedding-api ¯\_(ツ)_/¯
-    const { TableauPulse } = await import('https://10ay.online.tableau.com/javascripts/api/tableau.embedding.3.latest.js?url');
+    const { TableauPulse, PulseLayout } = await import('https://10ay.online.tableau.com/javascripts/api/tableau.embedding.3.latest.js?url');
 
     const pulse = new TableauPulse();
     pulse.src = banInsights!.find(banInsight => banInsight.metricDefinition.metric_id === selectedMetricId)!.metricDefinition.url;
+    //pulse.layout = PulseLayout.Card;
     pulse.token = jwt;
+
+    const customParameter = document.createElement("custom-parameter");
+    customParameter.setAttribute("name", "embed_layout");
+    customParameter.setAttribute("value", selectedLayout);
+    pulse.appendChild(customParameter);
 
     const pulseElt = document.getElementById('tableauPulse')!;
     pulseElt.innerHTML = '';
@@ -98,7 +105,14 @@ function Pulse() {
         })}</div>
         {
           selectedMetricId 
-          ?<div className={styles.pulse} id="tableauPulse" ></div>
+          ? <div className={styles.pulseContainer}>
+              <div className={styles.pulseLayoutChooser}>
+                  <button className={styles.pulseLayoutButton} onClick={() => setSelectedLayout('default')}>default</button>
+                  <button className={styles.pulseLayoutButton} onClick={() => setSelectedLayout('card')}>card</button>
+                  <button className={styles.pulseLayoutButton} onClick={() => setSelectedLayout('ban')}>ban</button>
+                </div>
+              <div className={styles[`pulse${selectedLayout}`]} id="tableauPulse" />
+            </div>
           : <div className={styles.selectMetricMessageContainer}>
               <div className={styles.selectMetricMessage}>Select a metric card to see its detailed info</div>
             </div>
