@@ -44,6 +44,11 @@
     color: black;
 }
 
+.pulseLayoutButton.selected {
+    background-color: black;
+    color: white;
+}
+
 .cards {
     padding: 30px;
     display: flex;

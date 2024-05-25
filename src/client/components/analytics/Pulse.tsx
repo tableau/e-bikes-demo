@@ -107,9 +107,9 @@ function Pulse() {
           selectedMetricId 
           ? <div className={styles.pulseContainer}>
               <div className={styles.pulseLayoutChooser}>
-                  <button className={styles.pulseLayoutButton} onClick={() => setSelectedLayout('default')}>default</button>
-                  <button className={styles.pulseLayoutButton} onClick={() => setSelectedLayout('card')}>card</button>
-                  <button className={styles.pulseLayoutButton} onClick={() => setSelectedLayout('ban')}>ban</button>
+                  <button className={`${styles.pulseLayoutButton} ${selectedLayout === 'default' ? styles.selected : ''}`} onClick={() => setSelectedLayout('default')}>default</button>
+                  <button className={`${styles.pulseLayoutButton} ${selectedLayout === 'card' ? styles.selected : ''}`} onClick={() => setSelectedLayout('card')}>card</button>
+                  <button className={`${styles.pulseLayoutButton} ${selectedLayout === 'ban' ? styles.selected : ''}`} onClick={() => setSelectedLayout('ban')}>ban</button>
                 </div>
               <div className={styles[`pulse${selectedLayout}`]} id="tableauPulse" />
             </div>
