@@ -23,8 +23,8 @@ export async function callHBI(query: Query) {
         headers: {
             'Content-Type': 'application/json',
             // I created this PAT on the server with an expiration of 1 year
-            'Credential-Key': 'TC_DEMO',
-            'Credential-Value': '1XXKvOu+QvaEaRE1eZg07Q==:RwvUkn9HklJ910LU1zelRLvOeI6scSPP'
+            'Credential-Key': 'EBIKES',
+            'Credential-Value': 'o2JyVlnQS4WgNWIgbWvzFA==:XTkc6qAYsCP3xarJOaXBSaXuYVZ14rZR'
         }
     }
     // The developer.salesforce address is the address of our HBI production server
