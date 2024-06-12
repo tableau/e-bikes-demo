@@ -36,7 +36,7 @@ const query: Query = {
       {
         filterType: "DATE",
         columnName: "Order Placed Date",
-        units: "DAY",
+        units: "DAYS",
         pastCount: 30,
         futureCount: 0
       }
