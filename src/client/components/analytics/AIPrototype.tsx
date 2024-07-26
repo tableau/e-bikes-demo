@@ -85,6 +85,9 @@ function AIPrototype() {
     {
       prompt: 'Show these results in a line chart',
       output: 'tableau-viz',
+      onPromptScripts: [
+        '<script src="https://10ay.online.tableau.com/javascripts/api/tableau.embedding.3.latest.js"></script>',
+      ],
       onPrompt: `document.getElementById('output').appendChild(response.html);`,
       responseText: undefined,
       responseHtml: `<tableau-viz src='[temp-url]' token='[authtoken]' />`,
@@ -94,6 +97,9 @@ function AIPrototype() {
     {
       prompt: 'Filter the data to show the bike DYNAMO X1 only',
       output: 'tableau-viz',
+      onPromptScripts: [
+        '<script src="https://10ay.online.tableau.com/javascripts/api/tableau.embedding.3.latest.js"></script>',
+      ],
       onPrompt: `document.getElementById('output').appendChild(response.html);`,
       responseText: undefined,
       responseHtml: `<tableau-viz src='[temp-url]' token='[authtoken]' />`,
@@ -103,6 +109,9 @@ function AIPrototype() {
     {
       prompt: 'Convert this in a KPI that I can track in Salesforce',
       output: 'tableau-pulse',
+      onPromptScripts: [
+        '<script src="https://10ay.online.tableau.com/javascripts/api/tableau.embedding.3.latest.js"></script>',
+      ],
       onPrompt: `document.getElementById('output').appendChild(response.html);`,
       responseText: undefined,
       responseHtml: `<tableau-pulse src='[temp-url]' token='[authtoken]' layout='ban' />`,
@@ -112,6 +121,9 @@ function AIPrototype() {
     {
       prompt: 'Show me the trendline on that KPI',
       output: 'tableau-pulse',
+      onPromptScripts: [
+        '<script src="https://10ay.online.tableau.com/javascripts/api/tableau.embedding.3.latest.js"></script>',
+      ],
       onPrompt: `document.getElementById('output').appendChild(response.html);`,
       responseText: undefined,
       responseHtml: `<tableau-pulse src='[temp-url]' token='[authtoken]' layout='card' />`,
@@ -126,12 +138,12 @@ function AIPrototype() {
         '<script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>',
         '<script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>',
       ],
-      onPrompt: `vegaEmbed('#vega', response.spec)`,
+      onPrompt: `const specWithData = { ...response.spec, data: { values: response.data } };\n  vegaEmbed('#vega', specWithData)`,
       responseText: undefined,
       responseHtml: `<div id='vega' />`,
       responseSpec: JSON.stringify(spec),
       responseData: data.map(row => `    {\n      partner: '${row.Partner}',\n      sales: ${row.Sales},\n    },`).join('\n'),
-      componentToRender: <VegaLite spec={spec} data={{ table: data }} />,
+      componentToRender: <VegaLite spec={spec as any} data={{ table: data }} />,
     },
   ];
 
