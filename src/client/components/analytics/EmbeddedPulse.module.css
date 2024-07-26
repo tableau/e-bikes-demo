@@ -1,0 +1,15 @@
+.defaultLayout {
+    width: 800px;
+    height: 100%;
+    border-radius: 40px;
+}
+
+.cardLayout {
+    width: 400px;
+    height: 420px
+}
+
+.banLayout {
+    width: 400px;
+    height: 200px
+}

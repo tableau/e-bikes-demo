@@ -1,13 +1,11 @@
 import { useEffect, useState } from 'react';
 import styles from './Pulse.module.css';
 import { BanInsight, usePulseApi } from './usePulseAPI';
-import { useAuth } from '../auth/useAuth';
 import classNames from 'classnames';
+import EmbeddedPulse from './EmbeddedPulse';
 
 function Pulse() {
 
-  const { getJwtFromServer } = useAuth()
-  const [jwt, setJwt] = useState<string | null>(null);
   const { getSubscribedBanInsights } = usePulseApi();
   const [selectedMetricId, setSelectedMetricId] = useState<string | null>(null);
   const [selectedLayout, setSelectedLayout] = useState<'default' | 'card' | 'ban'>('card');
@@ -21,11 +19,9 @@ function Pulse() {
     }
   })());
 
-  useEffect(() => {
+  const pulseUrl = banInsights?.find(banInsight => banInsight.metricDefinition.metric_id === selectedMetricId)?.metricDefinition.url;
 
-    (async () => {
-      setJwt(await getJwtFromServer());
-    })();
+  useEffect(() => {
 
     (async () => {
       const subscribedBanInsights = await getSubscribedBanInsights()
@@ -33,47 +29,6 @@ function Pulse() {
       localStorage.setItem('ban', JSON.stringify(subscribedBanInsights))
     })();
   }, []);
-
-  useEffect(() => {
-
-    if (!jwt || !selectedMetricId || !banInsights) {
-      return;
-    }
-
-    const pulseElt = document.getElementById('tableauPulse');
-
-    if (!pulseElt) {
-      return;
-    }
-
-    const metricDefinition= banInsights.find(banInsight => banInsight.metricDefinition.metric_id === selectedMetricId)
-
-    if (!metricDefinition) {
-      return;
-    }
-
-    loadVizAsync();
-
-  }, [jwt, selectedMetricId, selectedLayout])
-
-  async function loadVizAsync() {
-    // @ts-expect-error hack because GitHub runner can't install @tableau/embedding-api ¯\_(ツ)_/¯
-    const { TableauPulse, PulseLayout } = await import('https://10ay.online.tableau.com/javascripts/api/tableau.embedding.3.latest.js?url');
-
-    const pulse = new TableauPulse();
-    pulse.src = banInsights!.find(banInsight => banInsight.metricDefinition.metric_id === selectedMetricId)!.metricDefinition.url;
-    //pulse.layout = PulseLayout.Card;
-    pulse.token = jwt;
-
-    const customParameter = document.createElement("custom-parameter");
-    customParameter.setAttribute("name", "embed_layout");
-    customParameter.setAttribute("value", selectedLayout);
-    pulse.appendChild(customParameter);
-
-    const pulseElt = document.getElementById('tableauPulse')!;
-    pulseElt.innerHTML = '';
-    pulseElt.appendChild(pulse);
-  }
 
   if (!banInsights) {
 
@@ -86,12 +41,12 @@ function Pulse() {
       <div className={styles.root}>
         <div className={styles.cards}>{banInsights.map(banInsight => {
           return (
-            <div 
-              className={classNames(styles.card, banInsight.metricDefinition.metric_id === selectedMetricId ? styles.selected : '')} 
+            <div
+              className={classNames(styles.card, banInsight.metricDefinition.metric_id === selectedMetricId ? styles.selected : '')}
               key={banInsight.metricDefinition.name}
               onClick={() => setSelectedMetricId(banInsight.metricDefinition.metric_id)}
               title={banInsight.markup}
-              >
+            >
               <div className={styles.header}>
                 <div className={styles.name}>{banInsight.metricDefinition.name}</div>
                 <div className={styles.period}>{banInsight.period}</div>
@@ -104,16 +59,16 @@ function Pulse() {
           )
         })}</div>
         {
-          selectedMetricId 
-          ? <div className={styles.pulseContainer}>
+          selectedMetricId
+            ? <div className={styles.pulseContainer}>
               <div className={styles.pulseLayoutChooser}>
-                  <button className={`${styles.pulseLayoutButton} ${selectedLayout === 'default' ? styles.selected : ''}`} onClick={() => setSelectedLayout('default')}>default</button>
-                  <button className={`${styles.pulseLayoutButton} ${selectedLayout === 'card' ? styles.selected : ''}`} onClick={() => setSelectedLayout('card')}>card</button>
-                  <button className={`${styles.pulseLayoutButton} ${selectedLayout === 'ban' ? styles.selected : ''}`} onClick={() => setSelectedLayout('ban')}>ban</button>
-                </div>
-              <div className={styles[`pulse${selectedLayout}`]} id="tableauPulse" />
+                <button className={`${styles.pulseLayoutButton} ${selectedLayout === 'default' ? styles.selected : ''}`} onClick={() => setSelectedLayout('default')}>default</button>
+                <button className={`${styles.pulseLayoutButton} ${selectedLayout === 'card' ? styles.selected : ''}`} onClick={() => setSelectedLayout('card')}>card</button>
+                <button className={`${styles.pulseLayoutButton} ${selectedLayout === 'ban' ? styles.selected : ''}`} onClick={() => setSelectedLayout('ban')}>ban</button>
+              </div>
+              <EmbeddedPulse url={pulseUrl} layout={selectedLayout} />
             </div>
-          : <div className={styles.selectMetricMessageContainer}>
+            : <div className={styles.selectMetricMessageContainer}>
               <div className={styles.selectMetricMessage}>Select a metric card to see its detailed info</div>
             </div>
         }

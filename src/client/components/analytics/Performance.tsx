@@ -22,7 +22,7 @@ function Analytics() {
 
   return (
     <div className={styles.root}>
-      <EmbeddedDashboard width={1000} />
+      <EmbeddedDashboard sheet={'SalesAnalysis'} width={1000} />
       <p className={styles.footer}>
         This page was created with the <a href='https://developer.salesforce.com/tools/tableau/embedding-playground' target='_blank'>Tableau Embedding Playground</a>.
         <br />

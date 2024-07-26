@@ -56,8 +56,8 @@ const EmbeddedDashboardUpsellable: React.FC<{ selectedProduct: ProductInfo | nul
             </div>
         </div>
       }
-      {refreshDashboard && <EmbeddedDashboard width={520} selectedProduct={selectedProduct} />}
-      {!refreshDashboard && <EmbeddedDashboard width={520} selectedProduct={selectedProduct} />}
+      {refreshDashboard && <EmbeddedDashboard sheet={'SalesAnalysis'} width={520} selectedProduct={selectedProduct} />}
+      {!refreshDashboard && <EmbeddedDashboard sheet={'SalesAnalysis'} width={520} selectedProduct={selectedProduct} />}
     </div>
   )
 }

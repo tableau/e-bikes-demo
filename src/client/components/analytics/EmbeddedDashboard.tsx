@@ -3,7 +3,12 @@ import styles from './EmbeddedDashboard.module.css';
 import { ProductInfo } from '../productCatalog/ProductCatalog';
 import { useAuth } from '../auth/useAuth';
 
-const EmbeddedDashboard: React.FC<{ width: number, selectedProduct?: ProductInfo | null }> = ({ width, selectedProduct }) => {
+const EmbeddedDashboard: React.FC<{
+  sheet: string,
+  width: number,
+  height?: number,
+  selectedProduct?: ProductInfo | null
+}> = ({ sheet, width, height, selectedProduct }) => {
 
   const { getJwtFromServer } = useAuth()
   const [vizIsInteractive, setVizIsInteractive] = useState<boolean>(false);
@@ -59,9 +64,10 @@ const EmbeddedDashboard: React.FC<{ width: number, selectedProduct?: ProductInfo
     const { TableauEventType, TableauViz, Toolbar } = await import('https://10ay.online.tableau.com/javascripts/api/tableau.embedding.3.latest.js?url');
 
     const viz = new TableauViz();
-    viz.src = 'https://10ay.online.tableau.com/t/ehofman/views/eBikeSalesAnalysis/SalesAnalysis';
+    viz.src = `https://10ay.online.tableau.com/t/ehofman/views/eBikeSalesAnalysis/${sheet}`;
     viz.toolbar = Toolbar.Hidden;
     viz.token = jwt;
+    if (height) viz.height = height;
     viz.width = `${width}px`;
 
     viz.addEventListener(TableauEventType.FirstInteractive, () => {
@@ -79,9 +85,23 @@ const EmbeddedDashboard: React.FC<{ width: number, selectedProduct?: ProductInfo
     const viz = document.querySelector('tableau-viz') as typeof TableauViz;
 
     const dashboard = viz.workbook.activeSheet;
-    const worksheet = dashboard.worksheets.find(ws => ws.name === 'sales_BAN')!;
+    const worksheet = (() => {
+      if (!dashboard.worksheets) {
+        // AI Response
+        return dashboard;
+      } else {
+        for (const ws of dashboard.worksheets) {
+          if (ws.name === 'sales_BAN') {
+            return ws;
+          }
+        }
+        return null;
+      }
+    })();
 
-    worksheet.applyFilterAsync("Product Name", [selectedProduct.name], FilterUpdateType.Replace, { isExcludeMode: false });
+    if (worksheet) {
+      worksheet.applyFilterAsync("Product Name", [selectedProduct.name], FilterUpdateType.Replace, { isExcludeMode: false });
+    }
   }
 
   return (

@@ -8,10 +8,10 @@ import { ProductSales, useProductSales } from './useProductSales';
 import Sparkline from './Sparkline';
 
 export interface ProductInfo {
-  id: number;
+  id?: number;
   name: string;
-  price: number;
-  imageSrc: string;
+  price?: number;
+  imageSrc?: string;
 }
 
 function ProductCatalog() {

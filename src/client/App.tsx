@@ -6,9 +6,10 @@ import Analytics from './components/analytics/Performance';
 import Pulse from './components/analytics/Pulse';
 import Login from './components/auth/Login';
 import ProductCatalog from './components/productCatalog/ProductCatalog';
-import Copilot from './components/analytics/Analyze';
+import WebAuthoring from './components/analytics/WebAuthoring';
 import { NotificationItem } from './components/header/NotificationWindow';
 import { User } from '../db/users';
+import AIPrototype from './components/analytics/AIPrototype';
 
 interface AppContextType {
   user: User | undefined;
@@ -20,16 +21,15 @@ interface AppContextType {
   upgradeLicense: (user: User) => void;
 }
 
-export type Pages = 'Home' | 'Product Catalog' | 'Performance' | 'Analyze';
+export type Pages = 'Home' | 'Product Catalog' | 'Performance' | 'Analyze' | 'AI Prototype';
 
 export const userPages = ((user: User): Pages[] => {
   if (user.isRetailer) {
     return ['Home', 'Product Catalog', 'Analyze'];
   } else {
-    return ['Home', 'Performance', 'Analyze'];
+    return ['Home', 'Performance', 'Analyze'].concat(window.location.href.includes('prototype') ? ['AI Prototype'] : []) as Pages[];
   }
 });
-
 
 const AppContext = createContext<AppContextType>({
   user: undefined,
@@ -60,10 +60,10 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   }
 
   const upgradeLicense = (user: User) => {
-setUser({
-  ...user,
-  license: 'Premium'
-})
+    setUser({
+      ...user,
+      license: 'Premium'
+    })
   }
 
   return (
@@ -99,7 +99,8 @@ function App() {
         {selectedPage === 'Product Catalog' && <ProductCatalog />}
         {selectedPage === 'Performance' && <Analytics />}
         {selectedPage === 'Analyze' && user.isRetailer && <Pulse />}
-        {selectedPage === 'Analyze' && !user.isRetailer && <Copilot />}
+        {selectedPage === 'Analyze' && !user.isRetailer && <WebAuthoring />}
+        {selectedPage === 'AI Prototype' && <AIPrototype />}
       </div>
     )
 
