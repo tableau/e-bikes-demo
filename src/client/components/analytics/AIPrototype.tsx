@@ -51,8 +51,8 @@ function AIPrototype() {
     { Partner: 'Flattire', Sales: 356, Orders: 49 },
   ];
 
-  const responseText = `${data[0].Partner} was the best selling partner with $${data[0].Sales} in sales last month, followed by ${data[1].Partner} ($${data[1].Sales}) and $${data[2].Partner} (${data[2].Sales})`;
-  const responseHtml = `<div><b>${data[0].Partner}</b> was the best selling partner with <b>$${data[0].Sales}</b> in sales last month, followed by <b>${data[1].Partner}</b> (<b>$${data[1].Sales}</b>) and <b>$${data[2].Partner}</b> (<b>${data[2].Sales}</b>)</div>`;
+  const responseText = `${data[0].Partner} was the best selling partner with $${data[0].Sales} in sales last month, followed by ${data[1].Partner} ($${data[1].Sales}) and ${data[2].Partner} ($${data[2].Sales})`;
+  const responseHtml = `<div><b>${data[0].Partner}</b> was the best selling partner with <b>$${data[0].Sales}</b> in sales last month, followed by <b>${data[1].Partner}</b> (<b>$${data[1].Sales}</b>) and <b>${data[2].Partner}</b> (<b>$${data[2].Sales}</b>)</div>`;
 
   const prompts = [
     {
