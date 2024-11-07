@@ -56,8 +56,8 @@ export function useProductSales() {
     // Define the basic query structure with type assertion for TypeScript
     const query: QueryStructure = {
       connection: {
-        tableauServerName: 'us-west-2a.online.tableau.com',
-        siteId: 'ehofmanvds',
+        tableauServerName: '10ay.online.tableau.com',
+        siteId: 'ehofman',
         datasource: 'eBikesInventoryandSales'
       },
       query: {
@@ -135,7 +135,7 @@ export function useProductSales() {
       const response = await fetch('/api/-/hbi-query', post);
       const json = await response.json();
 
-       console.log('Hbi data:' , json)
+      //  console.log('Hbi data:' , json)
 
       return (json.data ?? []) as ProductSales[];
     } catch (error) {
