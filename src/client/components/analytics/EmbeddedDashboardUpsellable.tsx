@@ -11,16 +11,18 @@ const EmbeddedDashboardUpsellable: React.FC<{ selectedProduct: ProductInfo | nul
 
   const [refreshDashboard, setRefreshDashboard] = useState<boolean>(false);
   const [insights, setInsights] = useState<string | null>(null);
-  const { getSubscribedBanInsights } = usePulseApi();
-
+  // const { getSubscribedBanInsights } = usePulseApi();
+const {getSubscribedSpringboardInsights} = usePulseApi();
 
   useEffect(() => {
 
     if (user?.license === 'Premium') {
       (async () => {
-        const banInsights = await getSubscribedBanInsights();
+        // const banInsights = await getSubscribedBanInsights();
+        const banInsights = await getSubscribedSpringboardInsights();
+        // console.log('banInsights', banInsights)
         const firstNegativeBanInsight = banInsights.find(banInsight => banInsight.sentiment === 'negative');
-        if (firstNegativeBanInsight) {
+        if (firstNegativeBanInsight && firstNegativeBanInsight.markup) {
           setInsights(`${firstNegativeBanInsight.metricDefinition.name}: ${firstNegativeBanInsight.markup}`);
         } else {
           setInsights(null);
