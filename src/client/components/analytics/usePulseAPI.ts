@@ -146,60 +146,58 @@ export function usePulseApi() {
 
   }
 
-  // Eski Nov 2024: Disabled the Ban insights Pulse query because Dan Platt informed the team deprecated the "markup" output, as they prepare to add translations to the api
-  // Replaced with the Springboard Insights
-  // async function getSubscribedBanInsights(): Promise<BanInsight[]> {
+  async function getSubscribedBanInsights(): Promise<BanInsight[]> {
 
-  //   const metricDefinitions = await getSubscribedMetricDefinitions();
+    const metricDefinitions = await getSubscribedMetricDefinitions();
 
-  //   const promises = metricDefinitions.map(async (metricDefinition) => {
+    const promises = metricDefinitions.map(async (metricDefinition) => {
 
-  //     const url = `/api/-/pulse/insights/ban`;
-  //     const response = await fetch(url, {
-  //       method: 'POST',
-  //       headers: await getHeaders(),
-  //       body: JSON.stringify({
-  //         bundle_request: {
-  //           version: '1',
-  //           options: {
-  //             output_format: 'OUTPUT_FORMAT_TEXT',
-  //           },
-  //           input: {
-  //             metadata: {
-  //               name: metricDefinition.name,
-  //               metric_id: metricDefinition.metric_id,
-  //               definition_id: metricDefinition.definition_id,
-  //             },
-  //             metric: {
-  //               definition: metricDefinition.definition_specification,
-  //               metric_specification: metricDefinition.metric_specification,
-  //               extension_options: metricDefinition.extension_options,
-  //               representation_options: metricDefinition.representation_options,
-  //               insights_options: metricDefinition.insights_options,
-  //             },
-  //           }
-  //         }
-  //       })
-  //     });
+      const url = `/api/-/pulse/insights/ban`;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: await getHeaders(),
+        body: JSON.stringify({
+          bundle_request: {
+            version: '1',
+            options: {
+              output_format: 'OUTPUT_FORMAT_TEXT',
+            },
+            input: {
+              metadata: {
+                name: metricDefinition.name,
+                metric_id: metricDefinition.metric_id,
+                definition_id: metricDefinition.definition_id,
+              },
+              metric: {
+                definition: metricDefinition.definition_specification,
+                metric_specification: metricDefinition.metric_specification,
+                extension_options: metricDefinition.extension_options,
+                representation_options: metricDefinition.representation_options,
+                insights_options: metricDefinition.insights_options,
+              },
+            }
+          }
+        })
+      });
 
-  //     const json = await response.json();
-  //     const insight = json.bundle_response.result.insight_groups[0].insights[0].result
+      const json = await response.json();
+      const insight = json.bundle_response.result.insight_groups[0].insights[0].result
 
-  //     console.log('returning data, insight json:', json)
+      console.log('returning data, insight json:', json)
 
-  //     return {
-  //       metricDefinition,
-  //       period: insight.facts.target_time_period.label,
-  //       markup: insight.markup,
-  //       value: insight.facts.target_period_value.formatted,
-  //       direction: insight.facts.difference.direction,
-  //       sentiment: insight.facts.sentiment,
-  //     } as BanInsight;
+      return {
+        metricDefinition,
+        period: insight.facts.target_time_period.label,
+        markup: insight.markup,
+        value: insight.facts.target_period_value.formatted,
+        direction: insight.facts.difference.direction,
+        sentiment: insight.facts.sentiment,
+      } as BanInsight;
 
-  //   });
+    });
 
-  //   return await Promise.all(promises);
-  // }
+    return await Promise.all(promises);
+  }
   
   async function getSubscribedSpringboardInsights(): Promise<BanInsight[]> {
   
@@ -284,7 +282,7 @@ export function usePulseApi() {
 
 
   // return { getSubscribedBanInsights };
-  return { getSubscribedSpringboardInsights };
+  return { getSubscribedBanInsights, getSubscribedSpringboardInsights };
 
 
 }
