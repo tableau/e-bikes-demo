@@ -245,7 +245,7 @@ export function usePulseApi() {
       let sentiment: 'positive' | 'negative' = 'positive';
   
       // Extract markup from insights of type "top"
-      const topInsightGroup = insightGroups.find(group => group.type === "top");
+      const topInsightGroup = insightGroups.find((group: any) => group.type === "top");
       if (topInsightGroup) {
         const topInsight = topInsightGroup.insights[0];
         if (topInsight?.result) {
@@ -254,7 +254,7 @@ export function usePulseApi() {
       }
   
       // Extract sentiment, direction, period, and value from insights of type "ban"
-      const banInsightGroup = insightGroups.find(group => group.type === "ban");
+      const banInsightGroup = insightGroups.find((group: any) => group.type === "ban");
       if (banInsightGroup) {
         const banInsight = banInsightGroup.insights[0];
         if (banInsight?.result) {

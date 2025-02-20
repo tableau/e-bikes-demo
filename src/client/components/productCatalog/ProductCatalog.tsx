@@ -51,7 +51,7 @@ function ProductCatalog() {
           setTotalSalesVolume(0);
           setTotalReturns(0);
         } finally {
-          setIsLoading(false); 
+          setIsLoading(false);
         }
       };
 
@@ -77,13 +77,13 @@ function ProductCatalog() {
       <div className={styles.catalog}>
         <div className={styles.grid}>
           {products.map((product) => (
-            <div 
-              className={styles.cardContainer} 
+            <div
+              className={styles.cardContainer}
               key={product.id}
               onMouseEnter={() => handleMouseEnter(product)}
               onMouseLeave={() => setHoveredProductName(null)}
             >
-              <div 
+              <div
                 className={`${styles.card} ${user?.license === 'Premium' && hoveredProductName === product.name ? styles.isFlipped : ''}`}
               >
                 {user?.license === 'Premium' && hoveredProductName === product.name ? (
@@ -94,7 +94,7 @@ function ProductCatalog() {
                   <div className={styles.cardFront}>
                     <Product
                       product={product}
-                      selectProduct={() => setSelectedProduct(product)} 
+                      selectProduct={() => setSelectedProduct(product)}
                       selected={product.id === selectedProduct?.id}
                       salesPerformance={sales?.length ? Math.floor(sales.map(item => item.productName).indexOf(product.name) / sales.length * 3) + 1 : undefined}
                     />

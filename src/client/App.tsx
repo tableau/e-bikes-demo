@@ -2,14 +2,13 @@ import { useState, createContext, useContext, ReactNode } from 'react'
 import styles from './App.module.css';
 import Header from './components/header/Header';
 import Home from './components/home/Home';
-import Analytics from './components/analytics/Performance';
+import Performance from './components/analytics/Performance';
 import Pulse from './components/analytics/Pulse';
 import Login from './components/auth/Login';
 import ProductCatalog from './components/productCatalog/ProductCatalog';
 import WebAuthoring from './components/analytics/WebAuthoring';
 import { NotificationItem } from './components/header/NotificationWindow';
 import { User } from '../db/users';
-import AIPrototype from './components/analytics/AIPrototype';
 
 interface AppContextType {
   user: User | undefined;
@@ -21,13 +20,13 @@ interface AppContextType {
   upgradeLicense: (user: User) => void;
 }
 
-export type Pages = 'Home' | 'Product Catalog' | 'Performance' | 'Analyze' | 'AI Prototype';
+export type Pages = 'Home' | 'Product Catalog' | 'Performance' | 'Analyze';
 
 export const userPages = ((user: User): Pages[] => {
   if (user.isRetailer) {
     return ['Home', 'Product Catalog', 'Analyze'];
   } else {
-    return ['Home', 'Performance', 'Analyze'].concat(window.location.href.includes('prototype') ? ['AI Prototype'] : []) as Pages[];
+    return ['Home', 'Performance', 'Analyze'] as Pages[];
   }
 });
 
@@ -97,10 +96,9 @@ function App() {
 
         {selectedPage === 'Home' && <Home />}
         {selectedPage === 'Product Catalog' && <ProductCatalog />}
-        {selectedPage === 'Performance' && <Analytics />}
+        {selectedPage === 'Performance' && <Performance />}
         {selectedPage === 'Analyze' && user.isRetailer && <Pulse />}
         {selectedPage === 'Analyze' && !user.isRetailer && <WebAuthoring />}
-        {selectedPage === 'AI Prototype' && <AIPrototype />}
       </div>
     )
 
