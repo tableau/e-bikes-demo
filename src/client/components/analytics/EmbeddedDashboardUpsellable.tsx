@@ -58,8 +58,7 @@ const {getSubscribedSpringboardInsights} = usePulseApi();
             </div>
         </div>
       }
-      {refreshDashboard && <EmbeddedDashboard sheet={'SalesAnalysis'} width={520} selectedProduct={selectedProduct} />}
-      {!refreshDashboard && <EmbeddedDashboard sheet={'SalesAnalysis'} width={520} selectedProduct={selectedProduct} />}
+      {<EmbeddedDashboard sheet={'SalesAnalysis'} width={520} selectedProduct={selectedProduct} />}
     </div>
   )
 }
