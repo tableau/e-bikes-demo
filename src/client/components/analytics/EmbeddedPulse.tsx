@@ -26,7 +26,7 @@ const EmbeddedPulse: React.FC<{
   } else {
 
     return (
-      <div className={styles[`${layout}Layout`]}>
+      <div key={layout} className={`${styles.root} ${styles[`${layout}Layout`]}`}>
         <TableauPulse
           src={url}
           token={jwt}
@@ -36,8 +36,9 @@ const EmbeddedPulse: React.FC<{
               name: 'fontCssUrl',
               value: 'https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap',
             },
-            { name: 'backgroundColor', value: '#fff' },
-            { name: 'foregroundColor', value: '#cff' },
+ 
+            { name: 'backgroundColor', value: '#ffffff' },
+            { name: 'foregroundColor', value: 'hashtag#cff' },
             { name: 'bar', value: '#022', type: 'chart' },
           ]}
         />
