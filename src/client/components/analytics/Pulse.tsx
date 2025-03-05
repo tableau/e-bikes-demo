@@ -8,7 +8,7 @@ function Pulse() {
 
   const { getSubscribedBanInsights } = usePulseApi();
   const [selectedMetricId, setSelectedMetricId] = useState<string | null>(null);
-  const [selectedLayout, setSelectedLayout] = useState<'default' | 'card' | 'ban'>('card');
+  const [selectedLayout, setSelectedLayout] = useState<'default' | 'card' | 'ban'>('default');
 
   const [banInsights, setBanInsights] = useState<BanInsight[] | null>((() => {
     const previous = localStorage.getItem('ban');
