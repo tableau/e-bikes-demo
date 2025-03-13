@@ -21,7 +21,7 @@ function WebAuthoring() {
     return (
       <div className={styles.root}>
         <TableauAuthoringViz
-          src={`https://10ay.online.tableau.com/t/ehofman/authoringNewWorkbook/${crypto.randomUUID()}/eBikesInventoryandSales`}
+          src={`https://10ax.online.tableau.com/t/ehofman10ax/authoringNewWorkbook/${crypto.randomUUID()}/eBikesInventoryandSales`}
           token={jwt}
           hideCloseButton={true}
         />

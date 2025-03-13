@@ -67,9 +67,9 @@ function base64url(source: WordArray) {
 
 export function createJwt(user: User, license: string) {
 
-  const secretValue = 'atZ7HITCyV4nwi3gLzPsZt6+haXfjiYauu1lj4i0GDA=';
-  const secretId = '30baa038-146e-44f7-8d31-9f5d6bea1b13'
-  const clientId = '25c68ec4-3600-40a3-aaed-26a748e29fb3';
+  const secretValue = 'fUBFx38pD3JDVPwExVwtRGEQwWQ1Xerawu+cvp58o64=';
+  const secretId = '29a6c96a-22ab-4a74-bbbb-04a99f4999b3'
+  const clientId = '1452a42f-1589-408c-9829-fe3db370d96f';
 
   const scopes = ["tableau:views:embed", "tableau:views:embed_authoring", "tableau:insights:embed", "tableau:insight_metrics:read", "tableau:insights:read"];
   const username = "embedded@ebikes.com";
