@@ -56,7 +56,7 @@ export function useProductSales() {
     // Define the basic query structure with type assertion for TypeScript
     const query: QueryStructure = {
       connection: {
-        tableauServerName: '10ay.online.tableau.com',
+        tableauServerName: '10ax.online.tableau.com',
         siteId: 'ehofman',
         datasource: 'eBikesInventoryandSales'
       },

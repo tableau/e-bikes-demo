@@ -8,7 +8,7 @@ import { Query } from '../../../server/hbi'
 // Our HBI Query to get return percentages
 const query: Query = {
   connection: {
-    tableauServerName: '10ay.online.tableau.com',
+    tableauServerName: '10ax.online.tableau.com',
     siteId: 'ehofman',
     datasource: 'eBikesInventoryandSales'
   },

@@ -32,7 +32,7 @@ const EmbeddedDashboard: React.FC<{
       <div className={styles.root}>
         <div className={styles.viz}>
           <TableauViz
-            src={`https://10ay.online.tableau.com/t/ehofman/views/eBikeSalesAnalysis/${sheet}`}
+            src={`https://10ax.online.tableau.com/t/ehofman10ax/views/eBikeSalesAnalysis/${sheet}`}
             token={jwt}
             height={`${height}px`}
             width={`${width}px`}

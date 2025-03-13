@@ -25,9 +25,9 @@ export function usePulseApi() {
 
   const { getJwtFromServer } = useAuth()
 
-  const server = 'https://10ay.online.tableau.com';
-  const site = 'ehofman';
-  const subscriber = '8988c285-bb3a-47cd-b570-168a830abc04'; //'embedded@ebikes.com';
+  const server = 'https://10ax.online.tableau.com';
+  const site = 'ehofman10ax';
+  const subscriber = '17bd7f27-7274-4191-8d3c-2d29120bf9f0'; //'embedded@ebikes.com';
 
   async function getHeaders() {
 
