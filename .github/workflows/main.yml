@@ -23,7 +23,7 @@ jobs:
       - name: Deploy to Heroku
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-          HEROKU_APP_NAME: "e-bikes-demo"
+          HEROKU_APP_NAME: "ebikes-demo"
           DEPLOY_PATH: "../deploy-demo"
         run: |
           rm -rf $DEPLOY_PATH
