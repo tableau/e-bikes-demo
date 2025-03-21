@@ -1,34 +1,63 @@
 import fetch from 'node-fetch';
+import { server } from "../constants/Constants";
+
+// Define interfaces for your query structure
+interface QueryColumn {
+    fieldCaption: string;
+    fieldAlias?: string;
+    sortPriority?: number;
+    calculation?: string;
+    function?: string;
+}
+
+interface QueryFilter {
+    filterType: string;
+    field: FilterField;
+    values?: string[];
+    exclude?: boolean;
+    periodType?: string;
+    dateRangeType?: string;
+    rangeN?: number;
+}
+
+interface FilterField {
+    fieldCaption?: string;
+    function?: string;
+    calculation?: string
+}
 
 // This is the Query to send to HBI
 export type Query = {
     // The connection indicates the Tableau Server and Datasource to run the Query against
-    connection: {
-        tableauServerName: string,
-        siteId: string,
-        datasource: string
+    datasource: {
+        datasourceLuid: string
     }
     // Here is the Query. Consult the docs for the exact format.
-    query: object
+    query: {
+        fields: QueryColumn[];
+        filters: QueryFilter[];
+    }
 }
 
 export type QueryOutput = {
     data: object[];
 }
 
-export async function callHBI(query: Query) {
+export async function callHBI(token: string, query: Query) {
     const post = {
         method: 'post',
         body: JSON.stringify(query),
         headers: {
             'Content-Type': 'application/json',
-            // I created this PAT on the server with an expiration of 1 year (until 6 Nov 2025)
-            'Credential-Key': 'ebikes',
-            'Credential-Value': 'TEGcZtVXSgqy1HKr91YiUg==:hCEmX5UKhqKFzNwWYLu96DsMUgA9uHyb'
+            'Accept': '*/*',
+            'X-Tableau-Auth': token,
         }
     }
-    // The developer.salesforce address is the address of our HBI production server
-    const response = await fetch('https://developer.salesforce.com/tools/tableau/headless-bi/v1/query-datasource', post);
-    const jsonResponse = await response.json() as QueryOutput;
-    return jsonResponse;
+    const response = await fetch(`https://${server}/api/v1/vizql-data-service/query-datasource`, post);
+    if (response.ok) {
+        const jsonResponse = await response.json() as QueryOutput;
+        return jsonResponse;
+    }
+    const retval = await response.json();
+    return retval;
 }

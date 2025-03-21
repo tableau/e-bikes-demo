@@ -41,7 +41,7 @@ export async function get(request: ExpressRequest, response: ExpressResponse) {
       headers['X-Tableau-Auth'] = token;
     }
 
-    const fetchResponse = await fetch(`${server}/api/${apiVersion}/${apiPath}?${query}`, {
+    const fetchResponse = await fetch(`https://${server}/api/${apiVersion}/${apiPath}?${query}`, {
       method: 'GET',
       headers,
     });

@@ -6,6 +6,7 @@ import styles from './ProductCatalog.module.css';
 import { productlist } from './productlist';
 import { ProductSales, useProductSales } from './useProductSales';
 import Sparkline from './Sparkline';
+import { useAuth } from '../auth/useAuth';
 
 export interface ProductInfo {
   id?: number;
@@ -28,10 +29,15 @@ function ProductCatalog() {
 
   useEffect(() => {
     (async () => {
+      if (sales && sales.length > 0) {
+        return;
+      }
       const hbiData = await getSalesPerProduct();
-      setSales(hbiData.sort((item1, item2) => item2.sales - item1.sales));
+      if (hbiData.length > 0) {
+        setSales(hbiData.sort((item1, item2) => item2.sales - item1.sales));
+      }
     })();
-  }, []);
+  }, [sales, getSalesPerProduct]);
 
   useEffect(() => {
     if (user?.license === 'Premium' && hoveredProductName) {
@@ -71,6 +77,10 @@ function ProductCatalog() {
       setSelectedProduct(product); // Now also sets the product as selected
     }
   };
+
+  if (!sales) {
+    return null;
+  }
 
   return (
     <div className={styles.root}>

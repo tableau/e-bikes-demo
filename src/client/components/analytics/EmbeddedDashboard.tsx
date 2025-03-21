@@ -3,6 +3,7 @@ import styles from './EmbeddedDashboard.module.css';
 import { TableauViz } from '@tableau/embedding-api-react';
 import { ProductInfo } from '../productCatalog/ProductCatalog';
 import { useAuth } from '../auth/useAuth';
+import { server, site } from "../../../constants/Constants";
 
 const EmbeddedDashboard: React.FC<{
   sheet: string,
@@ -32,7 +33,7 @@ const EmbeddedDashboard: React.FC<{
       <div className={styles.root}>
         <div className={styles.viz}>
           <TableauViz
-            src={`https://10ax.online.tableau.com/t/ehofman10ax/views/eBikeSalesAnalysis/${sheet}`}
+            src={`https://${server}/t/${site}/views/eBikeSalesAnalysis/${sheet}`}
             token={jwt}
             height={`${height}px`}
             width={`${width}px`}

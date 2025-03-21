@@ -40,7 +40,7 @@ const Header: React.FC<HeaderProps> = ({ selectedPage, onPageChange }) => {
         <div >
           <ul>
             <li>
-              {!user.isRetailer && <NotificationBell />}
+              {user.license === 'Premium'  && <NotificationBell />}
             </li>
             <li>
               <img key={'Avatar'} className={styles.avatar} src={`${user?.username}.png`} onClick={() => login(undefined)} />

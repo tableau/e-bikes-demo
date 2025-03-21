@@ -21,7 +21,7 @@ export async function signinAsync({ server, apiVersion, jwt, site }: SignInParam
     apiVersion = '3.21';
   }
 
-  const signinResponse = await fetch(`${server}/api/${apiVersion}/auth/signin`, {
+  const signinResponse = await fetch(`https://${server}/api/${apiVersion}/auth/signin`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

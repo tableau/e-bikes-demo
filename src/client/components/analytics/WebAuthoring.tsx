@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import styles from './WebAuthoring.module.css';
 import { useAuth } from '../auth/useAuth';
 import { TableauAuthoringViz } from '@tableau/embedding-api-react';
+import { server, site } from "../../../constants/Constants";
 
 function WebAuthoring() {
 
@@ -21,7 +22,7 @@ function WebAuthoring() {
     return (
       <div className={styles.root}>
         <TableauAuthoringViz
-          src={`https://10ax.online.tableau.com/t/ehofman10ax/authoringNewWorkbook/${crypto.randomUUID()}/eBikesInventoryandSales`}
+          src={`https://${server}/t/${site}/authoringNewWorkbook/${crypto.randomUUID()}/eBikesInventoryandSales`}
           token={jwt}
           hideCloseButton={true}
         />
