@@ -56,10 +56,8 @@ export async function callHBI(token: string, query: Query) {
     const response = await fetch(`https://${server}/api/v1/vizql-data-service/query-datasource`, post);
     if (response.ok) {
         const jsonResponse = await response.json() as QueryOutput;
-        console.log(jsonResponse);
         return jsonResponse;
     }
     const retval = await response.json();
-    console.log(retval);
     return retval;
 }
