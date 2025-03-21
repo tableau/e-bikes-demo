@@ -1,4 +1,5 @@
 import { useAuth } from "../auth/useAuth";
+import { server, site, subscriber } from "../../../constants/Constants";
 
 interface MetricDefinition {
   metric_id: string,
@@ -24,10 +25,6 @@ export interface BanInsight {
 export function usePulseApi() {
 
   const { getJwtFromServer } = useAuth()
-
-  const server = 'https://10ax.online.tableau.com';
-  const site = 'ehofman10ax';
-  const subscriber = '17bd7f27-7274-4191-8d3c-2d29120bf9f0'; //'embedded@ebikes.com';
 
   async function getHeaders() {
 
@@ -133,7 +130,7 @@ export function usePulseApi() {
           metric_id: definition.metric_id,
           definition_id: definition.definition_id,
           name: definition_response.metadata.name,
-          url: `${server}/pulse/site/${site}/metrics/${definition.metric_id}`,
+          url: `https://${server}/pulse/site/${site}/metrics/${definition.metric_id}`,
           metric_specification: definition.metric_specification,
           definition_specification: definition_response.specification,
           extension_options: definition_response.extension_options,

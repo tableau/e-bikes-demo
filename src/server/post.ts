@@ -15,16 +15,6 @@ export type RequestData = {
 
 export async function post(request: ExpressRequest, response: ExpressResponse) {
   try {
-    // Glueing HBI POST into here
-    if (request.originalUrl.startsWith('/api/-/hbi-query')) {
-      const queryResult = await callHBI(request.body)
-      try {
-        response.send(queryResult);
-      } catch (e: unknown) {
-        response.send({ error: `${e}`, queryResult });
-      }
-      return;
-    }
     const requestResult = validateRequest(request);
     if (requestResult.err) {
       response.status(400).send({ error: 'invalid_request' });
@@ -43,6 +33,17 @@ export async function post(request: ExpressRequest, response: ExpressResponse) {
       token = signinResult.val;
     }
 
+    // ****** HBI POST Handled Here
+    if (request.originalUrl.startsWith('/api/-/hbi-query')) {
+      const queryResult = await callHBI(token, request.body)
+      try {
+        response.send(queryResult);
+      } catch (e: unknown) {
+        response.send({ error: `${e}`, queryResult });
+      }
+      return;
+    }
+    
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
       Accept: 'application/json',
@@ -64,7 +65,7 @@ export async function post(request: ExpressRequest, response: ExpressResponse) {
       }
     }
 
-    const fetchResponse = await fetch(`${server}/api/${apiVersion}/${apiPath}`, init);
+    const fetchResponse = await fetch(`https://${server}/api/${apiVersion}/${apiPath}`, init);
 
     const raw = await fetchResponse.text();
     if (!raw) {

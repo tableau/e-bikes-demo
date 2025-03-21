@@ -4,28 +4,28 @@ import { useAppContext } from '../../App';
 import NotificationWindow from './NotificationWindow';
 import { NotificationItem } from './NotificationWindow';
 import { Query } from '../../../server/hbi'
+import { useAuth } from '../auth/useAuth';
+import { server, site, datasourceLuid } from "../../../constants/Constants";
 
 // Our HBI Query to get return percentages
 const query: Query = {
-  connection: {
-    tableauServerName: '10ax.online.tableau.com',
-    siteId: 'ehofman',
-    datasource: 'eBikesInventoryandSales'
+  datasource: {
+    datasourceLuid: datasourceLuid,
   },
   query: {
-    columns: [
+    fields: [
       {
-        columnName: "Account Name",
-        columnAlias: "accountName",
+        fieldCaption: "Account Name",
+        fieldAlias: "accountName",
         sortPriority: 1
       },
       {
-        columnName: "Product Name",
-        columnAlias: "productName",
+        fieldCaption: "Product Name",
+        fieldAlias: "productName",
         sortPriority: 2
       },
       {
-        columnName: "returnPercentage",
+        fieldCaption: "returnPercentage",
         // Note that for "Migrated Data" we have to use the name of the column as the
         // underlying Tableau PDS knows it (count). Not the human created name.
         calculation: "SUM(IF [Return Flag] = 'Yes' THEN 1 END) / COUNT([count])"
@@ -34,13 +34,12 @@ const query: Query = {
     filters: [
       {
         filterType: "DATE",
-        columnName: "Order Placed Date",
-        units: "DAYS",
-        // Note that to get the last 30 days, it's actually -29 for the value. Thinking about fixing that
-        // but currently that's how it works. We can also put an anchor date in here if needed. Right
-        // Now it's the last 30 days from now.
-        pastCount: 30,
-        futureCount: 0
+        field: {
+          fieldCaption: "Order Placed Date"
+        },
+        periodType: "DAYS",
+        dateRangeType: "LASTN",
+        rangeN: 30
       }
     ]
   }
@@ -57,6 +56,19 @@ const NotificationBell: React.FC = () => {
 
   const { notifications, notificationReceived } = useAppContext();
   const [showPopup, setShowPopup] = useState(false);
+  const [jwt, setJwt] = useState<string | null>(null);
+  const { getJwtFromServer } = useAuth()
+
+  useEffect(() => {
+    (async () => {
+      if (jwt) {
+        return;
+      }
+      setJwt(await getJwtFromServer());
+    })();
+
+  }, [jwt, getJwtFromServer]);
+  
 
   useEffect(() => {
     if (notifications.length > 0) {
@@ -64,11 +76,17 @@ const NotificationBell: React.FC = () => {
     }
 
     (async () => {
+      if (!jwt) {
+        return;
+      }
       const post = {
         method: 'post',
         body: JSON.stringify(query),
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          server: server,
+          site: site,
+          jwt: jwt
         }
       }
 
@@ -100,7 +118,7 @@ const NotificationBell: React.FC = () => {
       }
 
     })();
-  }, [])
+  }, [jwt, notificationReceived, notifications.length])
 
   return (
     <Fragment>
