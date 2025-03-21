@@ -2,8 +2,9 @@
 
 export const server = '10ay.online.tableau.com';
 export const site = 'ehofman';
-export const subscriber = '17bd7f27-7274-4191-8d3c-2d29120bf9f0'; //'embedded@ebikes.com';
-export const username = "sjauhal@salesforce.com"; //"embedded@ebikes.com";
+//export const subscriber = '17bd7f27-7274-4191-8d3c-2d29120bf9f0'; //'embedded@ebikes.com' on 10ax
+export const subscriber = '8988c285-bb3a-47cd-b570-168a830abc04'; //'embedded@ebikes.com' on 10ay
+export const username = "embedded@ebikes.com";
 
 export const secretValue = 'atZ7HITCyV4nwi3gLzPsZt6+haXfjiYauu1lj4i0GDA=';
 export const secretId = '30baa038-146e-44f7-8d31-9f5d6bea1b13'
