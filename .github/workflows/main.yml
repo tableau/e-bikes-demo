@@ -35,7 +35,7 @@ jobs:
           mv prod-package.json $DEPLOY_PATH/package.json
           rm -rf dist/data
           cp -a dist/. $DEPLOY_PATH/dist
-          cp -a src/db/. $DEPLOY_PATH/src/constants
+          cp -a src/constants/. $DEPLOY_PATH/src/constants
           cp -a src/db/. $DEPLOY_PATH/src/db
           cp -a src/server/. $DEPLOY_PATH/src/server
           cd $DEPLOY_PATH
