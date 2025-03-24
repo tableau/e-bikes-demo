@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react';
 import styles from './Pulse.module.css';
 import { BanInsight, usePulseApi } from './usePulseAPI';
-import classNames from 'classnames';
 import EmbeddedPulse from './EmbeddedPulse';
+import PulseCustom from './PulseCustom';
+import { useAuth } from '../auth/useAuth';
+import classNames from 'classnames';
 
 function Pulse() {
 
   const { getSubscribedBanInsights } = usePulseApi();
-  const [selectedMetricId, setSelectedMetricId] = useState<string | null>(null);
-  const [selectedLayout, setSelectedLayout] = useState<'default' | 'card' | 'ban'>('default');
-
+  const { getJwtFromServer } = useAuth()
+  const [jwt, setJwt] = useState<string | null>(null);
   const [banInsights, setBanInsights] = useState<BanInsight[] | null>((() => {
     const previous = localStorage.getItem('ban');
     if (previous) {
@@ -18,8 +19,15 @@ function Pulse() {
       return null;
     }
   })());
+  const [theme, setTheme] = useState<'light' | 'dark'>('light')
 
-  const pulseUrl = banInsights?.find(banInsight => banInsight.metricDefinition.metric_id === selectedMetricId)?.metricDefinition.url;
+  useEffect(() => {
+
+    (async () => {
+      setJwt(await getJwtFromServer());
+    })();
+
+  }, []);
 
   useEffect(() => {
 
@@ -30,51 +38,44 @@ function Pulse() {
     })();
   }, []);
 
-  if (!banInsights) {
-
-    return <div>loading...</div>
-
+  if (!jwt) {
+    return null;
   } else {
 
-    return (
+    const pulseUrl = (banInsights && banInsights[0].metricDefinition.url) ?? '';
 
-      <div className={styles.root}>
-        <div className={styles.cards}>{banInsights.map(banInsight => {
-          return (
-            <div
-              className={classNames(styles.card, banInsight.metricDefinition.metric_id === selectedMetricId ? styles.selected : '')}
-              key={banInsight.metricDefinition.name}
-              onClick={() => setSelectedMetricId(banInsight.metricDefinition.metric_id)}
-              title={banInsight.markup}
-            >
-              <div className={styles.header}>
-                <div className={styles.name}>{banInsight.metricDefinition.name}</div>
-                <div className={styles.period}>{banInsight.period}</div>
-              </div>
-              <div className={styles.ban}>
-                <div className={styles.value}>{banInsight.value}</div>
-                <div className={classNames(styles.triangle, styles[banInsight.direction], styles[banInsight.sentiment])}></div>
-              </div>
-            </div>
-          )
-        })}</div>
-        {
-          selectedMetricId
-            ? <div className={styles.pulseContainer}>
-              <div className={styles.pulseLayoutChooser}>
-                <button className={`${styles.pulseLayoutButton} ${selectedLayout === 'default' ? styles.selected : ''}`} onClick={() => setSelectedLayout('default')}>default</button>
-                <button className={`${styles.pulseLayoutButton} ${selectedLayout === 'card' ? styles.selected : ''}`} onClick={() => setSelectedLayout('card')}>card</button>
-                <button className={`${styles.pulseLayoutButton} ${selectedLayout === 'ban' ? styles.selected : ''}`} onClick={() => setSelectedLayout('ban')}>ban</button>
-              </div>
-              <EmbeddedPulse url={pulseUrl} layout={selectedLayout} />
-            </div>
-            : <div className={styles.selectMetricMessageContainer}>
-              <div className={styles.selectMetricMessage}>Select a metric card to see its detailed info</div>
-            </div>
-        }
-      </div>
-    )
+    if (!banInsights) {
 
+      return <div>loading...</div>
+
+    } else {
+
+      return (
+
+        <div className={classNames(styles.root, theme === 'light' ? styles.light : styles.dark)}>
+          <div className={styles.cards}>
+            <div className={styles.pulseItems}>
+              <div className={styles.pulseban}>
+                <EmbeddedPulse key={'ban'} url={pulseUrl} jwt={jwt} layout={'ban'} theme={theme} />
+              </div>
+              <div className={styles.pulsecard}>
+                <EmbeddedPulse key={'card'} url={pulseUrl} jwt={jwt} layout={'card'} theme={theme} />
+              </div>
+              <div className={styles.pulsedefault}>
+                <EmbeddedPulse key={'default'} url={pulseUrl} jwt={jwt} layout={'default'} theme={theme} />
+              </div>
+            </div>
+            <div className={styles.pulseCustomItems}>
+              <button onClick={() => setTheme(theme === "light" ? "dark" : "light")}>
+                {theme === "light" ? "🌙 Dark Mode" : "☀️ Light Mode"}
+              </button>
+              {banInsights.map(banInsight => <PulseCustom banInsight={banInsight} />)}
+            </div>
+          </div>
+        </div>
+      )
+
+    }
   }
 }
 
