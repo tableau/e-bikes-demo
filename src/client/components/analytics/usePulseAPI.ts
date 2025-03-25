@@ -180,8 +180,6 @@ export function usePulseApi() {
       const json = await response.json();
       const insight = json.bundle_response.result.insight_groups[0].insights[0].result
 
-      console.log('returning data, insight json:', json)
-
       return {
         metricDefinition,
         period: insight.facts.target_time_period.label,

@@ -69,7 +69,7 @@ function Pulse() {
               <button onClick={() => setTheme(theme === "light" ? "dark" : "light")}>
                 {theme === "light" ? "🌙 Dark Mode" : "☀️ Light Mode"}
               </button>
-              {banInsights.map(banInsight => <PulseCustom banInsight={banInsight} />)}
+              {banInsights.map(banInsight => <PulseCustom key={banInsight.value} banInsight={banInsight} />)}
             </div>
           </div>
         </div>

@@ -9,6 +9,7 @@ import ProductCatalog from './components/productCatalog/ProductCatalog';
 import WebAuthoring from './components/analytics/WebAuthoring';
 import { NotificationItem } from './components/header/NotificationWindow';
 import { User } from '../db/users';
+import AgentforceIntegration from './components/agent/AgentforceIntegration';
 
 interface AppContextType {
   user: User | undefined;
@@ -99,6 +100,8 @@ function App() {
         {selectedPage === 'Performance' && <Performance />}
         {selectedPage === 'Analyze' && user.isRetailer && <Pulse />}
         {selectedPage === 'Analyze' && !user.isRetailer && <WebAuthoring />}
+
+        <AgentforceIntegration />
       </div>
     )
 
