@@ -11,7 +11,7 @@ const EmbeddedPulse: React.FC<{
 
 
   const lightThemeParameters = [
-    { name: "fontCssUrl", value: "https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;display=swap" },
+    { name: "fontCssUrl", value: "https://fonts.googleapis.com/css2?family=Roboto&amp;display=swap" },
     { name: "fontSize", value: "18" },
     { name: "backgroundColor", value: "#fef" },
     { name: "backgroundColorOpaque", value: "" },
@@ -48,7 +48,7 @@ const EmbeddedPulse: React.FC<{
   ];
 
   const darkThemeParameters = [
-    { name: "fontCssUrl", value: "https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;display=swap" },
+    { name: "fontCssUrl", value: "https://fonts.googleapis.com/css2?family=Roboto&amp;display=swap" },
     { name: "fontSize", value: "18" },
     { name: "backgroundColor", value: "#022" },
     { name: "backgroundColorOpaque", value: "" },

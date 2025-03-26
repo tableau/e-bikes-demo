@@ -8,7 +8,7 @@ import classNames from 'classnames';
 
 function Pulse() {
 
-  const { getSubscribedBanInsights } = usePulseApi();
+  const { getSubscribedBanInsights, getPulseDiscoverInsights } = usePulseApi();
   const { getJwtFromServer } = useAuth()
   const [jwt, setJwt] = useState<string | null>(null);
   const [banInsights, setBanInsights] = useState<BanInsight[] | null>((() => {
@@ -20,6 +20,7 @@ function Pulse() {
     }
   })());
   const [theme, setTheme] = useState<'light' | 'dark'>('light')
+  const [pulseDiscoverInsights, setPulseDiscoverInsights] = useState<string | null>(null);
 
   useEffect(() => {
 
@@ -31,12 +32,29 @@ function Pulse() {
 
   useEffect(() => {
 
+    if (!jwt) {
+      return;
+    }
+
     (async () => {
       const subscribedBanInsights = await getSubscribedBanInsights()
       setBanInsights(subscribedBanInsights);
       localStorage.setItem('ban', JSON.stringify(subscribedBanInsights))
     })();
-  }, []);
+  }, [jwt]);
+
+  useEffect(() => {
+
+    if (!jwt) {
+      return;
+    }
+
+    (async () => {
+      const markup = await getPulseDiscoverInsights()
+      setPulseDiscoverInsights(markup);
+    })();
+
+  }, [jwt]);
 
   if (!jwt) {
     return null;
@@ -69,6 +87,7 @@ function Pulse() {
               <button onClick={() => setTheme(theme === "light" ? "dark" : "light")}>
                 {theme === "light" ? "🌙 Dark Mode" : "☀️ Light Mode"}
               </button>
+              <div dangerouslySetInnerHTML={{ __html: pulseDiscoverInsights ?? '' }} />
               {banInsights.map(banInsight => <PulseCustom key={banInsight.value} banInsight={banInsight} />)}
             </div>
           </div>

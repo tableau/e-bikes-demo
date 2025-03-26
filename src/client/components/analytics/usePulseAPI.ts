@@ -100,6 +100,22 @@ export function usePulseApi() {
 
   }
 
+  async function getPulseDiscoverInsights(): Promise<string> {
+
+    const metricDefinitions = await getSubscribedMetricDefinitions();
+    const url = `/api/-/pulse/insights/brief`
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: await getHeaders(),
+      body: JSON.stringify({"messages":[{"role":"ROLE_USER","content":"eBikes Inventory and Sales: What happened last month compared to the previous period for Wheelworks?","metric_group_context":[{"metadata":{"name":"Bike Sales","metric_id":"8f6d2220-d916-4cec-bfa6-0e0f02eb168c","definition_id":"582f3c05-0545-4f76-a00b-dd87fc3b276f"},"metric":{"definition":{"datasource":{"id":"ff397ea3-24eb-4c54-b0fc-fa46a9735b13"},"basic_specification":{"measure":{"field":"Sales","aggregation":"AGGREGATION_SUM"},"time_dimension":{"field":"Order Placed Date"},"filters":[]},"is_running_total":true},"metric_specification":{"filters":[{"field":"Account Name","operator":"OPERATOR_EQUAL","categorical_values":[{"string_value":"Wheelworks"}]}],"measurement_period":{"granularity":"GRANULARITY_BY_MONTH","range":"RANGE_LAST_COMPLETE"},"comparison":{"comparison":"TIME_COMPARISON_PREVIOUS_PERIOD"}},"extension_options":{"allowed_dimensions":["Front Brakes","Motor Type","Product Type","Product Name","Shipping Type","State","Battery Type","Account Name"],"allowed_granularities":["GRANULARITY_BY_DAY","GRANULARITY_BY_WEEK","GRANULARITY_BY_MONTH","GRANULARITY_BY_QUARTER","GRANULARITY_BY_YEAR"],"offset_from_today":0},"representation_options":{"type":"NUMBER_FORMAT_TYPE_CURRENCY","sentiment_type":"SENTIMENT_TYPE_UP_IS_GOOD","row_level_id_field":{"identifier_col":"","identifier_label":""},"row_level_entity_names":{"entity_name_singular":"","entity_name_plural":""},"row_level_name_field":{"name_col":""},"currency_code":"CURRENCY_CODE_USD"},"insights_options":{"show_insights":true,"settings":[{"type":"INSIGHT_TYPE_BOTTOM_CONTRIBUTORS","disabled":false},{"type":"INSIGHT_TYPE_TOP_DETRACTORS","disabled":false},{"type":"INSIGHT_TYPE_NEW_TREND","disabled":false},{"type":"INSIGHT_TYPE_RISKY_MONOPOLY","disabled":false},{"type":"INSIGHT_TYPE_TOP_DRIVERS","disabled":false},{"type":"INSIGHT_TYPE_CURRENT_TREND","disabled":false}]}}},{"metadata":{"name":"Bike Returns","metric_id":"fc7153ad-8670-4212-b067-60bdaeeeb4a4","definition_id":"907e21dd-1baf-49cb-ac47-ccce5250a707"},"metric":{"definition":{"datasource":{"id":"ff397ea3-24eb-4c54-b0fc-fa46a9735b13"},"viz_state_specification":{"viz_state_string":"{\"vizState\":{\"rows\":[{\"fieldOnShelf\":{\"component\":[\"usr:Calculation_14003446872543287:qk\"]},\"fieldCaption\":\"AGG(Calculation_14003446872543287)\"}],\"columns\":[{\"fieldOnShelf\":{\"component\":[\"tdy:Order Placed Date:qk\"]},\"fieldCaption\":\"DAY(Order Placed Date)\"}],\"defaultEncoding\":{}},\"dataModel\":{\"dataSource\":[{\"columnsToAdd\":[{\"name\":{\"component\":[\"Calculation_14003446872543287\"]},\"fieldType\":\"FIELD_TYPE_CONTINUOUS\",\"vtagg\":\"VISUAL_TOTAL_AGGREGATION_VTAGG_DEFAULT\",\"pivotStrategy\":\"FIELD_PIVOT_STRATEGY_PIVOT_ON_KEY\",\"role\":\"FIELD_ROLE_MEASURE\",\"dataType\":\"DATA_TYPE_INTEGER_TYPE\",\"calc\":{\"formula\":\"SUM(if [Return Flag] = \\\"Yes\\\" then [Units] else 0 end)\"},\"fiscalYearStart\":\"FISCAL_YEAR_START_JANUARY\"},{\"name\":{\"component\":[\"tdy:Order Placed Date:qk\"]},\"fieldType\":\"FIELD_TYPE_CONTINUOUS\",\"vtagg\":\"VISUAL_TOTAL_AGGREGATION_VTAGG_DEFAULT\",\"pivotStrategy\":\"FIELD_PIVOT_STRATEGY_PIVOT_ON_KEY\",\"role\":\"FIELD_ROLE_DIMENSION\",\"dataType\":\"DATA_TYPE_DATETIME_TYPE\",\"instance\":{\"baseColumn\":{\"component\":[\"Order Placed Date\"]},\"agg\":\"AGG_TYPE_TRUNC_DAY\"}},{\"name\":{\"component\":[\"usr:Calculation_14003446872543287:qk\"]},\"fieldType\":\"FIELD_TYPE_CONTINUOUS\",\"vtagg\":\"VISUAL_TOTAL_AGGREGATION_VTAGG_DEFAULT\",\"pivotStrategy\":\"FIELD_PIVOT_STRATEGY_PIVOT_ON_KEY\",\"role\":\"FIELD_ROLE_MEASURE\",\"dataType\":\"DATA_TYPE_INTEGER_TYPE\",\"instance\":{\"baseColumn\":{\"component\":[\"Calculation_14003446872543287\"]},\"agg\":\"AGG_TYPE_USER\"}}],\"contextSpecification\":{\"sampleCount\":-1,\"sampleUnits\":\"SORT_UNITS_RECORDS\",\"normalization\":\"EXTRACT_NORMALIZATION_DENORMALIZED\"},\"name\":\"sqlproxy.0neaa2z1qzub351dumtzj1548xdh\",\"displayMemberAliases\":true}]}}"},"is_running_total":false},"metric_specification":{"filters":[{"field":"Account Name","operator":"OPERATOR_EQUAL","categorical_values":[{"string_value":"Wheelworks"}]}],"measurement_period":{"granularity":"GRANULARITY_BY_MONTH","range":"RANGE_LAST_COMPLETE"},"comparison":{"comparison":"TIME_COMPARISON_PREVIOUS_PERIOD"}},"extension_options":{"allowed_dimensions":["Account State","Battery Type","Loyalty Status","Product Name","Motor Type","Account Name"],"allowed_granularities":["GRANULARITY_BY_DAY","GRANULARITY_BY_WEEK","GRANULARITY_BY_MONTH","GRANULARITY_BY_QUARTER","GRANULARITY_BY_YEAR"],"offset_from_today":0},"representation_options":{"type":"NUMBER_FORMAT_TYPE_NUMBER","number_units":{"singular_noun":"","plural_noun":""},"sentiment_type":"SENTIMENT_TYPE_DOWN_IS_GOOD","row_level_id_field":{"identifier_col":"","identifier_label":""},"row_level_entity_names":{"entity_name_singular":"","entity_name_plural":""},"row_level_name_field":{"name_col":""},"currency_code":"CURRENCY_CODE_USD"},"insights_options":{"show_insights":true,"settings":[{"type":"INSIGHT_TYPE_CURRENT_TREND","disabled":false},{"type":"INSIGHT_TYPE_BOTTOM_CONTRIBUTORS","disabled":true},{"type":"INSIGHT_TYPE_TOP_DETRACTORS","disabled":true},{"type":"INSIGHT_TYPE_NEW_TREND","disabled":false},{"type":"INSIGHT_TYPE_RECORD_LEVEL_OUTLIERS","disabled":true},{"type":"INSIGHT_TYPE_UNUSUAL_CHANGE","disabled":false},{"type":"INSIGHT_TYPE_RISKY_MONOPOLY","disabled":false},{"type":"INSIGHT_TYPE_TOP_DRIVERS","disabled":false}]}}}],"metric_group_context_resolved":false,"action_type":"ACTION_TYPE_ANSWER"}],"time_zone":"UTC"}),
+    });
+
+    const json = await response.json();
+    return json.markup as string;
+
+  }
+
   /** returns the list of definitions the subscriber has a subscription to */
   async function getSubscribedMetricDefinitions(): Promise<MetricDefinition[]> {
 
@@ -277,7 +293,11 @@ export function usePulseApi() {
 
 
   // return { getSubscribedBanInsights };
-  return { getSubscribedBanInsights, getSubscribedSpringboardInsights };
+  return { 
+    getPulseDiscoverInsights,
+    getSubscribedBanInsights, 
+    getSubscribedSpringboardInsights 
+  };
 
 
 }
