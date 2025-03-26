@@ -3,10 +3,14 @@ import { BanInsight } from './usePulseAPI';
 import classNames from 'classnames';
 
 const PulseCustom: React.FC<{
-  banInsight: BanInsight,
-}> = ({ banInsight }) => {
+  banInsights: BanInsight[] | null
+}> = ({ banInsights }) => {
 
-  return (
+  if (!banInsights) {
+    return <div>Custom Pulse loading...</div>
+  }
+
+  return banInsights.map(banInsight => (
     <div
       className={styles.card}
       key={banInsight.metricDefinition.name}
@@ -21,6 +25,7 @@ const PulseCustom: React.FC<{
         <div className={classNames(styles.triangle, styles[banInsight.direction], styles[banInsight.sentiment])}></div>
       </div>
     </div>
+  )
   )
 }
 

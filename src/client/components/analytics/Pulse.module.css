@@ -13,22 +13,6 @@
     background-color: #022;
 }
 
-.pulsedefault {
-    width: 800px;
-    height: calc(100vh - 140px);
-    border-radius: 40px;
-}
-
-.pulsecard {
-    width: 420px;
-    height: 460px
-}
-
-.pulseban {
-    width: 420px;
-    height: 230px
-}
-
 .cards {
     padding: 30px;
     display: flex;
