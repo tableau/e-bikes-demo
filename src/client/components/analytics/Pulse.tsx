@@ -54,7 +54,7 @@ function Pulse() {
             <button onClick={() => setTheme(theme === "light" ? "dark" : "light")}>
               {theme === "light" ? "🌙 Dark Mode" : "☀️ Light Mode"}
             </button>
-            <PulseDiscover jwt={jwt} />
+            <PulseDiscover jwt={jwt} theme = {theme}/>
             <PulseCustom banInsights={banInsights} />
           </div>
         </div>
