@@ -5,8 +5,6 @@ import styles from './ProductCatalog.module.css';
 import { productlist } from './productlist';
 import { ProductSales, useProductSales } from './useProductSales';
 import Sparkline from './Sparkline';
-import { users } from '../../../db/users';
-import { useParams } from 'react-router-dom';
 import { useAppContext } from '../../App';
 
 export interface ProductInfo {
@@ -27,11 +25,8 @@ function ProductCatalog() {
   const { getSalesPerProduct } = useProductSales();
   const [isLoading, setIsLoading] = useState(false);
 
-  const { userId } = useParams<{ userId: string }>();
-  const user = users.find(u => u.username === userId); // Fetch user data based on userId
+  const { userLicense } = useAppContext();
 
-      const { userLicense } = useAppContext();
-  
 
   useEffect(() => {
     (async () => {
@@ -46,7 +41,7 @@ function ProductCatalog() {
   }, [sales, getSalesPerProduct]);
 
   useEffect(() => {
-    if ((userLicense === 'Premium' ) && hoveredProductName) {
+    if ((userLicense === 'Premium') && hoveredProductName) {
       setIsLoading(true);
       const fetchAndSetSalesData = async () => {
         try {
@@ -78,7 +73,7 @@ function ProductCatalog() {
 
   // New handler for mouse enter that selects the product
   const handleMouseEnter = (product: ProductInfo) => {
-    if ((userLicense === 'Premium' )) {
+    if ((userLicense === 'Premium')) {
       setHoveredProductName(product.name);
       setSelectedProduct(product); // Now also sets the product as selected
     }

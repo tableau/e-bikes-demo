@@ -5,7 +5,6 @@ import EmbeddedDashboard from './EmbeddedDashboard';
 import { useEffect, useState } from 'react';
 import { ProductInfo } from '../productCatalog/ProductCatalog';
 import { usePulseApi } from './usePulseAPI';
-import { users } from '../../../db/users';
 import { useParams } from 'react-router-dom';
 
 const EmbeddedDashboardUpsellable: React.FC<{ selectedProduct: ProductInfo | null }> = ({ selectedProduct }) => {
@@ -18,7 +17,6 @@ const EmbeddedDashboardUpsellable: React.FC<{ selectedProduct: ProductInfo | nul
   const {getSubscribedSpringboardInsights} = usePulseApi();
 
   const { userId } = useParams<{ userId: string }>();
-  const user = users.find(u => u.username === userId); // Fetch user data based on userId
 
   useEffect(() => {
 
