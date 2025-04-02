@@ -101,7 +101,7 @@ function App() {
         {selectedPage === 'Analyze' && user.isRetailer && <Pulse />}
         {selectedPage === 'Analyze' && !user.isRetailer && <WebAuthoring />}
 
-        {/* <AgentforceIntegration /> */}
+        <AgentforceIntegration />
       </div>
     )
 

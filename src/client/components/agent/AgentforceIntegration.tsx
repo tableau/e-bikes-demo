@@ -3,7 +3,7 @@ const AgentforceIntegration = () => {
 
   return (
     <iframe
-      src="https://sf-agentforce-chat-client-production.up.railway.app/index.html"
+      src="https://tableau-agentforce-custom-client-production.up.railway.app/"
       style={{
         position: 'fixed',
         bottom: '20px',
