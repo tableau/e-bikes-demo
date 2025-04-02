@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
-import { useAppContext } from '../../App';
 import EmbeddedDashboardUpsellable from '../analytics/EmbeddedDashboardUpsellable';
 import Product from './Product';
 import styles from './ProductCatalog.module.css';
 import { productlist } from './productlist';
 import { ProductSales, useProductSales } from './useProductSales';
 import Sparkline from './Sparkline';
-import { useAuth } from '../auth/useAuth';
+import { users } from '../../../db/users';
+import { useParams } from 'react-router-dom';
+import { useAppContext } from '../../App';
 
 export interface ProductInfo {
   id?: number;
@@ -23,9 +24,14 @@ function ProductCatalog() {
   const [hoveredProductSales, setHoveredProductSales] = useState<ProductSales[]>([]);
   const [totalSalesVolume, setTotalSalesVolume] = useState<number>(0);
   const [totalReturns, setTotalReturns] = useState<number>(0);
-  const { user } = useAppContext();
   const { getSalesPerProduct } = useProductSales();
   const [isLoading, setIsLoading] = useState(false);
+
+  const { userId } = useParams<{ userId: string }>();
+  const user = users.find(u => u.username === userId); // Fetch user data based on userId
+
+      const { userLicense } = useAppContext();
+  
 
   useEffect(() => {
     (async () => {
@@ -40,7 +46,7 @@ function ProductCatalog() {
   }, [sales, getSalesPerProduct]);
 
   useEffect(() => {
-    if (user?.license === 'Premium' && hoveredProductName) {
+    if ((userLicense === 'Premium' ) && hoveredProductName) {
       setIsLoading(true);
       const fetchAndSetSalesData = async () => {
         try {
@@ -68,11 +74,11 @@ function ProductCatalog() {
       setTotalSalesVolume(0);
       setTotalReturns(0);
     }
-  }, [hoveredProductName, user?.license]);
+  }, [hoveredProductName, userLicense]);
 
   // New handler for mouse enter that selects the product
   const handleMouseEnter = (product: ProductInfo) => {
-    if (user?.license === 'Premium') {
+    if ((userLicense === 'Premium' )) {
       setHoveredProductName(product.name);
       setSelectedProduct(product); // Now also sets the product as selected
     }
@@ -94,9 +100,9 @@ function ProductCatalog() {
               onMouseLeave={() => setHoveredProductName(null)}
             >
               <div
-                className={`${styles.card} ${user?.license === 'Premium' && hoveredProductName === product.name ? styles.isFlipped : ''}`}
+                className={`${styles.card} ${userLicense === 'Premium' && hoveredProductName === product.name ? styles.isFlipped : ''}`}
               >
-                {user?.license === 'Premium' && hoveredProductName === product.name ? (
+                {userLicense === 'Premium' && hoveredProductName === product.name ? (
                   <div className={styles.cardBack}>
                     <Sparkline salesData={hoveredProductSales} totalSalesVolume={totalSalesVolume} totalReturns={totalReturns} isLoading={isLoading} />
                   </div>

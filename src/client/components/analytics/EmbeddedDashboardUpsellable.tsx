@@ -1,26 +1,31 @@
 import styles from './EmbeddedDashboardUpsellable.module.css';
+import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../App';
 import EmbeddedDashboard from './EmbeddedDashboard';
 import { useEffect, useState } from 'react';
 import { ProductInfo } from '../productCatalog/ProductCatalog';
 import { usePulseApi } from './usePulseAPI';
+import { users } from '../../../db/users';
+import { useParams } from 'react-router-dom';
 
 const EmbeddedDashboardUpsellable: React.FC<{ selectedProduct: ProductInfo | null }> = ({ selectedProduct }) => {
 
-  const { user, navigate, upgradeLicense } = useAppContext();
+  const { updateUserLicense, userLicense } = useAppContext();
+  const navigate = useNavigate();
 
   const [refreshDashboard, setRefreshDashboard] = useState<boolean>(false);
   const [insights, setInsights] = useState<string | null>(null);
-  // const { getSubscribedBanInsights } = usePulseApi();
-const {getSubscribedSpringboardInsights} = usePulseApi();
+  const {getSubscribedSpringboardInsights} = usePulseApi();
+
+  const { userId } = useParams<{ userId: string }>();
+  const user = users.find(u => u.username === userId); // Fetch user data based on userId
 
   useEffect(() => {
 
-    if (user?.license === 'Premium') {
+    if (userLicense === 'Premium') {
       (async () => {
-        // const banInsights = await getSubscribedBanInsights();
         const banInsights = await getSubscribedSpringboardInsights();
-        // console.log('banInsights', banInsights)
+
         const firstNegativeBanInsight = banInsights.find(banInsight => banInsight.sentiment === 'negative');
         if (firstNegativeBanInsight && firstNegativeBanInsight.markup) {
           setInsights(`${firstNegativeBanInsight.metricDefinition.name}: ${firstNegativeBanInsight.markup}`);
@@ -30,20 +35,16 @@ const {getSubscribedSpringboardInsights} = usePulseApi();
       })();
     }
 
-  }, [user?.license])
+  }, [userLicense])
 
   const upgradeUserLicense = () => {
-    if (!user) {
-      return null;
-    }
-
-    upgradeLicense(user);
+    updateUserLicense('Premium');
     setRefreshDashboard(!refreshDashboard);
   }
 
   return (
     <div className={styles.root}>
-      {user?.license === 'Basic' &&
+      {userLicense === 'Basic' && 
         <div className={styles.upsellMessage}>
           <p>You have access to basic operational data. </p>
           <p><a href='#' onClick={upgradeUserLicense}>Upgrade to premium</a> for $9.99 /month.</p>
@@ -54,7 +55,7 @@ const {getSubscribedSpringboardInsights} = usePulseApi();
         <div className={styles.insights}>
           {insights}
             <div className={styles.actions}>
-              <a className={styles.analyze} onClick={() => navigate('Analyze')}>Analyze</a>
+              <a className={styles.analyze} onClick={() => navigate(`${userId}/Analyze`)}>Analyze</a>
             </div>
         </div>
       }

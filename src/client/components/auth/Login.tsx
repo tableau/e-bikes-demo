@@ -1,12 +1,14 @@
 import { users } from '../../../db/users';
-import { useAppContext } from '../../App';
+import { useNavigate } from 'react-router-dom';
 import styles from './Login.module.css';
 import LoginUser from './LoginUser';
 import imagePath from '@/assets/CyclingGrass.jpg';
+import { useAppContext } from '../../App';
 
 function Login() {
 
-  const { login } = useAppContext();
+  const {updateUserLicense} = useAppContext();
+  const navigate  = useNavigate();
 
   return (
     <div className={styles.root} style={{ backgroundImage: `url(${imagePath})` }}>
@@ -16,7 +18,10 @@ function Login() {
           return <LoginUser 
             user={user}
             key={user.username}
-            onClick={() => login(user)} />
+            onClick={() => {
+              navigate(`${user.username}/Home`)
+              updateUserLicense(user.license);
+            }} />
         })
       }
 

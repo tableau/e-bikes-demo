@@ -1,54 +1,60 @@
 import React from 'react';
+import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import styles from './Header.module.css'
-import { Pages, useAppContext, userPages } from '../../App';
+import { useAppContext, userPages } from '../../App';
 import NotificationBell from './NotificationBell';
+import { users } from '../../../db/users';
 
-interface HeaderProps {
-  selectedPage: string;
-  onPageChange: (e: { newPage: Pages }) => void;
-}
+const Header: React.FC = () => {
+  const { userId } = useParams<{ userId: string }>();
+  const user = users.find(u => u.username === userId); // Fetch user data based on userId
 
-const Header: React.FC<HeaderProps> = ({ selectedPage, onPageChange }) => {
-
-  const { user, login } = useAppContext();
+  const navigate = useNavigate();
+    const { userLicense } = useAppContext();
 
   if (!user) {
     return null;
   }
 
+  const handlePageChange = (newPage: string) => {
+    navigate(`${newPage.toLowerCase().replace(' ', '-')}`);
+  };
+
   return (
-    <div className={styles.header}>
-      <nav>
-        <div >
-          <ul>
-            <li>
-              <img className={styles.logo} src={`${user.companyLogo}`} />
-            </li>
-            {userPages(user).map((page) => {
-              return (
-                <li
-                  key={page}
-                  className={page === selectedPage ? styles.active : ''}
-                  onClick={() => onPageChange({ newPage: page })}
-                >
-                  {page}
-                </li>
-              )
-            })}
-          </ul>
-        </div>
-        <div >
-          <ul>
-            <li>
-              {user.license === 'Premium'  && <NotificationBell />}
-            </li>
-            <li>
-              <img key={'Avatar'} className={styles.avatar} src={`${user?.username}.png`} onClick={() => login(undefined)} />
-            </li>
-          </ul>
-        </div>
-      </nav>
-    </div>
+    <>
+      <div className={styles.header}>
+        <nav>
+          <div>
+            <ul>
+              <li>
+                <img className={styles.logo} src={`/${user.companyLogo}`} />
+              </li>
+              {userPages(user).map((page) => {
+                return (
+                  <li
+                    key={page}
+                    onClick={() => handlePageChange(page)}
+                  >
+                    {page}
+                  </li>
+                )
+              })}
+            </ul>
+          </div>
+          <div>
+            <ul>
+              <li>
+                {(userLicense === 'Premium' ) && <NotificationBell />}
+              </li>
+              <li>
+                <img key={'Avatar'} className={styles.avatar} src={`/${user?.username}.png`} onClick={() => navigate('/')} />
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+      <Outlet />
+    </>
   );
 };
 

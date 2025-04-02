@@ -6,7 +6,7 @@ function Home() {
     <div className={styles.root}>
       <div>
         <video className={styles.video} autoPlay muted loop>
-          <source src="ebikes.mp4" type="video/mp4" />
+          <source src="/ebikes.mp4" type="video/mp4" />
         </video>
         <div className={styles.heroDynamo}>
           <h1 className={styles.title}>DYNAMO X2</h1>
@@ -15,7 +15,7 @@ function Home() {
         </div>
       </div>
       <div>
-        <img className={styles.img} src='CyclingGrass.jpg' />
+        <img className={styles.img} src='/CyclingGrass.jpg' />
         <div className={styles.heroElectra}>
           <h1 className={styles.title}>ELECTRA SERIES</h1>
           <h2 className={styles.subtitle}>RIDE WITH POWER</h2>

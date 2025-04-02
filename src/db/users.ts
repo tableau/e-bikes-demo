@@ -1,10 +1,12 @@
+export type LicenseType = 'Basic' | 'Premium';
+
 export interface User {
     username: string;
     company: string;
     companyLogo: string
     isRetailer: boolean;
     role: string;
-    license: 'Basic' | 'Premium';
+    license: LicenseType;
   }
 
   export const users: User[] = [

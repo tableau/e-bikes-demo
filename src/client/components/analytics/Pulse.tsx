@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
 import styles from './Pulse.module.css';
 import { BanInsight, usePulseApi } from './usePulseAPI';
-import EmbeddedPulse from './EmbeddedPulse';
 import PulseCustom from './PulseCustom';
 import { useAuth } from '../auth/useAuth';
 import classNames from 'classnames';
-import PulseDiscover from './PulseDiscover';
+import PulseEnhancedQA from './PulseEnhancedQA';
 import PulseStandard from './PulseStandard';
 
 function Pulse() {
@@ -54,7 +53,7 @@ function Pulse() {
             <button onClick={() => setTheme(theme === "light" ? "dark" : "light")}>
               {theme === "light" ? "🌙 Dark Mode" : "☀️ Light Mode"}
             </button>
-            <PulseDiscover jwt={jwt} theme = {theme}/>
+            <PulseEnhancedQA jwt={jwt} theme = {theme}/>
             <PulseCustom banInsights={banInsights} />
           </div>
         </div>
