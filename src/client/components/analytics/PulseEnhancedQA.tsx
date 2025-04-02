@@ -1,16 +1,17 @@
 import { useEffect, useState } from 'react';
 import { usePulseApi } from './usePulseAPI';
 
-const PulseDiscover: React.FC<{
+const PulseEnhancedQA: React.FC<{
   jwt: string,
   theme: 'light' | 'dark',
 }> = ({ jwt, theme }) => {
 
-  const Q1 = 'Which battery type had the highest sales last month?';
+  const Q1 = 'What battery type decreased the most in sales due to high returns?';
   const Q2 = 'eBikes Inventory and Sales: What happened last month compared to the previous period for Wheelworks?';
+  const loadingText = 'Pulse Enhanced Q&A loading...';
 
-  const { getPulseDiscoverInsights } = usePulseApi();
-  const [pulseDiscoverInsights, setPulseDiscoverInsights] = useState<string | null>(null);
+  const { getPulseEnhancedQAInsights } = usePulseApi();
+  const [PulseEnhancedQAInsights, setPulseEnhancedQAInsights] = useState<string | null>(null);
   const [question, setQuestion] = useState<string>(Q1);
   const [userInput, setUserInput] = useState<string>(Q1);
 
@@ -21,8 +22,8 @@ const PulseDiscover: React.FC<{
     }
 
     (async () => {
-      const markup = await getPulseDiscoverInsights(question);
-      setPulseDiscoverInsights(markup);
+      const markup = await getPulseEnhancedQAInsights(question);
+      setPulseEnhancedQAInsights(markup);
     })();
 
   }, [jwt, question]);
@@ -30,20 +31,21 @@ const PulseDiscover: React.FC<{
 
   if (!jwt) {
 
-    return <div>Pulse Discover loading...</div>
+    return <div>{loadingText}</div>
 
   } else {
 
     return (
       <div style={{ display: 'flex', gap: '10px', flexDirection: 'column' }}>
         <div style={{ display: 'flex', gap: '10px' }}>
-          <button onClick={() => { setUserInput(Q1); setQuestion(Q1); setPulseDiscoverInsights(null); }}>Q1</button>
-          <button onClick={() => { setUserInput(Q2); setQuestion(Q2); setPulseDiscoverInsights(null); }}>Q2</button>
+          <button onClick={() => { setUserInput(Q1); setQuestion(Q1); setPulseEnhancedQAInsights(null); }}>Q1</button>
+          <button onClick={() => { setUserInput(Q2); setQuestion(Q2); setPulseEnhancedQAInsights(null); }}>Q2</button>
         </div>
         <div style={{
           display: 'flex',
           gap: '10px',
           flexDirection: 'column',
+          fontSize: '18px',
           color: theme === 'light' ? 'black' : 'white',
         }}
         >
@@ -53,7 +55,7 @@ const PulseDiscover: React.FC<{
               if (e.key === 'Enter') {
                 e.preventDefault();
                 setQuestion(userInput);
-                setPulseDiscoverInsights(null)
+                setPulseEnhancedQAInsights(null)
               }
             }}
             onChange={(e) => {
@@ -67,11 +69,12 @@ const PulseDiscover: React.FC<{
               border: '1px solid #ccc',
               borderRadius: '4px',
               padding: '10px',
+              fontSize: '16px',
             }}
           />
-          {pulseDiscoverInsights
-            ? <div dangerouslySetInnerHTML={{ __html: pulseDiscoverInsights ?? '' }} />
-            : <div>Pulse Discover loading...</div>
+          {PulseEnhancedQAInsights
+            ? <div dangerouslySetInnerHTML={{ __html: PulseEnhancedQAInsights ?? '' }} />
+            : <div>{loadingText}</div>
           }
         </div>
       </div>
@@ -80,4 +83,4 @@ const PulseDiscover: React.FC<{
   }
 }
 
-export default PulseDiscover;
+export default PulseEnhancedQA;

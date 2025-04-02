@@ -1,15 +1,17 @@
 import React, { useEffect } from 'react';
 import styles from './NotificationWindow.module.css';
-import { useAppContext } from '../../App';
+import { useNavigate, useParams } from 'react-router-dom';
 
 export type NotificationItem = { title: string, message: string };
 
 const NotificationWindow: React.FC<{ notifications: NotificationItem[], onClose: () => void }> = ({ notifications, onClose }) => {
 
-    const {navigate} = useAppContext();
+    const { userId } = useParams<{ userId: string }>();
+  
+    const navigate = useNavigate();
 
     const analyze = () => {
-        navigate('Analyze');
+        navigate(`${userId}/Analyze`);
         onClose();
     }
 

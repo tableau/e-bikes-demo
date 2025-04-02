@@ -124,7 +124,7 @@ const NotificationBell: React.FC = () => {
     <Fragment>
       <div id={'notificationBell'} className={styles.notificationContainer}>
         <div className={styles.notificationIcon}>
-          <img key={'Notification'} className={styles.notification} src={`notification.png`} onClick={() => setShowPopup(prevShowPopup => !prevShowPopup)} />
+          <img key={'Notification'} className={styles.notification} src={`/notification.png`} onClick={() => setShowPopup(prevShowPopup => !prevShowPopup)} />
         </div>
         {notifications.length > 0 &&
           <div className={styles.notificationCount}>{notifications.length}</div>

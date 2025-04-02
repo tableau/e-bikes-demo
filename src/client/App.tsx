@@ -1,24 +1,20 @@
-import { useState, createContext, useContext, ReactNode } from 'react'
+import { useState, createContext, useContext, ReactNode } from 'react';
+import { Routes, Route } from 'react-router-dom';
 import styles from './App.module.css';
 import Header from './components/header/Header';
 import Home from './components/home/Home';
 import Performance from './components/analytics/Performance';
-import Pulse from './components/analytics/Pulse';
 import Login from './components/auth/Login';
 import ProductCatalog from './components/productCatalog/ProductCatalog';
-import WebAuthoring from './components/analytics/WebAuthoring';
 import { NotificationItem } from './components/header/NotificationWindow';
-import { User } from '../db/users';
-import AgentforceIntegration from './components/agent/AgentforceIntegration';
+import { LicenseType, User } from '../db/users';
+import Analyze from './components/analytics/Analyze';
 
 interface AppContextType {
-  user: User | undefined;
-  selectedPage: Pages;
   notifications: NotificationItem[];
-  login: (user?: User) => void;
-  navigate: (page: Pages) => void;
   notificationReceived: (notifications: NotificationItem[]) => void;
-  upgradeLicense: (user: User) => void;
+  userLicense: string;
+  updateUserLicense: (license: LicenseType) => void;
 }
 
 export type Pages = 'Home' | 'Product Catalog' | 'Performance' | 'Analyze';
@@ -32,49 +28,31 @@ export const userPages = ((user: User): Pages[] => {
 });
 
 const AppContext = createContext<AppContextType>({
-  user: undefined,
-  selectedPage: 'Home',
   notifications: [],
-  login: () => { },
-  navigate: () => { },
   notificationReceived: () => { },
-  upgradeLicense: () => { }
+  userLicense: '',
+  updateUserLicense: () => { },
 });
 export const useAppContext = () => useContext(AppContext);
 export const UserProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | undefined>(undefined);
-  const [selectedPage, setSelectedPage] = useState<Pages>('Home');
-  const [ notifications, setNotifications] = useState<NotificationItem[]>([]);
 
-  const login = (user?: User) => {
-    setUser(user);
-    setSelectedPage('Home');
-  }
-
-  const navigate = (page: Pages) => {
-    setSelectedPage(page);
-  }
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+  const [userLicense, setUserLicense] = useState<string>('Basic');
 
   const notificationReceived = (notifications: NotificationItem[]) => {
     setNotifications(notifications);
   }
 
-  const upgradeLicense = (user: User) => {
-    setUser({
-      ...user,
-      license: 'Premium'
-    })
+  const updateUserLicense = () => {
+    setUserLicense('Premium');
   }
 
   return (
     <AppContext.Provider value={{
-      user,
-      selectedPage,
       notifications,
-      login,
-      navigate,
       notificationReceived,
-      upgradeLicense
+      userLicense,
+      updateUserLicense,
     }}>
       {children}
     </AppContext.Provider>
@@ -83,29 +61,22 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
 function App() {
 
-  const { user, selectedPage, navigate } = useAppContext();
-
-  if (!user) {
-
-    return <Login />
-
-  } else {
-
-    return (
-      <div className={styles.root}>
-        <Header selectedPage={selectedPage} onPageChange={(e) => navigate(e.newPage)} />
-
-        {selectedPage === 'Home' && <Home />}
-        {selectedPage === 'Product Catalog' && <ProductCatalog />}
-        {selectedPage === 'Performance' && <Performance />}
-        {selectedPage === 'Analyze' && user.isRetailer && <Pulse />}
-        {selectedPage === 'Analyze' && !user.isRetailer && <WebAuthoring />}
-
-        <AgentforceIntegration />
-      </div>
-    )
-
-  }
+  return (
+    <div className={styles.root}>
+      <UserProvider>
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/:userId" element={<Header />}>
+            <Route path="home" element={<Home />} />
+            <Route path="product-catalog" element={<ProductCatalog />} />
+            <Route path="performance" element={<Performance />} />
+            <Route path="analyze" element={<Analyze />}
+            />
+          </Route>
+        </Routes>
+      </UserProvider>
+    </div>
+  );
 }
 
-export default App
+export default App;

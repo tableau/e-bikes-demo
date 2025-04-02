@@ -100,7 +100,7 @@ export function usePulseApi() {
 
   }
 
-  async function getPulseDiscoverInsights(question: string): Promise<string> {
+  async function getPulseEnhancedQAInsights(question: string): Promise<string> {
 
     const metricDefinitions = await getSubscribedMetricDefinitions();
     const url = `/api/-/pulse/insights/brief`
@@ -316,7 +316,7 @@ export function usePulseApi() {
 
   // return { getSubscribedBanInsights };
   return {
-    getPulseDiscoverInsights,
+    getPulseEnhancedQAInsights,
     getSubscribedBanInsights,
     getSubscribedSpringboardInsights
   };
