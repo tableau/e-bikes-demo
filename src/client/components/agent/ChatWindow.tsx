@@ -3,7 +3,7 @@ const ChatWindow = () => {
 
   return (
     <iframe
-      src="https://tableau-agentforce-custom-client-production.up.railway.app/"
+      src="https://rounded-corners-production.up.railway.app/"
       style={{
         position: 'fixed',
         bottom: '50px',
