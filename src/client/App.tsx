@@ -1,5 +1,5 @@
 import { useState, createContext, useContext, ReactNode } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Outlet } from 'react-router-dom';
 import styles from './App.module.css';
 import Header from './components/header/Header';
 import Home from './components/home/Home';
@@ -9,6 +9,7 @@ import ProductCatalog from './components/productCatalog/ProductCatalog';
 import { NotificationItem } from './components/header/NotificationWindow';
 import { LicenseType, User } from '../db/users';
 import Analyze from './components/analytics/Analyze';
+import AgentforceIntegration from './components/agent/AgentforceIntegration';
 
 interface AppContextType {
   notifications: NotificationItem[];
@@ -66,7 +67,13 @@ function App() {
       <UserProvider>
         <Routes>
           <Route path="/" element={<Login />} />
-          <Route path="/:userId" element={<Header />}>
+          <Route path="/:userId" element={
+            <>
+            <Header />
+            <Outlet />
+            <AgentforceIntegration />
+            </>
+          }>
             <Route path="home" element={<Home />} />
             <Route path="product-catalog" element={<ProductCatalog />} />
             <Route path="performance" element={<Performance />} />

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Outlet, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import styles from './Header.module.css'
 import { useAppContext, userPages } from '../../App';
 import NotificationBell from './NotificationBell';
@@ -53,7 +53,6 @@ const Header: React.FC = () => {
           </div>
         </nav>
       </div>
-      <Outlet />
     </>
   );
 };
