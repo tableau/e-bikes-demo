@@ -6,7 +6,7 @@ const ChatWindow = () => {
       src="https://tableau-agentforce-custom-client-production.up.railway.app/"
       style={{
         position: 'fixed',
-        bottom: '20px',
+        bottom: '50px',
         right: '20px',
         width: '400px',
         height: '600px',

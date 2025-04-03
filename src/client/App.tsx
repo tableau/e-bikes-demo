@@ -1,5 +1,5 @@
-import { useState, createContext, useContext, ReactNode } from 'react';
-import { Routes, Route, Outlet } from 'react-router-dom';
+import { useState, createContext, useContext, ReactNode, useEffect } from 'react';
+import { Routes, Route, Outlet, useLocation } from 'react-router-dom';
 import styles from './App.module.css';
 import Header from './components/header/Header';
 import Home from './components/home/Home';
@@ -64,6 +64,12 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 function App() {
 
   const [chatWindowMinimized, setChatWindowMinimized] = useState<boolean>(true);
+  const location = useLocation();
+
+  // Set chatWindowMinimized to true whenever the URL changes
+  useEffect(() => {
+    setChatWindowMinimized(true);
+  }, [location]);
 
   return (
     <div className={styles.root}>
