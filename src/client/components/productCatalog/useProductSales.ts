@@ -4,6 +4,8 @@ import { Query } from '../../../server/hbi'
 import { useAuth } from '../auth/useAuth';
 import { server, site, datasourceLuid } from "../../../constants/Constants";
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { users } from '../../../db/users';
 
 export interface ProductSales {
   productName: string;
@@ -20,7 +22,10 @@ interface SalesQueryOptions {
 }
 
 export function useProductSales() {
-  const { user } = useAppContext(); // Ensure you have a context that provides user information
+
+  const { userId } = useParams<{ userId: string }>();
+  const user = users.find(u => u.username === userId); // Fetch user data based on userId
+
   const [jwt, setJwt] = useState<string | null>(null);
   const { getJwtFromServer } = useAuth()
 
