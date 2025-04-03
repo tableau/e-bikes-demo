@@ -1,4 +1,4 @@
-const AgentforceIntegration = () => {
+const ChatWindow = () => {
 
 
   return (
@@ -20,4 +20,4 @@ const AgentforceIntegration = () => {
 
 };
 
-export default AgentforceIntegration;
+export default ChatWindow;

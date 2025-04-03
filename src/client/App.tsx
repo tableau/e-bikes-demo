@@ -9,7 +9,8 @@ import ProductCatalog from './components/productCatalog/ProductCatalog';
 import { NotificationItem } from './components/header/NotificationWindow';
 import { LicenseType, User } from '../db/users';
 import Analyze from './components/analytics/Analyze';
-import AgentforceIntegration from './components/agent/AgentforceIntegration';
+import ChatWindow from './components/agent/ChatWindow';
+import ChatMinimized from './components/agent/ChatMinimized';
 
 interface AppContextType {
   notifications: NotificationItem[];
@@ -62,6 +63,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
 function App() {
 
+  const [chatWindowMinimized, setChatWindowMinimized] = useState<boolean>(true);
+
   return (
     <div className={styles.root}>
       <UserProvider>
@@ -71,7 +74,7 @@ function App() {
             <>
             <Header />
             <Outlet />
-            <AgentforceIntegration />
+            {chatWindowMinimized ? <ChatMinimized onClick={() => setChatWindowMinimized(false)} /> : <ChatWindow />}
             </>
           }>
             <Route path="home" element={<Home />} />
