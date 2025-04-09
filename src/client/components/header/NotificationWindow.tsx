@@ -11,7 +11,7 @@ const NotificationWindow: React.FC<{ notifications: NotificationItem[], onClose:
     const navigate = useNavigate();
 
     const analyze = () => {
-        navigate(`${userId}/Analyze`);
+        navigate(`/${userId}/Analyze`);
         onClose();
     }
 
