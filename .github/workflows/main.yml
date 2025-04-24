@@ -22,6 +22,14 @@ jobs:
       - run: npm run build
       - name: Deploy to Heroku
         env:
+          USERNAME: ${{ secrets.USERNAME }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          SECRET_ID: ${{ secrets.SECRET_ID }}
+          SECRET_VALUE: ${{ secrets.SECRET_VALUE }}
+          VITE_SERVER: ${{ secrets.VITE_SERVER }}
+          VITE_SITE: ${{ secrets.VITE_SITE }}
+          VITE_SUBSCRIBER: ${{ secrets.VITE_SUBSCRIBER }}
+          VITE_DATASOURCE_LUID: ${{ secrets.VITE_DATASOURCE_LUID }}
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
           HEROKU_APP_NAME: "ebikes-demo"
           DEPLOY_PATH: "../deploy-demo"

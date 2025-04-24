@@ -6,7 +6,7 @@ import hmacSHA256 from 'crypto-js/hmac-sha256';
 import WordArray from 'crypto-js/lib-typedarrays';
 import { v4 as uuidv4 } from 'uuid';
 import { User, users } from '../db/users';
-import { clientId, secretId, secretValue, username } from '../constants/Constants';
+import { clientId, secretId, secretValue, username } from './Constants';
 
 export type RequestData = {
   server: string;
