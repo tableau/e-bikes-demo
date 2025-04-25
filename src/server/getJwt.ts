@@ -100,7 +100,7 @@ export function createJwt(user: User, license: string) {
     clientId: import.meta.env.VITE_CLIENT_ID,
     secretId: secretId,
     secretValue: secretValue,
-    username: username,
+    username: import.meta.env.VITE_USERNAME,
   });
 }
 
