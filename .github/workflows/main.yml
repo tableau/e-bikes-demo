@@ -19,7 +19,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
       - run: npm ci
-      - run: npm run build --verbose
+      - run: npm run build
         env:
           VITE_USERNAME: ${{ secrets.VITE_USERNAME }}
           VITE_CLIENT_ID: ${{ secrets.VITE_CLIENT_ID }}
