@@ -22,10 +22,10 @@ jobs:
       - run: npm run build
       - name: Deploy to Heroku
         env:
-          USERNAME: ${{ secrets.USERNAME }}
-          CLIENT_ID: ${{ secrets.CLIENT_ID }}
-          SECRET_ID: ${{ secrets.SECRET_ID }}
-          SECRET_VALUE: ${{ secrets.SECRET_VALUE }}
+          VITE_USERNAME: ${{ secrets.VITE_USERNAME }}
+          VITE_CLIENT_ID: ${{ secrets.VITE_CLIENT_ID }}
+          VITE_SECRET_ID: ${{ secrets.VITE_SECRET_ID }}
+          VITE_SECRET_VALUE: ${{ secrets.VITE_SECRET_VALUE }}
           VITE_SERVER: ${{ secrets.VITE_SERVER }}
           VITE_SITE: ${{ secrets.VITE_SITE }}
           VITE_SUBSCRIBER: ${{ secrets.VITE_SUBSCRIBER }}
