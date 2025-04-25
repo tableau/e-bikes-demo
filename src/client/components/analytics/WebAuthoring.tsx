@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import styles from './WebAuthoring.module.css';
 import { useAuth } from '../auth/useAuth';
 import { TableauAuthoringViz } from '@tableau/embedding-api-react';
-import { server, site } from "../../../constants/Constants";
+import { server, site } from "../../constants/Constants";
 
 function WebAuthoring() {
 

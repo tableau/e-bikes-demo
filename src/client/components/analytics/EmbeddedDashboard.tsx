@@ -3,7 +3,7 @@ import styles from './EmbeddedDashboard.module.css';
 import { TableauViz } from '@tableau/embedding-api-react';
 import { ProductInfo } from '../productCatalog/ProductCatalog';
 import { useAuth } from '../auth/useAuth';
-import { server, site } from "../../../constants/Constants";
+import { server, site } from "../../constants/Constants";
 
 const EmbeddedDashboard: React.FC<{
   sheet: string,

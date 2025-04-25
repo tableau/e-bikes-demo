@@ -95,13 +95,7 @@ export function createJwt(user: User, license: string) {
   const token = `${encodedHeader}.${encodedData}`;
   const signature = base64url(hmacSHA256(token, secretValue));
 
-  //return `${token}.${signature}`;
-  return JSON.stringify({
-    clientId: clientId,
-    secretId: secretId,
-    secretValue: secretValue,
-    username: username,
-  });
+  return `${token}.${signature}`;
 }
 
 

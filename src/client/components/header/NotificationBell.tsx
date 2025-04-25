@@ -5,7 +5,7 @@ import NotificationWindow from './NotificationWindow';
 import { NotificationItem } from './NotificationWindow';
 import { Query } from '../../../server/hbi'
 import { useAuth } from '../auth/useAuth';
-import { server, site, datasourceLuid } from "../../../constants/Constants";
+import { server, site, datasourceLuid } from "../../constants/Constants";
 
 // Our HBI Query to get return percentages
 const query: Query = {

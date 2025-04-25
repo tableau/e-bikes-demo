@@ -1,5 +1,5 @@
 import { useAuth } from "../auth/useAuth";
-import { server, site, subscriber } from "../../../constants/Constants";
+import { server, site, subscriber } from "../../constants/Constants";
 
 interface MetricDefinition {
   metric_id: string,

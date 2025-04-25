@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import { server } from "../constants/Constants";
+import { server } from "../client/constants/Constants";
 
 // Define interfaces for your query structure
 interface QueryColumn {

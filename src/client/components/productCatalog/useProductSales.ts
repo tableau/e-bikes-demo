@@ -2,7 +2,7 @@ import { useAppContext } from '../../App'; // Adjust the import path as necessar
 
 import { Query } from '../../../server/hbi'
 import { useAuth } from '../auth/useAuth';
-import { server, site, datasourceLuid } from "../../../constants/Constants";
+import { server, site, datasourceLuid } from "../../constants/Constants";
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { users } from '../../../db/users';
