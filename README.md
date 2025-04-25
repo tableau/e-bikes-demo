@@ -12,7 +12,7 @@ This sample application makes use of a JavaScript implementation, but you can fi
 If you have an application that doens't have a login, but rather is anonymous, you can make use of the [On-Demand Access](https://www.tableau.com/blog/on-demand-access-embedded-analytics) which is available with Usage Based Licensing (UBL).
 
 ## Architecture
-The application has a Vite React client, using the Tableau React NPM package, and a Vite server to generate the JWT (authentication token) and to act as a proxy for the VDS and Pulse API requests to Tableau Cloud.
+The application has a Vite React client, using the [Tableau Embedding API React NPM package](https://www.npmjs.com/package/@tableau/embedding-api-react), and a Express server to generate the JWT (authentication token) and to act as a proxy for the VDS and Pulse API requests to Tableau Cloud.
 
 Although this application uses React as its platform, Tableau Embedding is not limited to React. Tableau provides a Javascript SDK ([Tableau Embedding API v3](https://help.tableau.com/current/api/embedding_api/en-us/index.html)) which allows you to embed Tableau in any application that accepts HTML and JavaScript.
 
