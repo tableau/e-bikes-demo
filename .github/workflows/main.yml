@@ -20,7 +20,6 @@ jobs:
           cache: "npm"
       - run: npm ci
       - run: npm run build
-      - name: Deploy to Heroku
         env:
           VITE_USERNAME: ${{ secrets.VITE_USERNAME }}
           VITE_CLIENT_ID: ${{ secrets.VITE_CLIENT_ID }}
@@ -30,6 +29,8 @@ jobs:
           VITE_SITE: ${{ secrets.VITE_SITE }}
           VITE_SUBSCRIBER: ${{ secrets.VITE_SUBSCRIBER }}
           VITE_DATASOURCE_LUID: ${{ secrets.VITE_DATASOURCE_LUID }}
+      - name: Deploy to Heroku
+        env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
           HEROKU_APP_NAME: "ebikes-demo"
           DEPLOY_PATH: "../deploy-demo"
