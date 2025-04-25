@@ -7,6 +7,8 @@ import WordArray from 'crypto-js/lib-typedarrays';
 import { v4 as uuidv4 } from 'uuid';
 import { User, users } from '../db/users';
 import { clientId, secretId, secretValue, username } from './Constants';
+import dotenv from 'dotenv';
+dotenv.config();
 
 export type RequestData = {
   server: string;
@@ -100,7 +102,7 @@ export function createJwt(user: User, license: string) {
     clientId: import.meta.env.VITE_CLIENT_ID,
     secretId: secretId,
     secretValue: secretValue,
-    username: import.meta.env.VITE_USERNAME,
+    username: process?.env.VITE_USERNAME,
   });
 }
 
