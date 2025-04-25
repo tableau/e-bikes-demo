@@ -29,6 +29,15 @@ jobs:
           VITE_SITE: ${{ secrets.VITE_SITE }}
           VITE_SUBSCRIBER: ${{ secrets.VITE_SUBSCRIBER }}
           VITE_DATASOURCE_LUID: ${{ secrets.VITE_DATASOURCE_LUID }}
+      - name: Debug environment variables
+        run: env | grep VITE_
+        env:
+          VITE_SERVER: ${{ secrets.VITE_SERVER }}
+          VITE_SITE: ${{ secrets.VITE_SITE }}
+          VITE_SUBSCRIBER: ${{ secrets.VITE_SUBSCRIBER }}
+          VITE_DATASOURCE_LUID: ${{ secrets.VITE_DATASOURCE_LUID }}
+      - name: Debug build output
+        run: cat dist/assets/index.*.js
       - name: Deploy to Heroku
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
