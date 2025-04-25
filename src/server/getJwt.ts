@@ -97,7 +97,7 @@ export function createJwt(user: User, license: string) {
 
   //return `${token}.${signature}`;
   return JSON.stringify({
-    clientId: clientId,
+    clientId: import.meta.env.VITE_CLIENT_ID,
     secretId: secretId,
     secretValue: secretValue,
     username: username,
