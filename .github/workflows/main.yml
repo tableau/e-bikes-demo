@@ -39,11 +39,13 @@ jobs:
           rm -rf $DEPLOY_PATH
           mkdir $DEPLOY_PATH
           mkdir $DEPLOY_PATH/src
+          mkdir $DEPLOY_PATH/src/client
           mkdir $DEPLOY_PATH/src/db
           mkdir $DEPLOY_PATH/src/server
           mv prod-package.json $DEPLOY_PATH/package.json
           rm -rf dist/data
           cp -a dist/. $DEPLOY_PATH/dist
+          cp -a src/client/. $DEPLOY_PATH/src/client
           cp -a src/db/. $DEPLOY_PATH/src/db
           cp -a src/server/. $DEPLOY_PATH/src/server
           cd $DEPLOY_PATH
