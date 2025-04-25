@@ -15,7 +15,7 @@ export type RequestData = {
   apiPath: string;
   query: string;
   jwt: string;
-};
+}; 
 
 export async function getJwt(request: ExpressRequest, response: ExpressResponse) {
   try {
