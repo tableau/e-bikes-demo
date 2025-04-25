@@ -19,7 +19,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
       - run: npm ci
-      - run: npm run build
+      - run: npm run build --verbose
         env:
           VITE_USERNAME: ${{ secrets.VITE_USERNAME }}
           VITE_CLIENT_ID: ${{ secrets.VITE_CLIENT_ID }}
@@ -29,15 +29,6 @@ jobs:
           VITE_SITE: ${{ secrets.VITE_SITE }}
           VITE_SUBSCRIBER: ${{ secrets.VITE_SUBSCRIBER }}
           VITE_DATASOURCE_LUID: ${{ secrets.VITE_DATASOURCE_LUID }}
-      - name: Debug environment variables
-        run: env | grep VITE_
-        env:
-          VITE_SERVER: ${{ secrets.VITE_SERVER }}
-          VITE_SITE: ${{ secrets.VITE_SITE }}
-          VITE_SUBSCRIBER: ${{ secrets.VITE_SUBSCRIBER }}
-          VITE_DATASOURCE_LUID: ${{ secrets.VITE_DATASOURCE_LUID }}
-      - name: Debug build output
-        run: cat dist/assets/index.*.js
       - name: Deploy to Heroku
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
