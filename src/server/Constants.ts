@@ -1,4 +1,4 @@
-export const username = import.meta.env.USERNAME!;
-export const clientId = import.meta.env.CLIENT_ID!;
-export const secretId = import.meta.env.SECRET_ID!;
-export const secretValue = import.meta.env.SECRET_VALUE!;
+export const username = import.meta.env.VITE_USERNAME!;
+export const clientId = import.meta.env.VITE_CLIENT_ID!;
+export const secretId = import.meta.env.VITE_SECRET_ID!;
+export const secretValue = import.meta.env.VITE_SECRET_VALUE!;
