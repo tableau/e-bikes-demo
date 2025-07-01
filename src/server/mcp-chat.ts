@@ -22,7 +22,7 @@ async function createMCPClient() {
     ...process.env,
     SERVER: `https://${process.env.VITE_SERVER}`,
     SITE_NAME: process.env.VITE_SITE!,
-    PAT_NAME: process.env.TABLEAU_PAT_NANE!,
+    PAT_NAME: process.env.TABLEAU_PAT_NAME!,
     PAT_VALUE: process.env.TABLEAU_PAT_VALUE!,
     DATASOURCE_CREDENTIALS: "",
     DEFAULT_LOG_LEVEL: "debug",
@@ -30,15 +30,6 @@ async function createMCPClient() {
     EXCLUDE_TOOLS: "",
     MAX_RESULT_LIMIT: ""
   };
-
-
-  
-  console.log('MCP Environment:', {
-    SERVER: mcpEnv.SERVER,
-    SITE_NAME: mcpEnv.SITE_NAME,
-    PAT_NAME: mcpEnv.PAT_NAME,
-    PAT_VALUE: mcpEnv.PAT_VALUE ? '***' : 'MISSING'
-  });
 
   const transport = new StdioClientTransport({
     command: 'node',
