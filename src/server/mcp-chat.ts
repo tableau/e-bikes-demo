@@ -82,7 +82,15 @@ export async function mcpChat(req: Request, res: Response) {
         content: `You are a helpful assistant that can analyze Tableau data using these available tools:
 ${tools.tools.map(tool => `- ${tool.name}: ${tool.description}`).join('\n')}
 
-When users ask questions about data, dashboards, or analytics, use the appropriate tools to help them. Always explain what you're doing and provide clear, actionable insights.`,
+CRITICAL INSTRUCTIONS:
+1. When users ask questions about their data, IMMEDIATELY use the tools to get the actual data - don't just describe what you will do.
+2. ALWAYS use the datasource "eBikes Inventory and Sales" for data questions unless they specify a different datasource.
+3. For data analysis questions, follow this sequence:
+   - Use read-metadata or list-fields to understand the data structure
+   - Use query-datasource to get the actual data needed to answer the question
+   - Analyze the results and provide insights
+4. Don't say "I will do X" - just do X immediately using the available tools.
+5. Provide clear, actionable insights based on the actual data retrieved.`,
       };
 
       // Prepare conversation history
@@ -92,24 +100,44 @@ When users ask questions about data, dashboards, or analytics, use the appropria
         { role: 'user' as const, content: query }
       ];
 
-      // Call OpenAI with tools
-      const completion = await openai.chat.completions.create({
-        model: 'gpt-4o-mini',
-        messages: conversationMessages,
-        tools: openaiTools,
-        tool_choice: 'auto',
-      });
+      // Iterative tool calling with multiple rounds
+      let currentMessages: OpenAI.ChatCompletionMessageParam[] = [...conversationMessages];
+      const allToolResults: any[] = [];
+      let finalResponse = '';
+      const maxIterations = 5; // Prevent infinite loops
+      let iteration = 0;
+      let lastCompletion: OpenAI.ChatCompletion | null = null;
 
-      const assistantMessage = completion.choices[0].message;
-      let finalResponse = assistantMessage.content || '';
-      const toolResults: any[] = [];
+      while (iteration < maxIterations) {
+        iteration++;
+        console.log(`MCP Chat iteration ${iteration}`);
 
-      // Handle tool calls
-      if (assistantMessage.tool_calls) {
+        // Call OpenAI with tools
+        const completion = await openai.chat.completions.create({
+          model: 'gpt-4o-mini',
+          messages: currentMessages,
+          tools: openaiTools,
+          tool_choice: 'auto',
+        });
+
+        lastCompletion = completion;
+        const assistantMessage = completion.choices[0].message;
+        currentMessages.push(assistantMessage);
+
+        // If no tool calls, we're done
+        if (!assistantMessage.tool_calls || assistantMessage.tool_calls.length === 0) {
+          finalResponse = assistantMessage.content || '';
+          break;
+        }
+
+        // Execute all tool calls in this iteration
+        const iterationToolResults: any[] = [];
         for (const toolCall of assistantMessage.tool_calls) {
           try {
             const toolName = toolCall.function.name;
             const toolArgs = JSON.parse(toolCall.function.arguments);
+            
+            console.log(`Executing tool: ${toolName} with args:`, toolArgs);
             
             // Execute tool via MCP
             const result = await client.callTool({
@@ -117,46 +145,59 @@ When users ask questions about data, dashboards, or analytics, use the appropria
               arguments: toolArgs,
             });
             
-            toolResults.push({
+            const toolResult = {
               tool: toolName,
               arguments: toolArgs,
               result: result.content,
-            });
+            };
+            
+            iterationToolResults.push(toolResult);
+            allToolResults.push(toolResult);
+
+            // Add tool result to conversation
+            currentMessages.push({
+              role: 'tool',
+              content: JSON.stringify(result.content),
+              tool_call_id: toolCall.id,
+            } as OpenAI.ChatCompletionToolMessageParam);
+
           } catch (toolError) {
             console.error('Tool execution error:', toolError);
-            toolResults.push({
+            const errorResult = {
               tool: toolCall.function.name,
               arguments: toolCall.function.arguments,
               error: toolError instanceof Error ? toolError.message : String(toolError),
-            });
+            };
+            
+            iterationToolResults.push(errorResult);
+            allToolResults.push(errorResult);
+
+            // Add error to conversation
+            currentMessages.push({
+              role: 'tool',
+              content: JSON.stringify({ error: errorResult.error }),
+              tool_call_id: toolCall.id,
+            } as OpenAI.ChatCompletionToolMessageParam);
           }
         }
 
-        // If we have tool results, make another call to get the final response
-        if (toolResults.length > 0) {
-          const toolMessages = toolResults.map((result, index) => ({
-            role: 'tool' as const,
-            content: JSON.stringify(result.result || result.error),
-            tool_call_id: assistantMessage.tool_calls![index].id,
-          }));
+        console.log(`Iteration ${iteration} completed ${iterationToolResults.length} tool calls`);
+      }
 
-          const finalCompletion = await openai.chat.completions.create({
-            model: 'gpt-4o-mini',
-            messages: [
-              ...conversationMessages,
-              assistantMessage,
-              ...toolMessages,
-            ],
-          });
-
-          finalResponse = finalCompletion.choices[0].message.content || '';
-        }
+      // If we hit max iterations, make one final call for a response
+      if (iteration >= maxIterations && !finalResponse) {
+        console.log('Max iterations reached, getting final response');
+        const finalCompletion = await openai.chat.completions.create({
+          model: 'gpt-4o-mini',
+          messages: currentMessages,
+        });
+        finalResponse = finalCompletion.choices[0].message.content || '';
       }
 
       res.json({
         response: finalResponse,
-        toolResults,
-        usage: completion.usage,
+        toolResults: allToolResults,
+        usage: lastCompletion?.usage,
       });
 
     } finally {
