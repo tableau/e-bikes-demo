@@ -13,6 +13,20 @@ interface ChatResponse {
   response: string;
   toolResults: any[];
   usage: any;
+  iterations?: number;
+}
+
+interface ProgressUpdate {
+  message: string;
+  step: string;
+  iteration?: number;
+  maxIterations?: number;
+  tool?: string;
+  arguments?: any;
+  toolCount?: number;
+  toolsExecuted?: number;
+  success?: boolean;
+  error?: string;
 }
 
 function MCP() {
@@ -20,6 +34,7 @@ function MCP() {
   const [currentQuery, setCurrentQuery] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [progressUpdates, setProgressUpdates] = useState<ProgressUpdate[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -49,41 +64,97 @@ function MCP() {
     setCurrentQuery('');
     setIsLoading(true);
     setError(null);
+    setProgressUpdates([]);
 
     try {
-      const response = await fetch('/mcp-chat', {
+      // Create a unique request body
+      const requestBody = JSON.stringify({
+        messages: messages.map(msg => ({
+          role: msg.role,
+          content: msg.content,
+        })),
+        query: userMessage.content,
+      });
+
+      // Use fetch to handle SSE response
+      const response = await fetch('/mcp-chat-stream', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'text/event-stream',
         },
-        body: JSON.stringify({
-          messages: messages.map(msg => ({
-            role: msg.role,
-            content: msg.content,
-          })),
-          query: userMessage.content,
-        }),
+        body: requestBody,
       });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const data: ChatResponse = await response.json();
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
 
-      const assistantMessage: ChatMessage = {
-        role: 'assistant',
-        content: data.response,
-        toolResults: data.toolResults,
-        timestamp: new Date(),
-      };
+      if (!reader) {
+        throw new Error('Response body is not readable');
+      }
 
-      setMessages(prev => [...prev, assistantMessage]);
+      let finalResult: ChatResponse | null = null;
+
+      while (true) {
+        const { done, value } = await reader.read();
+        
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || '';
+
+        let currentEvent = '';
+        
+        for (const line of lines) {
+          if (line.startsWith('event: ')) {
+            currentEvent = line.slice(7);
+            continue;
+          }
+          
+          if (line.startsWith('data: ')) {
+            try {
+              const data = JSON.parse(line.slice(6));
+              
+              if (currentEvent === 'progress') {
+                setProgressUpdates(prev => [...prev, data as ProgressUpdate]);
+              } else if (currentEvent === 'result') {
+                finalResult = data as ChatResponse;
+              } else if (currentEvent === 'error') {
+                throw new Error(data.details || data.error);
+              }
+            } catch (parseError) {
+              console.warn('Failed to parse SSE data:', line);
+            }
+          }
+        }
+      }
+
+      if (finalResult) {
+        const assistantMessage: ChatMessage = {
+          role: 'assistant',
+          content: finalResult.response,
+          toolResults: finalResult.toolResults,
+          timestamp: new Date(),
+        };
+
+        setMessages(prev => [...prev, assistantMessage]);
+      } else {
+        throw new Error('No final result received');
+      }
+
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
       console.error('Chat error:', err);
     } finally {
       setIsLoading(false);
+      // Keep progress updates visible for a moment after completion
+      setTimeout(() => setProgressUpdates([]), 2000);
     }
   };
 
@@ -183,7 +254,43 @@ function MCP() {
               
               {isLoading && (
                 <div className={styles.loading}>
-                  <div>🤖 Thinking...</div>
+                  <div className={styles.loadingHeader}>🤖 MCP Analysis in Progress</div>
+                  {progressUpdates.length > 0 && (
+                    <div className={styles.progressContainer}>
+                      {progressUpdates.map((update, index) => (
+                        <div key={index} className={styles.progressItem}>
+                          <span className={styles.progressIcon}>
+                            {update.step === 'init' && '🔌'}
+                            {update.step === 'tools' && '🔍'}
+                            {update.step === 'tools-found' && '🛠️'}
+                            {update.step === 'analysis-start' && '🚀'}
+                            {update.step === 'iteration-start' && '🔄'}
+                            {update.step === 'tools-executing' && '⚙️'}
+                            {update.step === 'tool-executing' && '🔧'}
+                            {update.step === 'tool-completed' && '✅'}
+                            {update.step === 'tool-error' && '❌'}
+                            {update.step === 'iteration-complete' && '✨'}
+                            {update.step === 'complete' && '🎉'}
+                            {update.step === 'max-iterations' && '⏰'}
+                          </span>
+                          <span className={styles.progressMessage}>
+                            {update.message}
+                          </span>
+                          {update.iteration && update.maxIterations && (
+                            <span className={styles.progressBadge}>
+                              {update.iteration}/{update.maxIterations}
+                            </span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {progressUpdates.length === 0 && (
+                    <div className={styles.progressItem}>
+                      <span className={styles.progressIcon}>⏳</span>
+                      <span className={styles.progressMessage}>Initializing...</span>
+                    </div>
+                  )}
                 </div>
               )}
 

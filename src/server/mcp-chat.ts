@@ -104,7 +104,7 @@ CRITICAL INSTRUCTIONS:
       let currentMessages: OpenAI.ChatCompletionMessageParam[] = [...conversationMessages];
       const allToolResults: any[] = [];
       let finalResponse = '';
-      const maxIterations = 5; // Prevent infinite loops
+      const maxIterations = 15; // Prevent infinite loops
       let iteration = 0;
       let lastCompletion: OpenAI.ChatCompletion | null = null;
 
@@ -212,5 +212,248 @@ CRITICAL INSTRUCTIONS:
       error: 'Failed to process chat request', 
       details: error instanceof Error ? error.message : String(error)
     });
+  }
+}
+
+export async function mcpChatStream(req: Request, res: Response) {
+  // Set SSE headers
+  res.writeHead(200, {
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    'Connection': 'keep-alive',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+  });
+
+  const sendEvent = (event: string, data: any) => {
+    res.write(`event: ${event}\n`);
+    res.write(`data: ${JSON.stringify(data)}\n\n`);
+  };
+
+  try {
+    const { messages, query } = req.body as ChatRequest;
+    
+    sendEvent('progress', { message: 'Initializing MCP connection...', step: 'init' });
+    
+    // Create OpenAI client (lazy initialization after env is loaded)
+    const openai = new OpenAI({
+      apiKey: openaiApiKey,
+    });
+    
+    // Create MCP client
+    const { client, transport } = await createMCPClient();
+    
+    try {
+      sendEvent('progress', { message: 'Getting available tools...', step: 'tools' });
+      
+      // Get available tools from MCP server
+      const tools = await client.listTools();
+      
+      sendEvent('progress', { 
+        message: `Found ${tools.tools.length} tools: ${tools.tools.map(t => t.name).join(', ')}`, 
+        step: 'tools-found' 
+      });
+      
+      // Prepare OpenAI tools format
+      const openaiTools = tools.tools.map(tool => ({
+        type: 'function' as const,
+        function: {
+          name: tool.name,
+          description: tool.description,
+          parameters: tool.inputSchema,
+        },
+      }));
+
+      // Create system message with MCP context
+      const systemMessage: ChatMessage = {
+        role: 'system',
+        content: `You are a helpful assistant that can analyze Tableau data using these available tools:
+${tools.tools.map(tool => `- ${tool.name}: ${tool.description}`).join('\n')}
+
+CRITICAL INSTRUCTIONS:
+1. When users ask questions about their data, IMMEDIATELY use the tools to get the actual data - don't just describe what you will do.
+2. ALWAYS use the datasource "eBikes Inventory and Sales" for data questions unless they specify a different datasource.
+3. For data analysis questions, follow this sequence:
+   - Use read-metadata or list-fields to understand the data structure
+   - Use query-datasource to get the actual data needed to answer the question
+   - Analyze the results and provide insights
+4. Don't say "I will do X" - just do X immediately using the available tools.
+5. Provide clear, actionable insights based on the actual data retrieved.`,
+      };
+
+      // Prepare conversation history
+      const conversationMessages = [
+        systemMessage,
+        ...messages,
+        { role: 'user' as const, content: query }
+      ];
+
+      // Iterative tool calling with multiple rounds
+      let currentMessages: OpenAI.ChatCompletionMessageParam[] = [...conversationMessages];
+      const allToolResults: any[] = [];
+      let finalResponse = '';
+      const maxIterations = 5;
+      let iteration = 0;
+      let lastCompletion: OpenAI.ChatCompletion | null = null;
+
+      sendEvent('progress', { 
+        message: 'Starting analysis...', 
+        step: 'analysis-start',
+        maxIterations 
+      });
+
+      while (iteration < maxIterations) {
+        iteration++;
+        
+        sendEvent('progress', { 
+          message: `Iteration ${iteration}/${maxIterations}: Analyzing and planning...`, 
+          step: 'iteration-start',
+          iteration 
+        });
+
+        // Call OpenAI with tools
+        const completion = await openai.chat.completions.create({
+          model: 'gpt-4o-mini',
+          messages: currentMessages,
+          tools: openaiTools,
+          tool_choice: 'auto',
+        });
+
+        lastCompletion = completion;
+        const assistantMessage = completion.choices[0].message;
+        currentMessages.push(assistantMessage);
+
+        // If no tool calls, we're done
+        if (!assistantMessage.tool_calls || assistantMessage.tool_calls.length === 0) {
+          finalResponse = assistantMessage.content || '';
+          sendEvent('progress', { 
+            message: 'Analysis complete - generating final response...', 
+            step: 'complete' 
+          });
+          break;
+        }
+
+        sendEvent('progress', { 
+          message: `Executing ${assistantMessage.tool_calls.length} tool(s)...`, 
+          step: 'tools-executing',
+          toolCount: assistantMessage.tool_calls.length
+        });
+
+        // Execute all tool calls in this iteration
+        const iterationToolResults: any[] = [];
+        for (const toolCall of assistantMessage.tool_calls) {
+          try {
+            const toolName = toolCall.function.name;
+            const toolArgs = JSON.parse(toolCall.function.arguments);
+            
+            sendEvent('progress', { 
+              message: `🔧 ${toolName}(${Object.keys(toolArgs).map(k => `${k}: ${JSON.stringify(toolArgs[k])}`).join(', ')})`, 
+              step: 'tool-executing',
+              tool: toolName,
+              arguments: toolArgs
+            });
+            
+            // Execute tool via MCP
+            const result = await client.callTool({
+              name: toolName,
+              arguments: toolArgs,
+            });
+            
+            const toolResult = {
+              tool: toolName,
+              arguments: toolArgs,
+              result: result.content,
+            };
+            
+            iterationToolResults.push(toolResult);
+            allToolResults.push(toolResult);
+
+            sendEvent('progress', { 
+              message: `✅ ${toolName} completed successfully`, 
+              step: 'tool-completed',
+              tool: toolName,
+              success: true
+            });
+
+            // Add tool result to conversation
+            currentMessages.push({
+              role: 'tool',
+              content: JSON.stringify(result.content),
+              tool_call_id: toolCall.id,
+            } as OpenAI.ChatCompletionToolMessageParam);
+
+          } catch (toolError) {
+            console.error('Tool execution error:', toolError);
+            const errorResult = {
+              tool: toolCall.function.name,
+              arguments: toolCall.function.arguments,
+              error: toolError instanceof Error ? toolError.message : String(toolError),
+            };
+            
+            iterationToolResults.push(errorResult);
+            allToolResults.push(errorResult);
+
+            sendEvent('progress', { 
+              message: `❌ ${toolCall.function.name} failed: ${errorResult.error}`, 
+              step: 'tool-error',
+              tool: toolCall.function.name,
+              error: errorResult.error
+            });
+
+            // Add error to conversation
+            currentMessages.push({
+              role: 'tool',
+              content: JSON.stringify({ error: errorResult.error }),
+              tool_call_id: toolCall.id,
+            } as OpenAI.ChatCompletionToolMessageParam);
+          }
+        }
+
+        sendEvent('progress', { 
+          message: `Iteration ${iteration} completed - ${iterationToolResults.length} tool(s) executed`, 
+          step: 'iteration-complete',
+          iteration,
+          toolsExecuted: iterationToolResults.length
+        });
+      }
+
+      // If we hit max iterations, make one final call for a response
+      if (iteration >= maxIterations && !finalResponse) {
+        sendEvent('progress', { 
+          message: 'Max iterations reached - generating final response...', 
+          step: 'max-iterations' 
+        });
+        
+        const finalCompletion = await openai.chat.completions.create({
+          model: 'gpt-4o-mini',
+          messages: currentMessages,
+        });
+        finalResponse = finalCompletion.choices[0].message.content || '';
+      }
+
+      // Send final result
+      sendEvent('result', {
+        response: finalResponse,
+        toolResults: allToolResults,
+        usage: lastCompletion?.usage,
+        iterations: iteration
+      });
+
+      sendEvent('done', { message: 'Stream complete' });
+
+    } finally {
+      // Cleanup
+      await client.close();
+      await transport.close();
+    }
+
+  } catch (error) {
+    console.error('MCP Chat stream error:', error);
+    sendEvent('error', { 
+      error: 'Failed to process chat request', 
+      details: error instanceof Error ? error.message : String(error)
+    });
+  } finally {
+    res.end();
   }
 } 

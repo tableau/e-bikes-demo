@@ -10,7 +10,7 @@ import ViteExpress from 'vite-express';
 import { get } from './get';
 import { post } from './post';
 import { getJwt } from './getJwt';
-import { mcpChat } from './mcp-chat';
+import { mcpChat, mcpChatStream } from './mcp-chat';
 
 const port = (process.env.PORT && parseInt(process.env.PORT, 10)) || 5001;
 
@@ -38,6 +38,7 @@ app.use((err: any, _req: any, res: any, _next: any) => {
 
 app.get('/getJwt', getJwt);
 app.post('/mcp-chat', mcpChat);
+app.post('/mcp-chat-stream', mcpChatStream);
 app.get('/api/:apiVersion/:apiPath*', get);
 app.post('/api/:apiVersion/:apiPath*', post);
 
