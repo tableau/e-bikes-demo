@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import express from 'express';
@@ -8,9 +11,6 @@ import { get } from './get';
 import { post } from './post';
 import { getJwt } from './getJwt';
 import { mcpChat } from './mcp-chat';
-
-import dotenv from 'dotenv';
-dotenv.config();
 
 const port = (process.env.PORT && parseInt(process.env.PORT, 10)) || 5001;
 
