@@ -9,6 +9,7 @@ import ProductCatalog from './components/productCatalog/ProductCatalog';
 import { NotificationItem } from './components/header/NotificationWindow';
 import { LicenseType, User } from '../db/users';
 import Analyze from './components/analytics/Analyze';
+import MCP from './components/analytics/MCP';
 import ChatWindow from './components/agent/ChatWindow';
 import ChatMinimized from './components/agent/ChatMinimized';
 import DemoScript from './components/auth/DemoScript';
@@ -20,13 +21,13 @@ interface AppContextType {
   updateUserLicense: (license: LicenseType) => void;
 }
 
-export type Pages = 'Home' | 'Product Catalog' | 'Performance' | 'Analyze';
+export type Pages = 'Home' | 'Product Catalog' | 'Performance' | 'Analyze' | 'AI Assistant';
 
 export const userPages = ((user: User): Pages[] => {
   if (user.isRetailer) {
-    return ['Home', 'Product Catalog', 'Analyze'];
+    return ['Home', 'Product Catalog', 'Analyze', 'AI Assistant'];
   } else {
-    return ['Home', 'Performance', 'Analyze'] as Pages[];
+    return ['Home', 'Performance', 'Analyze', 'AI Assistant'] as Pages[];
   }
 });
 
@@ -91,8 +92,8 @@ function App() {
             <Route path="home" element={<Home />} />
             <Route path="product-catalog" element={<ProductCatalog />} />
             <Route path="performance" element={<Performance />} />
-            <Route path="analyze" element={<Analyze />}
-            />
+            <Route path="analyze" element={<Analyze />} />
+            <Route path="ai-assistant" element={<MCP />} />
           </Route>
         </Routes>
       </UserProvider>
