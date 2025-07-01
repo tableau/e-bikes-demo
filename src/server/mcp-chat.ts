@@ -2,8 +2,7 @@ import { Request, Response } from 'express';
 import OpenAI from 'openai';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
-import { openaiApiKey, tableauPATName, tableauPATValue } from './Constants';
-import { site, tableauServer } from '../client/constants/Constants';
+import { openaiApiKey } from './Constants';
 
 interface ChatMessage {
   role: 'user' | 'assistant' | 'system';
@@ -19,21 +18,32 @@ interface ChatRequest {
 async function createMCPClient() {
   const serverPath = '/Users/ehofman/tableau-mcp/build/index.js';
 
+  const mcpEnv = {
+    ...process.env,
+    SERVER: `https://${process.env.VITE_SERVER}`,
+    SITE_NAME: process.env.VITE_SITE!,
+    PAT_NAME: process.env.TABLEAU_PAT_NANE!,
+    PAT_VALUE: process.env.TABLEAU_PAT_VALUE!,
+    DATASOURCE_CREDENTIALS: "",
+    DEFAULT_LOG_LEVEL: "debug",
+    INCLUDE_TOOLS: "",
+    EXCLUDE_TOOLS: "",
+    MAX_RESULT_LIMIT: ""
+  };
+
+
+  
+  console.log('MCP Environment:', {
+    SERVER: mcpEnv.SERVER,
+    SITE_NAME: mcpEnv.SITE_NAME,
+    PAT_NAME: mcpEnv.PAT_NAME,
+    PAT_VALUE: mcpEnv.PAT_VALUE ? '***' : 'MISSING'
+  });
+
   const transport = new StdioClientTransport({
     command: 'node',
     args: [serverPath],
-    env: {
-      ...process.env,
-      SERVER: tableauServer,
-      SITE_NAME: site,
-      PAT_NAME: tableauPATName,
-      PAT_VALUE: tableauPATValue,
-      DATASOURCE_CREDENTIALS: "",
-      DEFAULT_LOG_LEVEL: "debug",
-      INCLUDE_TOOLS: "",
-      EXCLUDE_TOOLS: "",
-      MAX_RESULT_LIMIT: ""
-    }
+    env: mcpEnv
   });
 
   const client = new Client({
