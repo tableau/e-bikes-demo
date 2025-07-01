@@ -5,9 +5,11 @@
     flex-direction: column;
     background: #f8f9fa;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    overflow: hidden;
 }
 
 .header {
+    flex-shrink: 0;
     padding: 20px;
     background: white;
     border-bottom: 1px solid #e9ecef;
@@ -31,7 +33,7 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    min-height: 0;
 }
 
 .messagesContainer {
@@ -78,6 +80,7 @@
 }
 
 .inputContainer {
+    flex-shrink: 0;
     padding: 20px;
     background: white;
     border-top: 1px solid #e9ecef;
