@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import styles from './MCP.module.css';
+import DataVisualization from './DataVisualization';
 
 interface ChatMessage {
   role: 'user' | 'assistant' | 'system';
@@ -195,7 +196,7 @@ function MCP() {
       <div className={styles.header}>
         <h1 className={styles.title}>Tableau AI Assistant</h1>
         <p className={styles.subtitle}>
-          Ask questions about your data, dashboards, and analytics. Powered by MCP.
+          Ask questions about your data, dashboards, and analytics. Powered by Tableau's MCP.
         </p>
         {messages.length > 0 && (
           <button 
@@ -238,6 +239,10 @@ function MCP() {
                     <>
                       <ReactMarkdown>{message.content}</ReactMarkdown>
                       {renderToolResults(message.toolResults || [])}
+                      <DataVisualization 
+                        toolResults={message.toolResults || []} 
+                        responseContent={message.content}
+                      />
                     </>
                   ) : (
                     message.content
