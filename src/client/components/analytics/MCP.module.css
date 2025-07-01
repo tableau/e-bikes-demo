@@ -34,15 +34,38 @@
     display: flex;
     flex-direction: column;
     min-height: 0;
+    overflow: hidden; /* Ensure content doesn't overflow container */
 }
 
 .messagesContainer {
     flex: 1;
     padding: 20px;
-    overflow-y: auto;
+    overflow-y: scroll; /* Force scrollbar to always show */
+    overflow-x: hidden;
     display: flex;
     flex-direction: column;
     gap: 16px;
+    min-height: 0; /* Important for flex scrolling */
+    max-height: 100%; /* Ensure height constraint */
+}
+
+/* Force scrollbar to be always visible on all platforms */
+.messagesContainer::-webkit-scrollbar {
+    width: 8px;
+}
+
+.messagesContainer::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.messagesContainer::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+.messagesContainer::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
 }
 
 .message {
