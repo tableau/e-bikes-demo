@@ -219,6 +219,77 @@ function MCP() {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
+  const parseAndRenderTables = (content: string) => {
+    // More robust markdown table regex
+    const tableRegex = /(\|.+\|\s*\n\|[-:\s|]+\|\s*\n(?:\|.+\|\s*\n?)*)/g;
+    const parts = content.split(tableRegex);
+    
+    return parts.map((part, index) => {
+      // Check if this part is a markdown table
+      if (part.match(/^\|.+\|\s*\n\|[-:\s|]+\|/)) {
+        const lines = part.trim().split('\n').filter(line => line.trim());
+        if (lines.length < 3) return <span key={index}>{part}</span>;
+        
+        // Parse header (first line)
+        const headerCells = lines[0].split('|')
+          .map(cell => cell.trim())
+          .filter(cell => cell.length > 0);
+        
+        // Skip separator line (line 1), parse data rows (from line 2 onwards)
+        const dataRows = lines.slice(2)
+          .filter(line => line.includes('|'))
+          .map(line => 
+            line.split('|')
+              .map(cell => cell.trim())
+              .filter((cell, cellIndex, arr) => {
+                // Filter out empty cells at start/end from pipe formatting
+                return !(cell === '' && (cellIndex === 0 || cellIndex === arr.length - 1));
+              })
+          ).filter(row => row.length > 0);
+        
+        if (headerCells.length === 0 || dataRows.length === 0) {
+          return <span key={index}>{part}</span>;
+        }
+        
+        return (
+          <div key={index} className={styles.tableWrapper}>
+            <table className={styles.markdownTable}>
+              <thead className={styles.tableHeader}>
+                <tr className={styles.tableRow}>
+                  {headerCells.map((header, headerIndex) => (
+                    <th key={headerIndex} className={styles.tableHeaderCell} title={header}>
+                      {header}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className={styles.tableBody}>
+                {dataRows.map((row, rowIndex) => (
+                  <tr key={rowIndex} className={styles.tableRow}>
+                    {row.map((cell, cellIndex) => (
+                      <td key={cellIndex} className={styles.tableCell} title={cell}>
+                        {cell}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
+      } else {
+        // Regular text content - render with ReactMarkdown
+        if (!part.trim()) return null;
+        
+        return (
+          <ReactMarkdown key={index}>
+            {part}
+          </ReactMarkdown>
+        );
+      }
+    });
+  };
+
   const renderToolResults = (toolResults: any[]) => {
     if (!toolResults || toolResults.length === 0) return null;
 
@@ -280,7 +351,9 @@ function MCP() {
                 >
                   {message.role === 'assistant' ? (
                     <>
-                      <ReactMarkdown>{message.content}</ReactMarkdown>
+                      <div className={styles.messageContent}>
+                        {parseAndRenderTables(message.content)}
+                      </div>
                       {renderToolResults(message.toolResults || [])}
                       <DataVisualization
                         toolResults={message.toolResults || []}
