@@ -42,9 +42,32 @@ function MCP() {
   const progressContainerRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll to bottom when new messages arrive
+  const scrollToBottom = () => {
+    // Use requestAnimationFrame to ensure DOM has updated
+    requestAnimationFrame(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    });
+  };
+
+  // Scroll when messages change
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, isLoading]);
+    scrollToBottom();
+  }, [messages]);
+
+  // Scroll when loading state changes
+  useEffect(() => {
+    scrollToBottom();
+  }, [isLoading]);
+
+  // Scroll when progress updates change (to keep latest progress visible)
+  useEffect(() => {
+    scrollToBottom();
+  }, [progressUpdates]);
+
+  // Scroll when show progress state changes
+  useEffect(() => {
+    scrollToBottom();
+  }, [showProgress]);
 
   // Auto-resize textarea
   useEffect(() => {
@@ -78,6 +101,9 @@ function MCP() {
     setShowProgress(true);
     setError(null);
     setProgressUpdates([]);
+    
+    // Immediate scroll after user message
+    setTimeout(scrollToBottom, 50);
 
     try {
       // Create a unique request body
@@ -160,6 +186,8 @@ function MCP() {
         };
 
         setMessages(prev => [...prev, assistantMessage]);
+        // Ensure scroll after adding assistant message
+        setTimeout(scrollToBottom, 100);
       } else {
         throw new Error('No final result received');
       }
