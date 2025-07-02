@@ -179,6 +179,11 @@
     overflow-y: auto;
 }
 
+/* Hide scrollbar for progress container */
+.progressContainer::-webkit-scrollbar {
+    display: none;
+}
+
 .progressItem {
     display: flex;
     align-items: center;

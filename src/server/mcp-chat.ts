@@ -51,6 +51,7 @@ async function createMCPClient() {
 }
 
 export async function mcpChat(req: Request, res: Response) {
+  console.log('🔄 Regular MCP Chat endpoint called (not streaming)');
   try {
     const { messages, query } = req.body as ChatRequest;
     
@@ -230,8 +231,18 @@ export async function mcpChatStream(req: Request, res: Response) {
     res.write(`data: ${JSON.stringify(data)}\n\n`);
   };
 
+  // Send a test event immediately to verify connection
+  sendEvent('progress', { 
+    message: 'Connection established', 
+    step: 'init' 
+  });
+
   try {
     const { messages, query } = req.body as ChatRequest;
+    
+    console.log(`🚀 NEW MCP ANALYSIS STARTED`);
+    console.log(`📋 Query: "${query}"`);
+    console.log(`💬 Conversation history: ${messages.length} messages`);
     
     sendEvent('progress', { message: 'Initializing MCP connection...', step: 'init' });
     
@@ -305,6 +316,9 @@ CRITICAL INSTRUCTIONS:
       while (iteration < maxIterations) {
         iteration++;
         
+        console.log(`🔄 === ITERATION ${iteration}/${maxIterations} ===`);
+        console.log(`📝 Current conversation has ${currentMessages.length} messages`);
+        
         sendEvent('progress', { 
           message: `Iteration ${iteration}/${maxIterations}: Analyzing and planning...`, 
           step: 'iteration-start',
@@ -323,9 +337,15 @@ CRITICAL INSTRUCTIONS:
         const assistantMessage = completion.choices[0].message;
         currentMessages.push(assistantMessage);
 
+        console.log(`🤖 OpenAI responded with ${assistantMessage.tool_calls?.length || 0} tool calls`);
+        if (assistantMessage.content) {
+          console.log(`💬 Assistant message: ${assistantMessage.content.substring(0, 100)}...`);
+        }
+
         // If no tool calls, we're done
         if (!assistantMessage.tool_calls || assistantMessage.tool_calls.length === 0) {
           finalResponse = assistantMessage.content || '';
+          console.log(`✅ No more tool calls needed. Final response: ${finalResponse.substring(0, 100)}...`);
           sendEvent('progress', { 
             message: 'Analysis complete - generating final response...', 
             step: 'complete' 
@@ -341,13 +361,17 @@ CRITICAL INSTRUCTIONS:
 
         // Execute all tool calls in this iteration
         const iterationToolResults: any[] = [];
+        console.log(`🛠️  Executing ${assistantMessage.tool_calls.length} tool call(s):`);
+        
         for (const toolCall of assistantMessage.tool_calls) {
           try {
             const toolName = toolCall.function.name;
             const toolArgs = JSON.parse(toolCall.function.arguments);
             
+            console.log(`🔧 Calling ${toolName} with args:`, JSON.stringify(toolArgs, null, 2));
+            
             sendEvent('progress', { 
-              message: `🔧 ${toolName}(${Object.keys(toolArgs).map(k => `${k}: ${JSON.stringify(toolArgs[k])}`).join(', ')})`, 
+              message: `${toolName}(${Object.keys(toolArgs).map(k => `${k}: ${JSON.stringify(toolArgs[k])}`).join(', ')})`, 
               step: 'tool-executing',
               tool: toolName,
               arguments: toolArgs
@@ -368,8 +392,10 @@ CRITICAL INSTRUCTIONS:
             iterationToolResults.push(toolResult);
             allToolResults.push(toolResult);
 
+            console.log(`✅ ${toolName} completed successfully. Result:`, JSON.stringify(result.content, null, 2).substring(0, 300) + '...');
+
             sendEvent('progress', { 
-              message: `✅ ${toolName} completed successfully`, 
+              message: `${toolName} completed successfully`, 
               step: 'tool-completed',
               tool: toolName,
               success: true
@@ -383,7 +409,7 @@ CRITICAL INSTRUCTIONS:
             } as OpenAI.ChatCompletionToolMessageParam);
 
           } catch (toolError) {
-            console.error('Tool execution error:', toolError);
+            console.error(`❌ ${toolCall.function.name} FAILED:`, toolError);
             const errorResult = {
               tool: toolCall.function.name,
               arguments: toolCall.function.arguments,
@@ -409,6 +435,11 @@ CRITICAL INSTRUCTIONS:
           }
         }
 
+        console.log(`🏁 Iteration ${iteration} completed:`);
+        console.log(`   - ${iterationToolResults.length} tool(s) executed`);
+        console.log(`   - ${iterationToolResults.filter(r => !r.error).length} successful`);
+        console.log(`   - ${iterationToolResults.filter(r => r.error).length} failed`);
+        
         sendEvent('progress', { 
           message: `Iteration ${iteration} completed - ${iterationToolResults.length} tool(s) executed`, 
           step: 'iteration-complete',

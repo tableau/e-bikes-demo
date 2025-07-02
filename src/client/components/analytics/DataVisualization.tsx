@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   LineChart,
   Line,
@@ -247,20 +246,6 @@ function DataVisualization({ toolResults, responseContent }: DataVisualizationPr
       !numericKeys.includes(key) && !dateKeys.includes(key)
     );
 
-    // Debug logging
-    console.log('Chart detection debug:', {
-      keys,
-      numericKeys,
-      dateKeys,
-      categoricalKeys,
-      salesColumns: numericKeys.filter(key => 
-        /sales|revenue|amount|total|quantity|count|profit/i.test(key)
-      ),
-      timeColumns: dateKeys.filter(key => 
-        /date|time|year|month|quarter|period/i.test(key)
-      ),
-    });
-
     // Smart chart type selection with date field priority
     let chartType: 'line' | 'bar' | 'pie' | 'groupedBar' = 'bar';
     let xKey = keys[0];
@@ -381,10 +366,11 @@ function DataVisualization({ toolResults, responseContent }: DataVisualizationPr
   };
 
   const renderChart = (chartConfig: ChartData) => {
-    const { type, data, title, xKey, yKey, nameKey, valueKey, seriesKey, groupedData } = chartConfig;
+    const { type, data, xKey, yKey, nameKey, valueKey, seriesKey, groupedData } = chartConfig;
 
     switch (type) {
       case 'line':
+        if (!yKey) return null;
         return (
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
@@ -417,6 +403,7 @@ function DataVisualization({ toolResults, responseContent }: DataVisualizationPr
         );
 
       case 'bar':
+        if (!yKey) return null;
         return (
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
@@ -483,6 +470,7 @@ function DataVisualization({ toolResults, responseContent }: DataVisualizationPr
         );
 
       case 'pie':
+        if (!valueKey || !nameKey) return null;
         return (
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
@@ -495,7 +483,7 @@ function DataVisualization({ toolResults, responseContent }: DataVisualizationPr
                 outerRadius={80}
                 label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
               >
-                {data.map((entry, index) => (
+                {data.map((_, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
@@ -513,7 +501,7 @@ function DataVisualization({ toolResults, responseContent }: DataVisualizationPr
   const charts: ChartData[] = [];
   
   // Check tool results for structured data
-  toolResults.forEach((result, index) => {
+  toolResults.forEach((result) => {
     if (result.result) {
       const tableData = parseTableData(result.result);
       if (tableData && tableData.length > 1) {

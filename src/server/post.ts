@@ -60,9 +60,6 @@ export async function post(request: ExpressRequest, response: ExpressResponse) {
 
     if (body) {
       init.body = body;
-      if (process.env.NODE_ENV !== 'production') {
-        console.log(body);
-      }
     }
 
     const fetchResponse = await fetch(`https://${tableauServer}/api/${apiVersion}/${apiPath}`, init);

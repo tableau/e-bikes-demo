@@ -18,14 +18,6 @@ const root = path.join(__dirname, '../dist');
 
 const app = express();
 
-// Add request logging middleware
-// app.use((req, res, next) => {
-//   console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
-//   console.log('Headers:', req.headers);
-//   if (req.body) console.log('Body:', req.body);
-//   next();
-// });
-
 app.use('/', express.static(root))
    .use(cors())
    .use(bodyParser.json());

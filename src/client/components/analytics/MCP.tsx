@@ -34,10 +34,12 @@ function MCP() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [currentQuery, setCurrentQuery] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [showProgress, setShowProgress] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [progressUpdates, setProgressUpdates] = useState<ProgressUpdate[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const progressContainerRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -52,6 +54,15 @@ function MCP() {
     }
   }, [currentQuery]);
 
+
+
+  // Auto-scroll progress container to bottom when progress updates change
+  useEffect(() => {
+    if (progressContainerRef.current) {
+      progressContainerRef.current.scrollTop = progressContainerRef.current.scrollHeight;
+    }
+  }, [progressUpdates]);
+
   const sendMessage = async () => {
     if (!currentQuery.trim() || isLoading) return;
 
@@ -64,6 +75,7 @@ function MCP() {
     setMessages(prev => [...prev, userMessage]);
     setCurrentQuery('');
     setIsLoading(true);
+    setShowProgress(true);
     setError(null);
     setProgressUpdates([]);
 
@@ -100,28 +112,31 @@ function MCP() {
       }
 
       let finalResult: ChatResponse | null = null;
+      let currentEvent = ''; // Move outside the loop to persist across buffer reads
 
       while (true) {
         const { done, value } = await reader.read();
-        
+
         if (done) break;
 
         buffer += decoder.decode(value, { stream: true });
+
         const lines = buffer.split('\n');
         buffer = lines.pop() || '';
 
-        let currentEvent = '';
-        
         for (const line of lines) {
-          if (line.startsWith('event: ')) {
-            currentEvent = line.slice(7);
+          const trimmedLine = line.trim();
+
+          if (trimmedLine.startsWith('event: ')) {
+            currentEvent = trimmedLine.slice(7).trim();
             continue;
           }
-          
-          if (line.startsWith('data: ')) {
+
+          if (trimmedLine.startsWith('data: ')) {
             try {
-              const data = JSON.parse(line.slice(6));
-              
+              const dataStr = trimmedLine.slice(6).trim();
+              const data = JSON.parse(dataStr);
+
               if (currentEvent === 'progress') {
                 setProgressUpdates(prev => [...prev, data as ProgressUpdate]);
               } else if (currentEvent === 'result') {
@@ -130,7 +145,7 @@ function MCP() {
                 throw new Error(data.details || data.error);
               }
             } catch (parseError) {
-              console.warn('Failed to parse SSE data:', line);
+              console.warn('Failed to parse SSE data:', trimmedLine, 'Error:', parseError);
             }
           }
         }
@@ -154,8 +169,9 @@ function MCP() {
       console.error('Chat error:', err);
     } finally {
       setIsLoading(false);
-      // Keep progress updates visible for a moment after completion
-      setTimeout(() => setProgressUpdates([]), 2000);
+
+      setShowProgress(false);
+      setProgressUpdates([]);
     }
   };
 
@@ -199,14 +215,14 @@ function MCP() {
           Ask questions about your data, dashboards, and analytics. Powered by Tableau's MCP.
         </p>
         {messages.length > 0 && (
-          <button 
+          <button
             onClick={clearChat}
-            style={{ 
-              marginTop: '10px', 
-              padding: '6px 12px', 
-              background: '#dc3545', 
-              color: 'white', 
-              border: 'none', 
+            style={{
+              marginTop: '10px',
+              padding: '6px 12px',
+              background: '#dc3545',
+              color: 'white',
+              border: 'none',
               borderRadius: '4px',
               cursor: 'pointer'
             }}
@@ -231,37 +247,38 @@ function MCP() {
               {messages.map((message, index) => (
                 <div
                   key={index}
-                  className={`${styles.message} ${
-                    message.role === 'user' ? styles.userMessage : styles.assistantMessage
-                  }`}
+                  className={`${styles.message} ${message.role === 'user' ? styles.userMessage : styles.assistantMessage
+                    }`}
                 >
                   {message.role === 'assistant' ? (
                     <>
                       <ReactMarkdown>{message.content}</ReactMarkdown>
                       {renderToolResults(message.toolResults || [])}
-                      <DataVisualization 
-                        toolResults={message.toolResults || []} 
+                      <DataVisualization
+                        toolResults={message.toolResults || []}
                         responseContent={message.content}
                       />
                     </>
                   ) : (
                     message.content
                   )}
-                  <div style={{ 
-                    fontSize: '11px', 
-                    opacity: 0.6, 
-                    marginTop: '4px' 
+                  <div style={{
+                    fontSize: '11px',
+                    opacity: 0.6,
+                    marginTop: '4px'
                   }}>
                     {formatTimestamp(message.timestamp)}
                   </div>
                 </div>
               ))}
-              
-              {isLoading && (
+
+              {(isLoading || showProgress) && (
                 <div className={styles.loading}>
-                  <div className={styles.loadingHeader}>🤖 MCP Analysis in Progress</div>
+                  <div className={styles.loadingHeader}>
+                    {isLoading ? '🤖 MCP Analysis in Progress' : '✅ Analysis Complete'}
+                  </div>
                   {progressUpdates.length > 0 && (
-                    <div className={styles.progressContainer}>
+                    <div className={styles.progressContainer} ref={progressContainerRef}>
                       {progressUpdates.map((update, index) => (
                         <div key={index} className={styles.progressItem}>
                           <span className={styles.progressIcon}>
@@ -300,9 +317,9 @@ function MCP() {
               )}
 
               {error && (
-                <div className={`${styles.message} ${styles.assistantMessage}`} style={{ 
-                  borderColor: '#dc3545', 
-                  backgroundColor: '#f8d7da' 
+                <div className={`${styles.message} ${styles.assistantMessage}`} style={{
+                  borderColor: '#dc3545',
+                  backgroundColor: '#f8d7da'
                 }}>
                   ❌ Error: {error}
                 </div>
