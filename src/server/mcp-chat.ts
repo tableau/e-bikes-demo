@@ -4,6 +4,8 @@ import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js'
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { openaiApiKey } from './Constants';
 
+const MAX_MCP_ITERATIONS = 10;
+
 interface ChatMessage {
   role: 'user' | 'assistant' | 'system';
   content: string;
@@ -105,11 +107,10 @@ CRITICAL INSTRUCTIONS:
       let currentMessages: OpenAI.ChatCompletionMessageParam[] = [...conversationMessages];
       const allToolResults: any[] = [];
       let finalResponse = '';
-      const maxIterations = 15; // Prevent infinite loops
       let iteration = 0;
       let lastCompletion: OpenAI.ChatCompletion | null = null;
 
-      while (iteration < maxIterations) {
+      while (iteration < MAX_MCP_ITERATIONS) {
         iteration++;
         console.log(`MCP Chat iteration ${iteration}`);
 
@@ -186,7 +187,7 @@ CRITICAL INSTRUCTIONS:
       }
 
       // If we hit max iterations, make one final call for a response
-      if (iteration >= maxIterations && !finalResponse) {
+      if (iteration >= MAX_MCP_ITERATIONS && !finalResponse) {
         console.log('Max iterations reached, getting final response');
         const finalCompletion = await openai.chat.completions.create({
           model: 'gpt-4o-mini',
@@ -303,24 +304,23 @@ CRITICAL INSTRUCTIONS:
       let currentMessages: OpenAI.ChatCompletionMessageParam[] = [...conversationMessages];
       const allToolResults: any[] = [];
       let finalResponse = '';
-      const maxIterations = 5;
       let iteration = 0;
       let lastCompletion: OpenAI.ChatCompletion | null = null;
 
       sendEvent('progress', { 
         message: 'Starting analysis...', 
         step: 'analysis-start',
-        maxIterations 
+        maxIterations: MAX_MCP_ITERATIONS 
       });
 
-      while (iteration < maxIterations) {
+      while (iteration < MAX_MCP_ITERATIONS) {
         iteration++;
         
-        console.log(`🔄 === ITERATION ${iteration}/${maxIterations} ===`);
+        console.log(`🔄 === ITERATION ${iteration}/${MAX_MCP_ITERATIONS} ===`);
         console.log(`📝 Current conversation has ${currentMessages.length} messages`);
         
         sendEvent('progress', { 
-          message: `Iteration ${iteration}/${maxIterations}: Analyzing and planning...`, 
+          message: `Iteration ${iteration}/${MAX_MCP_ITERATIONS}: Analyzing and planning...`, 
           step: 'iteration-start',
           iteration 
         });
@@ -449,7 +449,7 @@ CRITICAL INSTRUCTIONS:
       }
 
       // If we hit max iterations, make one final call for a response
-      if (iteration >= maxIterations && !finalResponse) {
+      if (iteration >= MAX_MCP_ITERATIONS && !finalResponse) {
         sendEvent('progress', { 
           message: 'Max iterations reached - generating final response...', 
           step: 'max-iterations' 
