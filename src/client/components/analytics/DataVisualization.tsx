@@ -132,6 +132,17 @@ function DataVisualization({ toolResults, responseContent }: DataVisualizationPr
     if (!content) return null;
 
     try {
+      // Handle MCP tool result structure: [{type: "text", text: "JSON_STRING"}]
+      if (Array.isArray(content) && content.length > 0 && content[0].type === 'text' && content[0].text) {
+        try {
+          const parsed = JSON.parse(content[0].text);
+          return parseTableData(parsed);
+        } catch (parseError) {
+          console.warn('Error parsing MCP tool result text:', parseError);
+          return null;
+        }
+      }
+
       // Handle different possible data structures
       if (Array.isArray(content)) {
         return content.length > 0 ? content : null;
