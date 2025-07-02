@@ -328,6 +328,29 @@ function DataVisualization({ toolResults, responseContent }: DataVisualizationPr
           return cleanedRow;
         }).filter(row => row[xKey] !== null && row[xKey] !== undefined);
 
+        // Sort by date field for proper chronological order
+        cleanedData.sort((a, b) => {
+          const aValue = a[xKey];
+          const bValue = b[xKey];
+          
+          if (typeof aValue === 'number' && typeof bValue === 'number') {
+            return aValue - bValue;
+          }
+          
+          if (typeof aValue === 'string' && typeof bValue === 'string') {
+            const aDate = new Date(aValue);
+            const bDate = new Date(bValue);
+            
+            if (isNaN(aDate.getTime()) || isNaN(bDate.getTime())) {
+              return aValue.localeCompare(bValue);
+            }
+            
+            return aDate.getTime() - bDate.getTime();
+          }
+          
+          return String(aValue).localeCompare(String(bValue));
+        });
+
         // Transform data for grouped bar chart
         const groupedMap = new Map();
         
@@ -344,6 +367,29 @@ function DataVisualization({ toolResults, responseContent }: DataVisualizationPr
         });
 
         const groupedData = Array.from(groupedMap.values());
+        
+        // Sort grouped data by x-axis field to maintain chronological order
+        groupedData.sort((a, b) => {
+          const aValue = a[xKey];
+          const bValue = b[xKey];
+          
+          if (typeof aValue === 'number' && typeof bValue === 'number') {
+            return aValue - bValue;
+          }
+          
+          if (typeof aValue === 'string' && typeof bValue === 'string') {
+            const aDate = new Date(aValue);
+            const bDate = new Date(bValue);
+            
+            if (isNaN(aDate.getTime()) || isNaN(bDate.getTime())) {
+              return aValue.localeCompare(bValue);
+            }
+            
+            return aDate.getTime() - bDate.getTime();
+          }
+          
+          return String(aValue).localeCompare(String(bValue));
+        });
         
         return {
           type: 'groupedBar',
@@ -402,6 +448,36 @@ function DataVisualization({ toolResults, responseContent }: DataVisualizationPr
       
       return cleanedRow;
     }).filter(row => row[xKey] !== null && row[xKey] !== undefined);
+
+    // Sort data by x-axis when it's a date/time field for proper chronological order
+    if (dateKeys.includes(xKey)) {
+      processedData.sort((a, b) => {
+        const aValue = a[xKey];
+        const bValue = b[xKey];
+        
+        // Handle different date formats
+        if (typeof aValue === 'number' && typeof bValue === 'number') {
+          // Year numbers
+          return aValue - bValue;
+        }
+        
+        if (typeof aValue === 'string' && typeof bValue === 'string') {
+          // Date strings - convert to Date objects for comparison
+          const aDate = new Date(aValue);
+          const bDate = new Date(bValue);
+          
+          // If Date parsing fails, fall back to string comparison
+          if (isNaN(aDate.getTime()) || isNaN(bDate.getTime())) {
+            return aValue.localeCompare(bValue);
+          }
+          
+          return aDate.getTime() - bDate.getTime();
+        }
+        
+        // Mixed types or other cases - convert to string and compare
+        return String(aValue).localeCompare(String(bValue));
+      });
+    }
 
     return {
       type: chartType,
