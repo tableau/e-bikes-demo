@@ -29,11 +29,45 @@ interface ChartData {
   valueKey?: string;
   seriesKey?: string; // For grouping different colored bars
   groupedData?: any[]; // For grouped bar chart data
+  isCurrency?: boolean; // Whether the main metric represents currency
 }
 
 const COLORS = ['#007bff', '#28a745', '#ffc107', '#dc3545', '#6c757d', '#17a2b8', '#fd7e14', '#6f42c1'];
 
 function DataVisualization({ toolResults, responseContent }: DataVisualizationProps) {
+  
+  // Determine if a field represents currency/monetary values
+  const isCurrencyField = (fieldName: string): boolean => {
+    const currencyKeywords = [
+      'sales', 'revenue', 'profit', 'income', 'cost', 'price', 'amount', 
+      'total sales', 'gross', 'net', 'value', 'margin', 'budget', 'spending'
+    ];
+    const lowerField = fieldName.toLowerCase();
+    return currencyKeywords.some(keyword => lowerField.includes(keyword));
+  };
+
+  // Smart number formatter based on field type
+  const formatNumber = (value: number, fieldName: string, useShortForm: boolean = true): string => {
+    if (isCurrencyField(fieldName)) {
+      // Currency formatting
+      if (useShortForm) {
+        if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`;
+        if (value >= 1000) return `$${(value / 1000).toFixed(0)}K`;
+        return `$${value.toLocaleString()}`;
+      } else {
+        return `$${value.toLocaleString()}`;
+      }
+    } else {
+      // Non-currency formatting (counts, returns, etc.)
+      if (useShortForm) {
+        if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`;
+        if (value >= 1000) return `${(value / 1000).toFixed(0)}K`;
+        return value.toLocaleString();
+      } else {
+        return value.toLocaleString();
+      }
+    }
+  };
   const parseMarkdownTable = (text: string): any[] | null => {
     try {
       // Find markdown table pattern
@@ -308,6 +342,7 @@ function DataVisualization({ toolResults, responseContent }: DataVisualizationPr
           xKey,
           yKey,
           seriesKey,
+          isCurrency: isCurrencyField(yKey),
         };
       } else {
         // Simple date + numeric = line chart (for trends over time)
@@ -317,16 +352,17 @@ function DataVisualization({ toolResults, responseContent }: DataVisualizationPr
     // PRIORITY 2: Category breakdown for small datasets (pie chart)
     else if (categoryColumns.length > 0 && salesColumns.length > 0 && data.length <= 8) {
       chartType = 'pie';
-      return {
-        type: 'pie',
-        data: data.map(row => ({
-          name: String(row[categoryColumns[0]]),
-          value: parseFloat(String(row[salesColumns[0]]).replace(/[$,\s%]/g, '')) || 0,
-        })),
-        title: `${categoryColumns[0]} by ${salesColumns[0]}`,
-        nameKey: 'name',
-        valueKey: 'value',
-      };
+              return {
+          type: 'pie',
+          data: data.map(row => ({
+            name: String(row[categoryColumns[0]]),
+            value: parseFloat(String(row[salesColumns[0]]).replace(/[$,\s%]/g, '')) || 0,
+          })),
+          title: `${categoryColumns[0]} by ${salesColumns[0]}`,
+          nameKey: 'name',
+          valueKey: 'value',
+          isCurrency: isCurrencyField(salesColumns[0]),
+        };
     }
     // PRIORITY 3: Category comparison (bar chart)
     else if (categoryColumns.length > 0 && numericKeys.length > 0) {
@@ -362,6 +398,7 @@ function DataVisualization({ toolResults, responseContent }: DataVisualizationPr
       title: `${xKey} vs ${yKey}`,
       xKey,
       yKey,
+      isCurrency: isCurrencyField(yKey),
     };
   };
 
@@ -377,15 +414,11 @@ function DataVisualization({ toolResults, responseContent }: DataVisualizationPr
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey={xKey} />
               <YAxis 
-                tickFormatter={(value) => {
-                  if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`;
-                  if (value >= 1000) return `$${(value / 1000).toFixed(0)}K`;
-                  return `$${value}`;
-                }}
+                tickFormatter={(value) => formatNumber(value, yKey, true)}
               />
               <Tooltip 
                 formatter={(value) => [
-                  typeof value === 'number' ? `$${value.toLocaleString()}` : value,
+                  typeof value === 'number' ? formatNumber(value, yKey, false) : value,
                   yKey
                 ]}
                 labelFormatter={(label) => `${xKey}: ${label}`}
@@ -410,15 +443,11 @@ function DataVisualization({ toolResults, responseContent }: DataVisualizationPr
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey={xKey} />
               <YAxis 
-                tickFormatter={(value) => {
-                  if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`;
-                  if (value >= 1000) return `$${(value / 1000).toFixed(0)}K`;
-                  return `$${value}`;
-                }}
+                tickFormatter={(value) => formatNumber(value, yKey, true)}
               />
               <Tooltip 
                 formatter={(value) => [
-                  typeof value === 'number' ? `$${value.toLocaleString()}` : value,
+                  typeof value === 'number' ? formatNumber(value, yKey, false) : value,
                   yKey
                 ]}
                 labelFormatter={(label) => `${xKey}: ${label}`}
@@ -443,15 +472,11 @@ function DataVisualization({ toolResults, responseContent }: DataVisualizationPr
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey={xKey} />
               <YAxis 
-                tickFormatter={(value) => {
-                  if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`;
-                  if (value >= 1000) return `$${(value / 1000).toFixed(0)}K`;
-                  return `$${value}`;
-                }}
+                tickFormatter={(value) => formatNumber(value, yKey || '', true)}
               />
               <Tooltip 
                 formatter={(value, name) => [
-                  typeof value === 'number' ? `$${value.toLocaleString()}` : value,
+                  typeof value === 'number' ? formatNumber(value, String(name), false) : value,
                   name
                 ]}
                 labelFormatter={(label) => `${xKey}: ${label}`}
