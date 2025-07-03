@@ -26,6 +26,8 @@ This walkthrough showcases both Analyst capabilities (Mario) and Business User f
 | The pink theme is too much for a pre-coffee morning—she switches to dark mode. | Click **Dark Mode** | Shows Pulse styling. |
 | Digging deeper, she finds a specific battery type is driving returns. | Scroll to the Pulse metric → Click **Breakdown** → Filter by **Battery Type** | Notice how filtering by dimensions reveals clear root causes—in this case, a problematic battery type. |
 | She wants to confirm whether this battery type also impacts sales. | Click on question Q1 (auto-seeded) | This uses **Pulse Enhanced Q&A** to correlate across multiple metrics. If no answer returns, move on—Q2 offers another pre-scripted question, or type your own. |
+| The Pulse analysis was great, but she wants to extend her search using conversational AI. | Click [AI Assistent](/McKenzie/ai-assistant) in the header | This uses **Tableau MCP Server** to allow the user to ask any question. The MCP Server sends a system prompt with the user question to the LLM, that has now access to the tools provided by the MCP Server. More specically, the LLM can now list the data sources in the site, find the fields in the data sources that can answer the user question, and query the actual data source. |
+| She wants to know the number of returns by battery type. | Type in "Show the number of returns by battery type by year" | You will see in the progress window that the LLM is using multiple iterations, and even correcting itself when errors occur, and using the different tools provided by MCP server to come up with the answer. The visualization in the bottom is using an open source charting library (rechart) to visualize the response of the LLM. |
 | Concerned, McKenzie calls Mario to report the issue. | Click the profile icon (top right) ([jump to](/)) | Return to the login screen. |
 | Mario wants to run his own analysis before taking action. | Click **Analyze** in the header ([jump to](/Mario/Analyze)) | A blank workbook opens, connected to the same published data source. Full Tableau authoring experience. |
 | He uses **Tableau Agent** to quickly generate insights. | Click the **Tableau Agent** icon → Click **Got It** → Type: “Show me the returns by battery type” | Tableau Agent creates a viz summarizing return volume by battery type. |
@@ -53,6 +55,10 @@ This walkthrough showcases both Analyst capabilities (Mario) and Business User f
 
 ### 🔹 Pulse Enhanced Q&A (Tableau Pluse license required)  
 - Ask natural language questions with correlation between KPIs (e.g., Sales vs. Returns).
+
+### 🔹 Tableau MCP Server  
+- Provide tools to LLMs to list data sources and query those
+- Enables conversational AI to ask data questions in natural language
 
 ### 🔹 Embedded Web Authoring for Analysts ([jump to](/Mario/Analyze))
 - Live connection to governed data.
