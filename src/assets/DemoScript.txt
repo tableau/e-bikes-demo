@@ -56,7 +56,7 @@ This walkthrough showcases both Analyst capabilities (Mario) and Business User f
 ### 🔹 Pulse Enhanced Q&A (Tableau Pluse license required)  
 - Ask natural language questions with correlation between KPIs (e.g., Sales vs. Returns).
 
-### 🔹 Tableau MCP Server  
+### 🔹 Tableau MCP Server ([jump to](/McKenzie/ai-assistant))
 - Provide tools to LLMs to list data sources and query those
 - Enables conversational AI to ask data questions in natural language
 
