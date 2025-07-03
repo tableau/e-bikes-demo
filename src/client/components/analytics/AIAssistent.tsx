@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
-import styles from './MCP.module.css';
-import DataVisualization from './DataVisualization';
+import styles from './AIAssistent.module.css';
+import AIAssistentDataVisuzliation from './AIAssistentDataVisuzliation';
 
 interface ChatMessage {
   role: 'user' | 'assistant' | 'system';
@@ -30,7 +30,7 @@ interface ProgressUpdate {
   error?: string;
 }
 
-function MCP() {
+function AIAssistent() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [currentQuery, setCurrentQuery] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -76,8 +76,6 @@ function MCP() {
       textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 120)}px`;
     }
   }, [currentQuery]);
-
-
 
   // Auto-scroll progress container to bottom when progress updates change
   useEffect(() => {
@@ -197,7 +195,6 @@ function MCP() {
       console.error('Chat error:', err);
     } finally {
       setIsLoading(false);
-
       setShowProgress(false);
       setProgressUpdates([]);
     }
@@ -355,7 +352,7 @@ function MCP() {
                         {parseAndRenderTables(message.content)}
                       </div>
                       {renderToolResults(message.toolResults || [])}
-                      <DataVisualization
+                      <AIAssistentDataVisuzliation
                         toolResults={message.toolResults || []}
                         responseContent={message.content}
                       />
@@ -454,4 +451,4 @@ function MCP() {
   );
 }
 
-export default MCP; 
+export default AIAssistent; 

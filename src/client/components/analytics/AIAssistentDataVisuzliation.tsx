@@ -14,7 +14,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 
-interface DataVisualizationProps {
+interface AIAssistentDataVisuzliationProps {
   toolResults: any[];
   responseContent?: string;
 }
@@ -34,7 +34,7 @@ interface ChartData {
 
 const COLORS = ['#007bff', '#28a745', '#ffc107', '#dc3545', '#6c757d', '#17a2b8', '#fd7e14', '#6f42c1'];
 
-function DataVisualization({ toolResults, responseContent }: DataVisualizationProps) {
+function AIAssistentDataVisuzliation({ toolResults, responseContent }: AIAssistentDataVisuzliationProps) {
   
   // Determine if a field represents currency/monetary values
   const isCurrencyField = (fieldName: string): boolean => {
@@ -68,6 +68,7 @@ function DataVisualization({ toolResults, responseContent }: DataVisualizationPr
       }
     }
   };
+
   const parseMarkdownTable = (text: string): any[] | null => {
     try {
       // Find markdown table pattern
@@ -198,24 +199,29 @@ function DataVisualization({ toolResults, responseContent }: DataVisualizationPr
           const lines = content.split('\n').filter(line => line.trim());
           if (lines.length > 1) {
             const headers = lines[0].split(',').map(h => h.trim());
-            const rows = lines.slice(1).map(line => {
+            const data = lines.slice(1).map(line => {
               const values = line.split(',').map(v => v.trim());
               const obj: any = {};
               headers.forEach((header, index) => {
-                obj[header] = values[index] || '';
+                if (index < values.length) {
+                  const value = values[index];
+                  // Try to parse as number
+                  const numValue = parseFloat(value);
+                  obj[header] = isNaN(numValue) ? value : numValue;
+                }
               });
               return obj;
             });
-            return rows.length > 0 ? rows : null;
+            return data.length > 0 ? data : null;
           }
-          return null;
         }
       }
+
+      return null;
     } catch (error) {
       console.warn('Error parsing table data:', error);
+      return null;
     }
-
-    return null;
   };
 
   const detectChartType = (data: any[]): ChartData | null => {
@@ -409,17 +415,17 @@ function DataVisualization({ toolResults, responseContent }: DataVisualizationPr
     // PRIORITY 2: Category breakdown for small datasets (pie chart)
     else if (categoryColumns.length > 0 && salesColumns.length > 0 && data.length <= 8) {
       chartType = 'pie';
-              return {
-          type: 'pie',
-          data: data.map(row => ({
-            name: String(row[categoryColumns[0]]),
-            value: parseFloat(String(row[salesColumns[0]]).replace(/[$,\s%]/g, '')) || 0,
-          })),
-          title: `${categoryColumns[0]} by ${salesColumns[0]}`,
-          nameKey: 'name',
-          valueKey: 'value',
-          isCurrency: isCurrencyField(salesColumns[0]),
-        };
+      return {
+        type: 'pie',
+        data: data.map(row => ({
+          name: String(row[categoryColumns[0]]),
+          value: parseFloat(String(row[salesColumns[0]]).replace(/[$,\s%]/g, '')) || 0,
+        })),
+        title: `${categoryColumns[0]} by ${salesColumns[0]}`,
+        nameKey: 'name',
+        valueKey: 'value',
+        isCurrency: isCurrencyField(salesColumns[0]),
+      };
     }
     // PRIORITY 3: Category comparison (bar chart)
     else if (categoryColumns.length > 0 && numericKeys.length > 0) {
@@ -679,4 +685,4 @@ function DataVisualization({ toolResults, responseContent }: DataVisualizationPr
   );
 }
 
-export default DataVisualization; 
+export default AIAssistentDataVisuzliation; 
