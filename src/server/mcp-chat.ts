@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import OpenAI from 'openai';
-import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
+import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { openaiApiKey } from './Constants';
 
@@ -18,26 +18,9 @@ interface ChatRequest {
 
 // Create MCP client connection  
 async function createMCPClient() {
-  const serverPath = '/Users/ehofman/tableau-mcp/build/index.js';
+  const serverUrl = 'https://tableau-mcp-proto-d14b2e55a4f4.herokuapp.com/tableau-mcp';
 
-  const mcpEnv = {
-    ...process.env,
-    SERVER: `https://${process.env.VITE_SERVER}`,
-    SITE_NAME: process.env.VITE_SITE!,
-    PAT_NAME: process.env.TABLEAU_PAT_NAME!,
-    PAT_VALUE: process.env.TABLEAU_PAT_VALUE!,
-    DATASOURCE_CREDENTIALS: "",
-    DEFAULT_LOG_LEVEL: "debug",
-    INCLUDE_TOOLS: "",
-    EXCLUDE_TOOLS: "",
-    MAX_RESULT_LIMIT: ""
-  };
-
-  const transport = new StdioClientTransport({
-    command: 'node',
-    args: [serverPath],
-    env: mcpEnv
-  });
+  const transport = new StreamableHTTPClientTransport(new URL(serverUrl));
 
   const client = new Client({
     name: "tableau-chat-client",
