@@ -11,6 +11,8 @@ import { LicenseType, User } from '../db/users';
 import Analyze from './components/analytics/Analyze';
 import AIAssistent from './components/analytics/AIAssistent';
 import DemoScript from './components/auth/DemoScript';
+import { useMobile } from './hooks/useMobile';
+import MobileRouteGuard from './components/MobileRouteGuard';
 
 interface AppContextType {
   notifications: NotificationItem[];
@@ -22,6 +24,17 @@ interface AppContextType {
 export type Pages = 'Home' | 'Product Catalog' | 'Performance' | 'Analyze' | 'AI Assistant';
 
 export const userPages = ((user: User): Pages[] => {
+  // Use mobile detection inside the component context
+  const isMobile = typeof window !== 'undefined' ? 
+    (window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) 
+    : false;
+
+  // On mobile, only show AI Assistant
+  if (isMobile) {
+    return ['AI Assistant'];
+  }
+
+  // On desktop, show pages based on user type
   if (user.isRetailer) {
     return ['Home', 'Product Catalog', 'Analyze', 'AI Assistant'];
   } else {
@@ -29,13 +42,14 @@ export const userPages = ((user: User): Pages[] => {
   }
 });
 
-const AppContext = createContext<AppContextType>({
-  notifications: [],
-  notificationReceived: () => { },
-  userLicense: '',
-  updateUserLicense: () => { },
-});
-export const useAppContext = () => useContext(AppContext);
+const AppContext = createContext<AppContextType | undefined>(undefined);
+
+export const useAppContext = () => {
+  const context = useContext(AppContext);
+  if (!context) throw new Error('useAppContext must be used within UserProvider');
+  return context;
+};
+
 export const UserProvider = ({ children }: { children: ReactNode }) => {
 
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
@@ -70,10 +84,10 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/demoscript" element={<DemoScript />} />
           <Route path="/:userId" element={
-            <>
+            <MobileRouteGuard>
               <Header />
               <Outlet />
-            </>
+            </MobileRouteGuard>
           }>
             <Route path="home" element={<Home />} />
             <Route path="product-catalog" element={<ProductCatalog />} />

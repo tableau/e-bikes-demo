@@ -4,10 +4,12 @@ import styles from './Header.module.css'
 import { useAppContext, userPages } from '../../App';
 import NotificationBell from './NotificationBell';
 import { users } from '../../../db/users';
+import { useMobile } from '../../hooks/useMobile';
 
 const Header: React.FC = () => {
   const { userId } = useParams<{ userId: string }>();
   const user = users.find(u => u.username === userId); // Fetch user data based on userId
+  const isMobile = useMobile();
 
   const navigate = useNavigate();
     const { userLicense } = useAppContext();
@@ -22,7 +24,7 @@ const Header: React.FC = () => {
 
   return (
     <>
-      <div className={styles.header}>
+      <div className={`${styles.header} ${isMobile ? styles.mobile : ''}`}>
         <nav>
           <div>
             <ul>
@@ -34,6 +36,7 @@ const Header: React.FC = () => {
                   <li
                     key={page}
                     onClick={() => handlePageChange(page)}
+                    className={styles.navItem}
                   >
                     {page}
                   </li>

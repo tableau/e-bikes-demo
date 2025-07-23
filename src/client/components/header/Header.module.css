@@ -22,6 +22,16 @@ nav li {
   cursor: pointer;
 }
 
+.navItem {
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.navItem:hover {
+  background-color: rgba(0, 123, 255, 0.1);
+}
+
 .active {
   font-weight: bold;
 }
@@ -33,6 +43,61 @@ nav li {
 .avatar {
   border-radius: 50%;
   width: 40px;
+}
+
+/* Mobile styles */
+.mobile nav {
+  height: 70px;
+  padding: 0 15px;
+}
+
+.mobile nav ul {
+  gap: 15px;
+}
+
+.mobile nav li {
+  margin-right: 10px;
+}
+
+.mobile .logo {
+  height: 40px;
+}
+
+.mobile .avatar {
+  width: 35px;
+}
+
+.mobile .navItem {
+  padding: 10px 16px;
+  font-size: 14px;
+  min-height: 44px; /* Minimum touch target size */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Very small screens */
+@media (max-width: 480px) {
+  .mobile nav ul {
+    gap: 8px;
+  }
+  
+  .mobile nav li {
+    margin-right: 5px;
+  }
+  
+  .mobile .navItem {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+  
+  .mobile .logo {
+    height: 35px;
+  }
+  
+  .mobile .avatar {
+    width: 32px;
+  }
 }
 
 
