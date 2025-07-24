@@ -30,6 +30,11 @@ interface ProgressUpdate {
   error?: string;
 }
 
+interface MessageToggles {
+  showTools: boolean;
+  showCharts: boolean;
+}
+
 function AIAssistent() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [currentQuery, setCurrentQuery] = useState<string>('');
@@ -37,6 +42,10 @@ function AIAssistent() {
   const [showProgress, setShowProgress] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [progressUpdates, setProgressUpdates] = useState<ProgressUpdate[]>([]);
+  
+  // Toggle states per message - using message index as key
+  const [messageToggles, setMessageToggles] = useState<{ [messageIndex: number]: MessageToggles }>({});
+  
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const progressContainerRef = useRef<HTMLDivElement>(null);
@@ -136,7 +145,7 @@ function AIAssistent() {
       }
 
       let finalResult: ChatResponse | null = null;
-      let currentEvent = ''; // Move outside the loop to persist across buffer reads
+      let currentEvent = '';
 
       while (true) {
         const { done, value } = await reader.read();
@@ -209,11 +218,52 @@ function AIAssistent() {
 
   const clearChat = () => {
     setMessages([]);
+    setMessageToggles({});
     setError(null);
   };
 
   const formatTimestamp = (date: Date) => {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
+  // Helper function to check if message has chart data
+  const hasChartData = (message: ChatMessage): boolean => {
+    if (!message.toolResults || message.toolResults.length === 0) return false;
+    
+    // Check if any tool result contains data that would generate a chart
+    return message.toolResults.some(result => {
+      if (!result.result) return false;
+      
+      // Parse tool result similar to AIAssistentDataVisuzliation component
+      const parseToolResult = (content: any): any[] | null => {
+        if (!content) return null;
+
+        try {
+          // Handle MCP tool result structure: [{type: "text", text: "JSON_STRING"}]
+          if (Array.isArray(content) && content.length > 0 && content[0].type === 'text' && content[0].text) {
+            try {
+              const parsed = JSON.parse(content[0].text);
+              // Check for data array with meaningful content
+              if (parsed.data && Array.isArray(parsed.data) && parsed.data.length > 1) {
+                // Verify the data has multiple fields (chartable)
+                const firstRow = parsed.data[0];
+                if (typeof firstRow === 'object' && Object.keys(firstRow).length >= 2) {
+                  return parsed.data;
+                }
+              }
+            } catch {
+              return null;
+            }
+          }
+          return null;
+        } catch {
+          return null;
+        }
+      };
+
+      const tableData = parseToolResult(result.result);
+      return tableData !== null;
+    });
   };
 
   const parseAndRenderTables = (content: string) => {
@@ -303,6 +353,63 @@ function AIAssistent() {
     );
   };
 
+  const renderMessageToggles = (message: ChatMessage, messageIndex: number) => {
+    // Only show toggles for assistant messages that have tools or charts
+    if (message.role !== 'assistant') {
+      return null;
+    }
+
+    const hasTools = message.toolResults && message.toolResults.length > 0;
+    const hasCharts = hasChartData(message);
+
+    // Don't show toggles if there's nothing to toggle
+    if (!hasTools && !hasCharts) {
+      return null;
+    }
+
+    // Get current toggle state for this message (default to false)
+    const currentToggles = messageToggles[messageIndex] || { showTools: false, showCharts: false };
+
+    const updateToggle = (field: 'showTools' | 'showCharts', value: boolean) => {
+      setMessageToggles(prev => ({
+        ...prev,
+        [messageIndex]: {
+          ...currentToggles,
+          [field]: value
+        }
+      }));
+    };
+
+    return (
+      <div className={styles.messageToggles}>
+        {hasTools && (
+          <label className={styles.toggleContainer}>
+            <input
+              type="checkbox"
+              checked={currentToggles.showTools}
+              onChange={(e) => updateToggle('showTools', e.target.checked)}
+              className={styles.toggleInput}
+            />
+            <span className={styles.toggleSlider}></span>
+            <span className={styles.toggleLabel}>Show tools</span>
+          </label>
+        )}
+        {hasCharts && (
+          <label className={styles.toggleContainer}>
+            <input
+              type="checkbox"
+              checked={currentToggles.showCharts}
+              onChange={(e) => updateToggle('showCharts', e.target.checked)}
+              className={styles.toggleInput}
+            />
+            <span className={styles.toggleSlider}></span>
+            <span className={styles.toggleLabel}>Show chart</span>
+          </label>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className={styles.root}>
       <div className={styles.header}>
@@ -313,15 +420,7 @@ function AIAssistent() {
         {messages.length > 0 && (
           <button
             onClick={clearChat}
-            style={{
-              marginTop: '10px',
-              padding: '6px 12px',
-              background: '#dc3545',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer'
-            }}
+            className={styles.clearButton}
           >
             Clear Chat
           </button>
@@ -340,35 +439,42 @@ function AIAssistent() {
             </div>
           ) : (
             <>
-              {messages.map((message, index) => (
-                <div
-                  key={index}
-                  className={`${styles.message} ${message.role === 'user' ? styles.userMessage : styles.assistantMessage
-                    }`}
-                >
-                  {message.role === 'assistant' ? (
-                    <>
-                      <div className={styles.messageContent}>
-                        {parseAndRenderTables(message.content)}
-                      </div>
-                      {renderToolResults(message.toolResults || [])}
-                      <AIAssistentDataVisuzliation
-                        toolResults={message.toolResults || []}
-                        responseContent={message.content}
-                      />
-                    </>
-                  ) : (
-                    message.content
-                  )}
-                  <div style={{
-                    fontSize: '11px',
-                    opacity: 0.6,
-                    marginTop: '4px'
-                  }}>
-                    {formatTimestamp(message.timestamp)}
+              {messages.map((message, index) => {
+                const currentToggles = messageToggles[index] || { showTools: false, showCharts: false };
+                
+                return (
+                  <div
+                    key={index}
+                    className={`${styles.message} ${message.role === 'user' ? styles.userMessage : styles.assistantMessage
+                      }`}
+                  >
+                    {message.role === 'assistant' ? (
+                      <>
+                        <div className={styles.messageContent}>
+                          {parseAndRenderTables(message.content)}
+                        </div>
+                        {renderMessageToggles(message, index)}
+                        {currentToggles.showTools && renderToolResults(message.toolResults || [])}
+                        {currentToggles.showCharts && (
+                          <AIAssistentDataVisuzliation
+                            toolResults={message.toolResults || []}
+                            responseContent={message.content}
+                          />
+                        )}
+                      </>
+                    ) : (
+                      message.content
+                    )}
+                    <div style={{
+                      fontSize: '11px',
+                      opacity: 0.6,
+                      marginTop: '4px'
+                    }}>
+                      {formatTimestamp(message.timestamp)}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
 
               {(isLoading || showProgress) && (
                 <div className={styles.loading}>

@@ -32,6 +32,22 @@
     font-size: 14px;
 }
 
+.clearButton {
+    margin-top: 10px;
+    padding: 6px 12px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+}
+
+.clearButton:hover {
+    background: #c82333;
+}
+
 .chatContainer {
     flex: 1;
     display: flex;
@@ -150,6 +166,73 @@
     font-size: 12px;
     color: #6c757d;
     border-left: 3px solid #28a745;
+}
+
+/* Message Toggle Styles */
+.messageToggles {
+    display: flex;
+    gap: 16px;
+    margin-top: 12px;
+    padding-top: 8px;
+    border-top: 1px solid #e9ecef;
+    flex-wrap: wrap;
+}
+
+.toggleContainer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.toggleInput {
+    display: none;
+}
+
+.toggleSlider {
+    position: relative;
+    width: 32px;
+    height: 18px;
+    background-color: #ccc;
+    border-radius: 18px;
+    transition: background-color 0.2s ease;
+}
+
+.toggleSlider:before {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 14px;
+    height: 14px;
+    background-color: white;
+    border-radius: 50%;
+    transition: transform 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.toggleInput:checked + .toggleSlider {
+    background-color: #007bff;
+}
+
+.toggleInput:checked + .toggleSlider:before {
+    transform: translateX(14px);
+}
+
+.toggleSlider:hover {
+    background-color: #adb5bd;
+}
+
+.toggleInput:checked + .toggleSlider:hover {
+    background-color: #0056b3;
+}
+
+.toggleLabel {
+    font-size: 12px;
+    color: #6c757d;
+    font-weight: 500;
+    white-space: nowrap;
 }
 
 .inputContainer {
@@ -408,6 +491,12 @@
         font-size: 13px;
     }
 
+    .clearButton {
+        padding: 8px 12px;
+        font-size: 13px;
+        margin-top: 8px;
+    }
+
     .messagesContainer {
         padding: 15px;
         gap: 12px;
@@ -417,6 +506,32 @@
         max-width: 90%;
         padding: 10px 14px;
         font-size: 14px;
+    }
+
+    .messageToggles {
+        gap: 12px;
+        margin-top: 10px;
+        padding-top: 6px;
+    }
+
+    .toggleSlider {
+        width: 30px;
+        height: 17px;
+    }
+
+    .toggleSlider:before {
+        width: 13px;
+        height: 13px;
+        top: 2px;
+        left: 2px;
+    }
+
+    .toggleInput:checked + .toggleSlider:before {
+        transform: translateX(15px);
+    }
+
+    .toggleLabel {
+        font-size: 11px;
     }
 
     .inputContainer {
@@ -530,6 +645,12 @@
         font-size: 12px;
     }
 
+    .clearButton {
+        padding: 6px 10px;
+        font-size: 12px;
+        margin-top: 6px;
+    }
+
     .messagesContainer {
         padding: 12px;
         gap: 10px;
@@ -539,6 +660,32 @@
         max-width: 95%;
         padding: 8px 12px;
         font-size: 13px;
+    }
+
+    .messageToggles {
+        gap: 8px;
+        margin-top: 8px;
+        padding-top: 4px;
+    }
+
+    .toggleSlider {
+        width: 28px;
+        height: 16px;
+    }
+
+    .toggleSlider:before {
+        width: 12px;
+        height: 12px;
+        top: 2px;
+        left: 2px;
+    }
+
+    .toggleInput:checked + .toggleSlider:before {
+        transform: translateX(12px);
+    }
+
+    .toggleLabel {
+        font-size: 10px;
     }
 
     .inputContainer {
