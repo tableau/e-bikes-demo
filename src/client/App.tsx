@@ -11,8 +11,8 @@ import { LicenseType, User } from '../db/users';
 import Analyze from './components/analytics/Analyze';
 import AIAssistent from './components/analytics/AIAssistent';
 import DemoScript from './components/auth/DemoScript';
-import { useMobile } from './hooks/useMobile';
 import MobileRouteGuard from './components/MobileRouteGuard';
+import { useGA } from './hooks/useGA';
 
 interface AppContextType {
   notifications: NotificationItem[];
@@ -76,6 +76,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 }
 
 function App() {
+  // Initialize Google Analytics tracking
+  useGA();
 
   return (
     <div className={styles.root}>
