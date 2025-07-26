@@ -12,8 +12,8 @@ export const useGA = () => {
 
   useEffect(() => {
     // Track page view when location changes
-    if (window.gtag && import.meta.env.VITE_GA_MEASUREMENT_ID) {
-      window.gtag('config', import.meta.env.VITE_GA_MEASUREMENT_ID, {
+    if (window.gtag) {
+      window.gtag('config', 'G-J9Z61G9FJ6', {
         page_path: location.pathname + location.search,
       });
     }
