@@ -13,6 +13,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
+import { VegaLite } from 'react-vega';
 
 interface AIAssistentDataVisuzliationProps {
   toolResults: any[];
@@ -35,6 +36,56 @@ interface ChartData {
 const COLORS = ['#007bff', '#28a745', '#ffc107', '#dc3545', '#6c757d', '#17a2b8', '#fd7e14', '#6f42c1'];
 
 function AIAssistentDataVisuzliation({ toolResults, responseContent }: AIAssistentDataVisuzliationProps) {
+  
+  // Function to extract Vega-Lite specifications from Pulse tool results
+  const extractVegaLiteSpecs = (toolResults: any[]) => {
+    const vegaSpecs: Array<{ spec: any; title: string }> = [];
+    
+    toolResults.forEach((result) => {
+      // ONLY extract from generate-pulse-metric-value-insight-bundle tool results
+      // These are the only ones that contain actual Vega-Lite visualizations
+      if (result.tool === 'generate-pulse-metric-value-insight-bundle' && result.result) {
+        result.result.forEach((item: any) => {
+          if (item.type === 'text' && item.text) {
+            try {
+              // Parse the JSON response from Pulse
+              const parsed = JSON.parse(item.text);
+              
+              // Navigate through the Pulse response structure to find Vega-Lite specs
+              if (parsed.bundle_response?.result?.insight_groups) {
+                parsed.bundle_response.result.insight_groups.forEach((group: any) => {
+                  if (group.insights) {
+                    group.insights.forEach((insight: any) => {
+                      if (insight.result?.viz && insight.result.viz.$schema) {
+                        
+                        // Found a Vega-Lite specification
+                        const cleanTitle = insight.result.markup ? 
+                          insight.result.markup.replace(/<[^>]*>/g, '').trim() : // Strip HTML tags
+                          'Business Metric Visualization';
+                        
+                        const finalTitle = cleanTitle.includes('was') ? 
+                          cleanTitle.split('was')[0].trim() + ' Trend' : 
+                          cleanTitle;
+                        
+                        vegaSpecs.push({
+                          spec: insight.result.viz,
+                          title: finalTitle
+                        });
+                      }
+                    });
+                  }
+                });
+              }
+            } catch (e) {
+              console.error('❌ PULSE JSON parsing failed:', e);
+            }
+          }
+        });
+      }
+    });
+    
+    return vegaSpecs;
+  };
   
   // Determine if a field represents currency/monetary values
   const isCurrencyField = (fieldName: string): boolean => {
@@ -615,11 +666,24 @@ function AIAssistentDataVisuzliation({ toolResults, responseContent }: AIAssiste
     }
   };
 
+  // Extract Vega-Lite specifications ONLY from generate-pulse-metric-value-insight-bundle tool results
+  const vegaSpecs = extractVegaLiteSpecs(toolResults);
+  // DO NOT extract from response content - it may contain LLM-generated fake charts
+  // const contentVegaSpecs = responseContent ? extractVegaLiteFromContent(responseContent) : [];
+  let allVegaSpecs = [...vegaSpecs];
+  
+  // ONLY use real Vega-Lite specs from successful Pulse tool calls
+  
   // Extract and analyze all tabular data from tool results and response content
   const charts: ChartData[] = [];
   
-  // Check tool results for structured data
+  // Check tool results for structured data - SKIP Pulse tools since they have their own Vega-Lite visualizations
   toolResults.forEach((result) => {
+    // Skip Pulse tool results - they should only show Vega-Lite visualizations
+    if (result.tool && result.tool.includes('pulse')) {
+      return;
+    }
+    
     if (result.result) {
       const tableData = parseTableData(result.result);
       if (tableData && tableData.length > 1) {
@@ -644,15 +708,37 @@ function AIAssistentDataVisuzliation({ toolResults, responseContent }: AIAssiste
     }
   }
 
-  if (charts.length === 0) {
+  // If no visualizations found, return null
+  if (charts.length === 0 && allVegaSpecs.length === 0) {
     return null;
   }
 
   return (
-    <div style={{ marginTop: '16px' }}>
+    <div>
       
+      {/* Render Vega-Lite charts from Pulse tools */}
+      {allVegaSpecs.map((vegaChart, index) => (
+        <div key={`vega-${index}`} style={{ 
+          marginBottom: allVegaSpecs.length > 1 || charts.length > 0 ? '20px' : '0px',
+          padding: '0px'
+        }}>
+          <div style={{ width: '100%', height: '300px' }}>
+            <VegaLite 
+              spec={vegaChart.spec} 
+              actions={false}
+              renderer="svg"
+              style={{ width: '100%', height: '100%' }}
+              onError={(error) => {
+                console.error('Vega-Lite rendering error:', error);
+              }}
+            />
+          </div>
+        </div>
+      ))}
+      
+      {/* Render regular Recharts */}
       {charts.map((chart, index) => (
-        <div key={index} style={{ 
+        <div key={`chart-${index}`} style={{ 
           marginBottom: '20px',
           padding: '16px',
           background: '#f8f9fa',
@@ -665,7 +751,7 @@ function AIAssistentDataVisuzliation({ toolResults, responseContent }: AIAssiste
             marginBottom: '12px',
             color: '#495057'
           }}>
-            {chart.title}
+            📈 {chart.title}
           </div>
           {renderChart(chart)}
         </div>

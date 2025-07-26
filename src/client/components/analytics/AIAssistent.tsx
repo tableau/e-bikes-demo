@@ -10,6 +10,124 @@ interface ChatMessage {
   timestamp: Date;
 }
 
+// Helper function to detect if a message contains Vega-Lite specifications
+const hasVegaLiteSpecs = (message: ChatMessage): boolean => {
+  // Check for JSON code blocks that contain Vega-Lite specifications
+  const jsonBlockRegex = /```json\s*(\{[\s\S]*?\})\s*```/g;
+  let match;
+  
+  while ((match = jsonBlockRegex.exec(message.content)) !== null) {
+    try {
+      const parsed = JSON.parse(match[1]);
+      // Check if the spec is nested inside a vegaLite property
+      let spec = parsed;
+      if (parsed.vegaLite) {
+        spec = parsed.vegaLite;
+      }
+      
+      // Check if this is a Vega-Lite specification by structure
+      const isVegaLite = (
+        (spec.$schema && spec.$schema.includes('vega-lite')) ||
+        (spec.data && spec.encoding && (spec.mark || spec.layer)) ||
+        (spec.data && spec.mark && (spec.encoding || spec.transform))
+      );
+      
+      if (isVegaLite) {
+        return true;
+      }
+    } catch (e) {
+      // Invalid JSON, continue checking
+    }
+  }
+  
+  // Check tool results for Pulse tools with successful Vega-Lite specs
+  if (message.toolResults) {
+    for (const result of message.toolResults) {
+      if (result.tool && result.tool.includes('pulse') && result.result) {
+        for (const item of result.result) {
+          if (item.type === 'text' && item.text) {
+            try {
+              const parsed = JSON.parse(item.text);
+              if (parsed.bundle_response?.result?.insight_groups) {
+                for (const group of parsed.bundle_response.result.insight_groups) {
+                  if (group.insights) {
+                    for (const insight of group.insights) {
+                      if (insight.result?.viz && insight.result.viz.$schema) {
+                        return true;
+                      }
+                    }
+                  }
+                }
+              }
+            } catch (e) {
+              // Parsing failed, continue
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  return false;
+};
+
+// Helper function to remove Vega-Lite JSON blocks from content when they're being rendered as charts
+const filterVegaLiteFromContent = (content: string): string => {
+  let filteredContent = content;
+  
+  // Remove the entire Visualization section that contains Vega-Lite JSON
+  filteredContent = filteredContent.replace(
+    /#{1,6}\s*Visualization\s*\n[\s\S]*?```json\s*\{[\s\S]*?\}\s*```/g,
+    ''
+  );
+  
+  // Also remove standalone Vega-Lite JSON blocks
+  const jsonBlockRegex = /```json\s*(\{[\s\S]*?\})\s*```/g;
+  filteredContent = filteredContent.replace(jsonBlockRegex, (match, jsonContent) => {
+    try {
+      const parsed = JSON.parse(jsonContent);
+      // Check if the spec is nested inside a vegaLite property
+      let spec = parsed;
+      if (parsed.vegaLite) {
+        spec = parsed.vegaLite;
+      }
+      
+      // Check if this is a Vega-Lite specification by structure  
+      const isVegaLite = (
+        (spec.$schema && spec.$schema.includes('vega-lite')) ||
+        (spec.data && spec.encoding && (spec.mark || spec.marks || spec.layer)) ||
+        (spec.data && spec.mark && (spec.encoding || spec.transform))
+      );
+      
+      if (isVegaLite) {
+        // Remove this JSON block since it will be rendered as a chart
+        return '';
+      }
+    } catch (e) {
+      // Invalid JSON, keep as is
+    }
+    
+    return match;
+  });
+  
+  // Remove broken image tags that reference Vega-Lite schema URLs
+  filteredContent = filteredContent.replace(
+    /!\[[^\]]*\]\(https:\/\/vega\.github\.io\/schema\/vega-lite\/[^)]*\)/g,
+    ''
+  );
+  
+  // Remove any sections that mention "Vega-Lite Specifications:" since the specs will be rendered as charts
+  filteredContent = filteredContent.replace(
+    /#{1,6}\s*Vega-Lite Specifications?:?\s*$/gm,
+    ''
+  );
+  
+  // Clean up extra whitespace and empty lines
+  filteredContent = filteredContent.replace(/\n\s*\n\s*\n/g, '\n\n');
+  
+  return filteredContent;
+};
+
 interface ChatResponse {
   response: string;
   toolResults: any[];
@@ -441,6 +559,8 @@ function AIAssistent() {
             <>
               {messages.map((message, index) => {
                 const currentToggles = messageToggles[index] || { showTools: false, showCharts: false };
+                const hasVegaSpecs = message.role === 'assistant' && hasVegaLiteSpecs(message);
+                const shouldShowCharts = currentToggles.showCharts || hasVegaSpecs;
                 
                 return (
                   <div
@@ -451,11 +571,20 @@ function AIAssistent() {
                     {message.role === 'assistant' ? (
                       <>
                         <div className={styles.messageContent}>
-                          {parseAndRenderTables(message.content)}
+                          {parseAndRenderTables(hasVegaSpecs ? filterVegaLiteFromContent(message.content) : message.content)}
+                          {hasVegaSpecs && (
+                            <div style={{ marginTop: '16px' }}>
+                              <h4>Visualization</h4>
+                              <AIAssistentDataVisuzliation
+                                toolResults={message.toolResults || []}
+                                responseContent={message.content}
+                              />
+                            </div>
+                          )}
                         </div>
                         {renderMessageToggles(message, index)}
                         {currentToggles.showTools && renderToolResults(message.toolResults || [])}
-                        {currentToggles.showCharts && (
+                        {currentToggles.showCharts && !hasVegaSpecs && (
                           <AIAssistentDataVisuzliation
                             toolResults={message.toolResults || []}
                             responseContent={message.content}

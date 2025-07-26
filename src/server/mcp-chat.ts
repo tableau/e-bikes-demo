@@ -76,7 +76,20 @@ CRITICAL INSTRUCTIONS:
    - Use query-datasource to get the actual data needed to answer the question
    - Analyze the results and provide insights
 4. Don't say "I will do X" - just do X immediately using the available tools.
-5. Provide clear, actionable insights based on the actual data retrieved.`,
+5. Provide clear, actionable insights based on the actual data retrieved.
+
+PULSE METRICS AND KPI INSTRUCTIONS (HIGHEST PRIORITY):
+6. MANDATORY: When users mention ANY of these words/phrases, use Pulse tools FIRST before any other tools:
+   - "insights", "metric", "KPI", "key performance indicator", "pulse", "business performance", "dashboard"
+   - "bike sales", "bike returns", "sales insights", "returns insights" (these are known Pulse metrics)
+   - ANY question about insights from specific business metrics
+7. For ANY insight request, ALWAYS follow this sequence:
+   - FIRST: Use list-all-pulse-metric-definitions to see available metrics
+   - SECOND: For any specific metric mentioned, use generate-pulse-metric-value-insight-bundle with OUTPUT_FORMAT_HTML
+   - THIRD: Extract and display the actual Pulse insights AND Vega-Lite visualizations returned
+   - ONLY if Pulse tools fail completely, then use regular data analysis tools
+8. When displaying Pulse results, show the EXACT content returned by the tools, including HTML and Vega-Lite specs.
+9. DO NOT use query-datasource for insight requests - use Pulse tools instead.`,
       };
 
       // Prepare conversation history
@@ -273,7 +286,20 @@ CRITICAL INSTRUCTIONS:
    - Use query-datasource to get the actual data needed to answer the question
    - Analyze the results and provide insights
 4. Don't say "I will do X" - just do X immediately using the available tools.
-5. Provide clear, actionable insights based on the actual data retrieved.`,
+5. Provide clear, actionable insights based on the actual data retrieved.
+
+PULSE METRICS AND KPI INSTRUCTIONS (HIGHEST PRIORITY):
+6. MANDATORY: When users mention ANY of these words/phrases, use Pulse tools FIRST before any other tools:
+   - "insights", "metric", "KPI", "key performance indicator", "pulse", "business performance", "dashboard"
+   - "bike sales", "bike returns", "sales insights", "returns insights" (these are known Pulse metrics)
+   - ANY question about insights from specific business metrics
+7. For ANY insight request, ALWAYS follow this sequence:
+   - FIRST: Use list-all-pulse-metric-definitions to see available metrics
+   - SECOND: For any specific metric mentioned, use generate-pulse-metric-value-insight-bundle with OUTPUT_FORMAT_HTML
+   - THIRD: Extract and display the actual Pulse insights AND Vega-Lite visualizations returned
+   - ONLY if Pulse tools fail completely, then use regular data analysis tools
+8. When displaying Pulse results, show the EXACT content returned by the tools, including HTML and Vega-Lite specs.
+9. DO NOT use query-datasource for insight requests - use Pulse tools instead.`,
       };
 
       // Prepare conversation history
@@ -353,6 +379,12 @@ CRITICAL INSTRUCTIONS:
             
             console.log(`🔧 Calling ${toolName} with args:`, JSON.stringify(toolArgs, null, 2));
             
+            // Enhanced logging for Pulse tools
+            if (toolName.includes('pulse')) {
+              console.log(`🎯 PULSE TOOL DETECTED: ${toolName}`);
+              console.log(`📋 Full arguments structure:`, JSON.stringify(toolArgs, null, 4));
+            }
+            
             sendEvent('progress', { 
               message: `${toolName}(${Object.keys(toolArgs).map(k => `${k}: ${JSON.stringify(toolArgs[k])}`).join(', ')})`, 
               step: 'tool-executing',
@@ -365,6 +397,11 @@ CRITICAL INSTRUCTIONS:
               name: toolName,
               arguments: toolArgs,
             });
+            
+            // Enhanced logging for Pulse results
+            if (toolName.includes('pulse')) {
+              console.log(`🎯 PULSE RESULT for ${toolName}:`, JSON.stringify(result.content, null, 2));
+            }
             
             const toolResult = {
               tool: toolName,
