@@ -22,7 +22,11 @@ function Performance() {
 
   return (
     <div className={styles.root}>
-      <EmbeddedDashboard sheet={'SalesAnalysis'} width={1000} />
+      <EmbeddedDashboard
+        sheet={'SalesAnalysis'}
+        width={1000}
+        showDashboardNarratives={true}
+      />
     </div>
   )
 }
