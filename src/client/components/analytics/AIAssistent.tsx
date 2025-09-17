@@ -785,6 +785,9 @@ function AIAssistent() {
           </div>
         </div>
       )}
+        <div className={styles.footer}>
+          <a href={`https://tableau.github.io/tableau-mcp/`} target='_blank'>Tableau MCP documentation</a>
+        </div>
     </div>
   );
 }
