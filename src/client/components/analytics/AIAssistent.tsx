@@ -15,7 +15,7 @@ const hasVegaLiteSpecs = (message: ChatMessage): boolean => {
   // Check for JSON code blocks that contain Vega-Lite specifications
   const jsonBlockRegex = /```json\s*(\{[\s\S]*?\})\s*```/g;
   let match;
-  
+
   while ((match = jsonBlockRegex.exec(message.content)) !== null) {
     try {
       const parsed = JSON.parse(match[1]);
@@ -24,14 +24,14 @@ const hasVegaLiteSpecs = (message: ChatMessage): boolean => {
       if (parsed.vegaLite) {
         spec = parsed.vegaLite;
       }
-      
+
       // Check if this is a Vega-Lite specification by structure
       const isVegaLite = (
         (spec.$schema && spec.$schema.includes('vega-lite')) ||
         (spec.data && spec.encoding && (spec.mark || spec.layer)) ||
         (spec.data && spec.mark && (spec.encoding || spec.transform))
       );
-      
+
       if (isVegaLite) {
         return true;
       }
@@ -39,7 +39,7 @@ const hasVegaLiteSpecs = (message: ChatMessage): boolean => {
       // Invalid JSON, continue checking
     }
   }
-  
+
   // Check tool results for Pulse tools with successful Vega-Lite specs
   if (message.toolResults) {
     for (const result of message.toolResults) {
@@ -67,20 +67,20 @@ const hasVegaLiteSpecs = (message: ChatMessage): boolean => {
       }
     }
   }
-  
+
   return false;
 };
 
 // Helper function to remove Vega-Lite JSON blocks from content when they're being rendered as charts
 const filterVegaLiteFromContent = (content: string): string => {
   let filteredContent = content;
-  
+
   // Remove the entire Visualization section that contains Vega-Lite JSON
   filteredContent = filteredContent.replace(
     /#{1,6}\s*Visualization\s*\n[\s\S]*?```json\s*\{[\s\S]*?\}\s*```/g,
     ''
   );
-  
+
   // Also remove standalone Vega-Lite JSON blocks
   const jsonBlockRegex = /```json\s*(\{[\s\S]*?\})\s*```/g;
   filteredContent = filteredContent.replace(jsonBlockRegex, (match, jsonContent) => {
@@ -91,14 +91,14 @@ const filterVegaLiteFromContent = (content: string): string => {
       if (parsed.vegaLite) {
         spec = parsed.vegaLite;
       }
-      
+
       // Check if this is a Vega-Lite specification by structure  
       const isVegaLite = (
         (spec.$schema && spec.$schema.includes('vega-lite')) ||
         (spec.data && spec.encoding && (spec.mark || spec.marks || spec.layer)) ||
         (spec.data && spec.mark && (spec.encoding || spec.transform))
       );
-      
+
       if (isVegaLite) {
         // Remove this JSON block since it will be rendered as a chart
         return '';
@@ -106,25 +106,25 @@ const filterVegaLiteFromContent = (content: string): string => {
     } catch (e) {
       // Invalid JSON, keep as is
     }
-    
+
     return match;
   });
-  
+
   // Remove broken image tags that reference Vega-Lite schema URLs
   filteredContent = filteredContent.replace(
     /!\[[^\]]*\]\(https:\/\/vega\.github\.io\/schema\/vega-lite\/[^)]*\)/g,
     ''
   );
-  
+
   // Remove any sections that mention "Vega-Lite Specifications:" since the specs will be rendered as charts
   filteredContent = filteredContent.replace(
     /#{1,6}\s*Vega-Lite Specifications?:?\s*$/gm,
     ''
   );
-  
+
   // Clean up extra whitespace and empty lines
   filteredContent = filteredContent.replace(/\n\s*\n\s*\n/g, '\n\n');
-  
+
   return filteredContent;
 };
 
@@ -153,7 +153,13 @@ interface MessageToggles {
   showCharts: boolean;
 }
 
-function AIAssistent() {
+interface AIAssistentProps {
+  isSidePane?: boolean;
+}
+
+function AIAssistent({
+  isSidePane = false
+}: AIAssistentProps = {}) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [currentQuery, setCurrentQuery] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -162,10 +168,10 @@ function AIAssistent() {
   const [progressUpdates, setProgressUpdates] = useState<ProgressUpdate[]>([]);
   const [showSystemPrompt, setShowSystemPrompt] = useState<boolean>(false);
   const [systemPromptContent, setSystemPromptContent] = useState<string>('');
-  
+
   // Toggle states per message - using message index as key
   const [messageToggles, setMessageToggles] = useState<{ [messageIndex: number]: MessageToggles }>({});
-  
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const progressContainerRef = useRef<HTMLDivElement>(null);
@@ -228,7 +234,7 @@ function AIAssistent() {
     setShowProgress(true);
     setError(null);
     setProgressUpdates([]);
-    
+
     // Immediate scroll after user message
     setTimeout(scrollToBottom, 50);
 
@@ -349,7 +355,7 @@ function AIAssistent() {
       3: "What data sources are available and what are the interesting fields in each data source?",
       4: "Using the data source 'Incidents, Accidents, & Occupational Safety', can you write an analytical summary of the impact of weather and location on the number of accidents",
     };
-    
+
     const query = seededQuestions[questionNumber as keyof typeof seededQuestions] || '';
     sendMessage(query);
   };
@@ -360,7 +366,7 @@ function AIAssistent() {
       setShowSystemPrompt(true);
       return;
     }
-    
+
     try {
       const response = await fetch('/system-prompt');
       if (!response.ok) {
@@ -391,11 +397,11 @@ function AIAssistent() {
   // Helper function to check if message has chart data
   const hasChartData = (message: ChatMessage): boolean => {
     if (!message.toolResults || message.toolResults.length === 0) return false;
-    
+
     // Check if any tool result contains data that would generate a chart
     return message.toolResults.some(result => {
       if (!result.result) return false;
-      
+
       // Parse tool result similar to AIAssistentDataVisuzliation component
       const parseToolResult = (content: any): any[] | null => {
         if (!content) return null;
@@ -432,22 +438,22 @@ function AIAssistent() {
     // More robust markdown table regex
     const tableRegex = /(\|.+\|\s*\n\|[-:\s|]+\|\s*\n(?:\|.+\|\s*\n?)*)/g;
     const parts = content.split(tableRegex);
-    
+
     return parts.map((part, index) => {
       // Check if this part is a markdown table
       if (part.match(/^\|.+\|\s*\n\|[-:\s|]+\|/)) {
         const lines = part.trim().split('\n').filter(line => line.trim());
         if (lines.length < 3) return <span key={index}>{part}</span>;
-        
+
         // Parse header (first line)
         const headerCells = lines[0].split('|')
           .map(cell => cell.trim())
           .filter(cell => cell.length > 0);
-        
+
         // Skip separator line (line 1), parse data rows (from line 2 onwards)
         const dataRows = lines.slice(2)
           .filter(line => line.includes('|'))
-          .map(line => 
+          .map(line =>
             line.split('|')
               .map(cell => cell.trim())
               .filter((cell, cellIndex, arr) => {
@@ -455,11 +461,11 @@ function AIAssistent() {
                 return !(cell === '' && (cellIndex === 0 || cellIndex === arr.length - 1));
               })
           ).filter(row => row.length > 0);
-        
+
         if (headerCells.length === 0 || dataRows.length === 0) {
           return <span key={index}>{part}</span>;
         }
-        
+
         return (
           <div key={index} className={styles.tableWrapper}>
             <table className={styles.markdownTable}>
@@ -489,7 +495,7 @@ function AIAssistent() {
       } else {
         // Regular text content - render with ReactMarkdown
         if (!part.trim()) return null;
-        
+
         return (
           <ReactMarkdown key={index}>
             {part}
@@ -577,7 +583,7 @@ function AIAssistent() {
       <div className={styles.header}>
         <div className={styles.headerTop}>
           <h1 className={styles.title}>Tableau AI Assistant</h1>
-          <button 
+          <button
             className={styles.infoButton}
             onClick={toggleSystemPrompt}
             title="View System Instructions"
@@ -585,46 +591,48 @@ function AIAssistent() {
             ?
           </button>
         </div>
-        <div className={styles.headerControls}>
-        <p className={styles.subtitle}>
-          Ask questions about your data, dashboards, and analytics. Powered by Tableau's MCP.
-        </p>
-          <div className={styles.seededQuestions}>
-            <span className={styles.seededQuestionsLabel}>Seeded questions:</span>
-            <button
-              onClick={() => handleSeededQuestion(1)}
-              className={styles.seededQuestionButton}
-            >
-              Data Question
-            </button>
-            <button
-              onClick={() => handleSeededQuestion(2)}
-              className={styles.seededQuestionButton}
-            >
-              Pulse
-            </button>
-            <button
-              onClick={() => handleSeededQuestion(3)}
-              className={styles.seededQuestionButton}
-            >
-              Datasource Info
-            </button>
-            <button
-              onClick={() => handleSeededQuestion(4)}
-              className={styles.seededQuestionButton}
-            >
-              Summary using different data source
-            </button>
-        </div>
-        {messages.length > 0 && (
-            <button
-              onClick={clearChat}
-              className={styles.clearButton}
-            >
-              Clear Chat
-            </button>
-          )}
-        </div>
+        {!isSidePane && (
+          <div className={styles.headerControls}>
+            <p className={styles.subtitle}>
+              Ask questions about your data, dashboards, and analytics. Powered by Tableau's MCP.
+            </p>
+            <div className={styles.seededQuestions}>
+              <span className={styles.seededQuestionsLabel}>Seeded questions:</span>
+              <button
+                onClick={() => handleSeededQuestion(1)}
+                className={styles.seededQuestionButton}
+              >
+                Data Question
+              </button>
+              <button
+                onClick={() => handleSeededQuestion(2)}
+                className={styles.seededQuestionButton}
+              >
+                Pulse
+              </button>
+              <button
+                onClick={() => handleSeededQuestion(3)}
+                className={styles.seededQuestionButton}
+              >
+                Datasource Info
+              </button>
+              <button
+                onClick={() => handleSeededQuestion(4)}
+                className={styles.seededQuestionButton}
+              >
+                Summary using different data source
+              </button>
+            </div>
+            {messages.length > 0 && (
+              <button
+                onClick={clearChat}
+                className={styles.clearButton}
+              >
+                Clear Chat
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
       <div className={styles.chatContainer}>
@@ -642,7 +650,7 @@ function AIAssistent() {
               {messages.map((message, index) => {
                 const currentToggles = messageToggles[index] || { showTools: false, showCharts: false };
                 const hasVegaSpecs = message.role === 'assistant' && hasVegaLiteSpecs(message);
-                
+
                 return (
                   <div
                     key={index}
@@ -770,7 +778,7 @@ function AIAssistent() {
           <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
             <div className={styles.modalHeader}>
               <h2>System Instructions</h2>
-              <button 
+              <button
                 className={styles.modalCloseButton}
                 onClick={toggleSystemPrompt}
               >
@@ -785,9 +793,11 @@ function AIAssistent() {
           </div>
         </div>
       )}
+      {!isSidePane && (
         <div className={styles.footer}>
           <a href={`https://tableau.github.io/tableau-mcp/`} target='_blank'>Tableau MCP documentation</a>
         </div>
+      )}
     </div>
   );
 }

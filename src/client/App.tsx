@@ -25,8 +25,8 @@ export type Pages = 'Home' | 'Product Catalog' | 'Performance' | 'Analyze' | 'AI
 
 export const userPages = ((user: User): Pages[] => {
   // Use mobile detection inside the component context
-  const isMobile = typeof window !== 'undefined' ? 
-    (window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) 
+  const isMobile = typeof window !== 'undefined' ?
+    (window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))
     : false;
 
   // On mobile, only show AI Assistant
@@ -93,9 +93,16 @@ function App() {
           }>
             <Route path="home" element={<Home />} />
             <Route path="product-catalog" element={<ProductCatalog />} />
-            <Route path="performance" element={<Performance />} />
+            <Route path="performance" element={
+              <div style={{ display: 'flex', flexDirection: 'row', gap: '10px' }}>
+                <Performance />
+                <div style={{ height: '600px', width: '400px' }}>
+                  <AIAssistent isSidePane={true} />
+                </div>
+              </div>
+            } />
             <Route path="analyze" element={<Analyze />} />
-                            <Route path="ai-assistant" element={<AIAssistent />} />
+            <Route path="ai-assistant" element={<AIAssistent isSidePane={false} />} />
           </Route>
         </Routes>
       </UserProvider>
