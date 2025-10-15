@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import styles from './AIAssistent.module.css';
 import AIAssistentDataVisuzliation from './AIAssistentDataVisuzliation';
+import { useMobile } from '../../hooks/useMobile';
 
 interface ChatMessage {
   role: 'user' | 'assistant' | 'system';
@@ -168,6 +169,7 @@ function AIAssistent({
   const [progressUpdates, setProgressUpdates] = useState<ProgressUpdate[]>([]);
   const [showSystemPrompt, setShowSystemPrompt] = useState<boolean>(false);
   const [systemPromptContent, setSystemPromptContent] = useState<string>('');
+  const isMobile = useMobile();
 
   // Toggle states per message - using message index as key
   const [messageToggles, setMessageToggles] = useState<{ [messageIndex: number]: MessageToggles }>({});
@@ -793,11 +795,11 @@ function AIAssistent({
           </div>
         </div>
       )}
-      {!isSidePane && (
-        <div className={styles.footer}>
-          <a href={`https://tableau.github.io/tableau-mcp/`} target='_blank'>Tableau MCP documentation</a>
-        </div>
-      )}
+       {!isSidePane && !isMobile && (
+         <div className={styles.footer}>
+           <a href={`https://tableau.github.io/tableau-mcp/`} target='_blank'>Tableau MCP documentation</a>
+         </div>
+       )}
     </div>
   );
 }
