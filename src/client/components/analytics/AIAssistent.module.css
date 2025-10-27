@@ -11,6 +11,16 @@
     box-shadow: 0 0 20px rgba(0,0,0,0.1);
 }
 
+.root ::selection {
+    background: rgba(0, 123, 255, 0.2);
+    color: #333;
+}
+
+.root ::-moz-selection {
+    background: rgba(0, 123, 255, 0.2);
+    color: #333;
+}
+
 .header {
     flex-shrink: 0;
     padding: 20px;
@@ -177,6 +187,16 @@
     border-bottom-right-radius: 6px;
 }
 
+.userMessage ::selection {
+    background: rgba(255, 255, 255, 0.3);
+    color: white;
+}
+
+.userMessage ::-moz-selection {
+    background: rgba(255, 255, 255, 0.3);
+    color: white;
+}
+
 .assistantMessage {
     align-self: flex-start;
     background: white;
@@ -184,6 +204,16 @@
     border: 1px solid #e9ecef;
     border-bottom-left-radius: 6px;
     box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.assistantMessage ::selection {
+    background: rgba(0, 123, 255, 0.2);
+    color: #333;
+}
+
+.assistantMessage ::-moz-selection {
+    background: rgba(0, 123, 255, 0.2);
+    color: #333;
 }
 
 .messageContent {
@@ -914,6 +944,16 @@
     padding: 20px;
     white-space: pre-wrap;
     overflow-x: auto;
+}
+
+.systemPromptText::-moz-selection {
+    background: rgba(0, 123, 255, 0.2);
+    color: #495057;
+}
+
+.systemPromptText::-moz-selection {
+    background: rgba(0, 123, 255, 0.2);
+    color: #495057;
 }
 
 /* Mobile Modal Styles */

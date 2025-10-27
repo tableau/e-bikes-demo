@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import styles from './AIAssistent.module.css';
 import AIAssistentDataVisuzliation from './AIAssistentDataVisuzliation';
-import { useMobile } from '../../hooks/useMobile';
 
 interface ChatMessage {
   role: 'user' | 'assistant' | 'system';
@@ -169,7 +168,7 @@ function AIAssistent({
   const [progressUpdates, setProgressUpdates] = useState<ProgressUpdate[]>([]);
   const [showSystemPrompt, setShowSystemPrompt] = useState<boolean>(false);
   const [systemPromptContent, setSystemPromptContent] = useState<string>('');
-  const isMobile = useMobile();
+  const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
 
   // Toggle states per message - using message index as key
   const [messageToggles, setMessageToggles] = useState<{ [messageIndex: number]: MessageToggles }>({});
@@ -220,6 +219,16 @@ function AIAssistent({
       progressContainerRef.current.scrollTop = progressContainerRef.current.scrollHeight;
     }
   }, [progressUpdates]);
+
+  // Track window width for responsive behavior
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const sendMessage = async (query: string) => {
     if (!query.trim() || isLoading) return;
@@ -795,7 +804,7 @@ function AIAssistent({
           </div>
         </div>
       )}
-       {!isSidePane && !isMobile && (
+       {!isSidePane && windowWidth > 1200 && (
          <div className={styles.footer}>
            <a href={`https://tableau.github.io/tableau-mcp/`} target='_blank'>Tableau MCP documentation</a>
          </div>
