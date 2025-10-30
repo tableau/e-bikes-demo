@@ -17,6 +17,17 @@ const PulseEnhancedQA: React.FC<{
   const [question, setQuestion] = useState<string>(Q1);
   const [userInput, setUserInput] = useState<string>(Q1);
 
+  // Convert citations from [[n]](randomguid|id) to [[n]](https://10ay.online.tableau.com/pulse/site/ehofman/id)
+  const convertCitations = (content: string): string => {
+    // Pattern matches [[n]](randomguid|id) where n is a number, randomguid is ignored, and id is extracted
+    // Format: [[n]](guid|id) - we extract the id after the pipe character
+    const citationPattern = /\[\[(\d+)\]\]\([^|]+\|([^)]+)\)/gi;
+    
+    return content.replace(citationPattern, (_match, number, id) => {
+      return `<a href="https://10ay.online.tableau.com/pulse/site/ehofman/metrics/${id}" target="_blank" rel="noopener noreferrer">[${number}]</a>`;
+    });
+  };
+
   useEffect(() => {
 
     if (!jwt) {
@@ -77,7 +88,7 @@ const PulseEnhancedQA: React.FC<{
           />
           {PulseEnhancedQAInsights
             ? <ReactMarkdown  rehypePlugins={[rehypeRaw]}>
-                {PulseEnhancedQAInsights}
+                {convertCitations(PulseEnhancedQAInsights)}
               </ReactMarkdown>
             : <div>{loadingText}</div>
           }
