@@ -16,12 +16,11 @@
 .cards {
     padding: 30px;
     display: flex;
-    justify-content: center;
     gap: 20px;
 }
 
 .pulseItems {
-    width: 100%;
+    width: 900px;
     height: 100%;
     display: flex;
     flex-direction: row;
@@ -33,5 +32,6 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
-    width: 300px;
+    flex: 1;
+    min-width: 0;
 }

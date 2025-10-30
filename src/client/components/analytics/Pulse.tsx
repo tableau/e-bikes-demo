@@ -46,15 +46,20 @@ function Pulse() {
 
       <div className={classNames(styles.root, theme === 'light' ? styles.light : styles.dark)}>
         <div className={styles.cards}>
-          <div className={styles.pulseItems}>
-            <PulseStandard jwt={jwt} theme={theme} banInsights={banInsights} />
-          </div>
-          <div className={styles.pulseCustomItems}>
-            <button onClick={() => setTheme(theme === "light" ? "dark" : "light")}>
+          <div style={{ display: 'flex', gap: '10px', flexDirection: 'column' }}>
+            <button onClick={() => setTheme(theme === "light" ? "dark" : "light")} style={{ height: '40px', width: '200px' }}>
               {theme === "light" ? "🌙 Dark Mode" : "☀️ Light Mode"}
             </button>
-            <PulseEnhancedQA jwt={jwt} theme = {theme}/>
+            <div>Custom rendering:</div>
             <PulseCustom banInsights={banInsights} />
+            <div>Standard rendering in different layouts:</div>
+            <div className={styles.pulseItems}>
+              <PulseStandard jwt={jwt} theme={theme} banInsights={banInsights} />
+            </div>
+
+          </div>
+          <div className={styles.pulseCustomItems}>
+            <PulseEnhancedQA jwt={jwt} theme={theme} />
           </div>
         </div>
       </div>
