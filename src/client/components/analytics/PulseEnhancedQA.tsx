@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { usePulseApi } from './usePulseAPI';
+import ReactMarkdown from 'react-markdown';
+import rehypeRaw from "rehype-raw";
 
 const PulseEnhancedQA: React.FC<{
   jwt: string,
@@ -49,6 +51,7 @@ const PulseEnhancedQA: React.FC<{
           color: theme === 'light' ? 'black' : 'white',
         }}
         >
+
           <textarea
             value={userInput}
             onKeyDown={(e) => {
@@ -73,7 +76,9 @@ const PulseEnhancedQA: React.FC<{
             }}
           />
           {PulseEnhancedQAInsights
-            ? <div dangerouslySetInnerHTML={{ __html: PulseEnhancedQAInsights ?? '' }} />
+            ? <ReactMarkdown  rehypePlugins={[rehypeRaw]}>
+                {PulseEnhancedQAInsights}
+              </ReactMarkdown>
             : <div>{loadingText}</div>
           }
         </div>
