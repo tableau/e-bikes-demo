@@ -6,9 +6,15 @@ const EmbeddedPulse: React.FC<{
   url: string | undefined,
   layout: PulseLayout,
   jwt: string,
-  theme: 'light' | 'dark',
+  theme: 'light' | 'dark' | 'none',
 }> = ({ url, layout, jwt, theme }) => {
 
+
+  const noneThemeParameters = [
+    { name: "fontCssUrl", value: "https://fonts.googleapis.com/css2?family=Roboto&amp;display=swap" },
+    { name: "fontSize", value: "18" },
+    { name: "backgroundColor", value: "#fff" },
+  ];
 
   const lightThemeParameters = [
     { name: "fontCssUrl", value: "https://fonts.googleapis.com/css2?family=Roboto&amp;display=swap" },
@@ -89,7 +95,7 @@ const EmbeddedPulse: React.FC<{
         src={url}
         token={jwt}
         layout={layout}
-        themeParameters={theme === 'light' ? lightThemeParameters : darkThemeParameters}
+        themeParameters={theme === 'light' ? lightThemeParameters : theme === 'dark' ? darkThemeParameters : noneThemeParameters}
       />
     </div>
   )
