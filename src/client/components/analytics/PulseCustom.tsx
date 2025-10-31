@@ -4,14 +4,17 @@ import classNames from 'classnames';
 
 const PulseCustom: React.FC<{
   banInsights: BanInsight[] | null
-}> = ({ banInsights }) => {
+  theme: 'light' | 'dark'
+}> = ({ banInsights, theme }) => {
 
   if (!banInsights) {
-    return <div>Custom Pulse loading...</div>
+    return null;
   }
 
-  return <div style={{ display: 'flex', gap: '10px', flexDirection: 'row' }}>
-    {banInsights.map(banInsight => (
+  return <div style={{ display: 'flex', gap: '10px', flexDirection: 'column' }}>
+            <div style={{ fontSize: '18px', color: theme === 'light' ? 'black' : 'white' }}>Custom rendering:</div>
+            <div style={{ display: 'flex', gap: '10px', flexDirection: 'row' ,flexWrap:'wrap'}}>
+            {banInsights.map(banInsight => (  
       <div
         className={styles.card}
         key={banInsight.metricDefinition.name}
@@ -24,10 +27,11 @@ const PulseCustom: React.FC<{
         <div className={styles.ban}>
           <div className={styles.value}>{banInsight.value}</div>
           <div className={classNames(styles.triangle, styles[banInsight.direction], styles[banInsight.sentiment])}></div>
-        </div>
+            </div>
+          </div>
+        ))}
       </div>
-    ))}
-  </div>
+    </div>
 }
 
 export default PulseCustom;

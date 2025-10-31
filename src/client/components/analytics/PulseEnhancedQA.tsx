@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { usePulseApi } from './usePulseAPI';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from "rehype-raw";
+import styles from './PulseEnhancedQA.module.css';
 
 const PulseEnhancedQA: React.FC<{
   jwt: string,
@@ -49,7 +50,7 @@ const PulseEnhancedQA: React.FC<{
   } else {
 
     return (
-      <div style={{ display: 'flex', gap: '10px', flexDirection: 'column' }}>
+      <div className={styles.root} style={{ display: 'flex', gap: '10px', flexDirection: 'column' }}>
         <div style={{ display: 'flex', gap: '10px' }}>
           <button onClick={() => { setUserInput(Q1); setQuestion(Q1); setPulseEnhancedQAInsights(null); }}>Q1</button>
           <button onClick={() => { setUserInput(Q2); setQuestion(Q2); setPulseEnhancedQAInsights(null); }}>Q2</button>

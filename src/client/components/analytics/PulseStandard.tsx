@@ -17,8 +17,10 @@ const PulseStandard: React.FC<{
     const pulseUrl = (banInsights && banInsights[1].metricDefinition.url) ?? '';
 
     return (
-      <>
-        <div className={styles.pulseban}>
+      <div style={{ display: 'flex', gap: '10px', flexDirection: 'column' }}>
+            <div style={{ fontSize: '18px', color: theme === 'light' ? 'black' : 'white' }}>Standard rendering in different layouts:</div>
+            <div style={{ display: 'flex', gap: '10px', flexDirection: 'row' ,flexWrap:'wrap'}}>
+            <div className={styles.pulseban}>
           <EmbeddedPulse key={'ban'} url={pulseUrl} jwt={jwt} layout={'ban'} theme={theme} />
         </div>
         <div className={styles.pulsecard}>
@@ -27,7 +29,8 @@ const PulseStandard: React.FC<{
         <div className={styles.pulsedefault}>
           <EmbeddedPulse key={'default'} url={pulseUrl} jwt={jwt} layout={'default'} theme={theme} />
         </div>
-      </>
+        </div>
+      </div>
     )
 
   }

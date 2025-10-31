@@ -50,9 +50,7 @@ function Pulse() {
             <button onClick={() => setTheme(theme === "light" ? "dark" : "light")} style={{ height: '40px', width: '200px' }}>
               {theme === "light" ? "🌙 Dark Mode" : "☀️ Light Mode"}
             </button>
-            <div style={{ fontSize: '18px', color: theme === 'light' ? 'black' : 'white' }}>Custom rendering:</div>
-            <PulseCustom banInsights={banInsights} />
-            <div style={{ fontSize: '18px', color: theme === 'light' ? 'black' : 'white' }}>Standard rendering in different layouts:</div>
+            <PulseCustom banInsights={banInsights} theme={theme} />
             <div className={styles.pulseItems}>
               <PulseStandard jwt={jwt} theme={theme} banInsights={banInsights} />
             </div>
