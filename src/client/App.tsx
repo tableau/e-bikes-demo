@@ -94,12 +94,7 @@ function App() {
             <Route path="home" element={<Home />} />
             <Route path="product-catalog" element={<ProductCatalog />} />
             <Route path="performance" element={
-              <div style={{ display: 'flex', flexDirection: 'row', gap: '10px' }}>
                 <Performance />
-                <div style={{ height: '600px', width: '400px' }}>
-                  <AIAssistent isSidePane={true} />
-                </div>
-              </div>
             } />
             <Route path="analyze" element={<Analyze />} />
             <Route path="ai-assistant" element={<AIAssistent isSidePane={false} />} />

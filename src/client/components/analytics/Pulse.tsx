@@ -60,6 +60,10 @@ function Pulse() {
             <PulseEnhancedQA jwt={jwt} theme={theme} />
           </div>
         </div>
+        <div className={styles.footer}>
+          <a href={`https://help.tableau.com/current/api/rest_api/en-us/REST/rest_api_ref_pulse.htm`} target='_blank'>Pulse API documentation</a>
+          <a href={`https://help.tableau.com/current/api/embedding_api/en-us/docs/embedding_api_pulse.html`} target='_blank'>How to embed Pulse component</a>
+        </div>
       </div>
     )
 

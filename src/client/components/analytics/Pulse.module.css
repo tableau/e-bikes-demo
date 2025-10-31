@@ -35,3 +35,15 @@
     flex: 1;
     min-width: 0;
 }
+
+.footer {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    text-align: right;
+    font-size: smaller;
+    z-index: 10000;
+    bottom: 10px;
+    right: 30px;
+    position: absolute;
+}
