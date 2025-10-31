@@ -25,6 +25,10 @@ const PulseEnhancedQA: React.FC<{
     // Pattern matches [[n]](randomguid|id) where n is a number, we capture both randomguid and id
     // Format: [[n]](guid|id) - we extract both values separated by pipe character
     const citationPattern = /\[\[(\d+)\]\]\(([^|]+)\|([^)]+)\)/gi;
+
+    // The insightId is the auto-generated id for the insight based on the metric. That is what the Enhanced Q&A used to 
+    // generate the answer to the user.
+    // The metricId is the id of the metric that was used to base the insight of.
     
     return content.replace(citationPattern, (_match, number, insightId, metricId) => {
       return `<a href="#" data-citation-number="${number}" data-metric-id="${metricId}" data-insight-id="${insightId}" class="citation-link">[${number}]</a>`;
