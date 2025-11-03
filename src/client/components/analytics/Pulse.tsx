@@ -62,6 +62,7 @@ function Pulse() {
         </div>
         <div className={styles.footer}>
           <a href={`https://help.tableau.com/current/api/rest_api/en-us/REST/rest_api_ref_pulse.htm`} target='_blank'>Pulse API documentation</a>
+          <a href={`https://help.tableau.com/current/api/rest_api/en-us/REST/rest_api_ref_pulse.htm#EmbeddingsService_GenerateInsightBrief`} target='_blank'>Pulse Enhanced Q&A API documentation</a>
           <a href={`https://help.tableau.com/current/api/embedding_api/en-us/docs/embedding_api_pulse.html`} target='_blank'>How to embed Pulse component</a>
         </div>
       </div>
