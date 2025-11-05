@@ -100,7 +100,7 @@ export function usePulseApi() {
 
   }
 
-  async function getPulseEnhancedQAInsights(question: string): Promise<string> {
+  async function getPulseEnhancedQAInsights(question: string): Promise<{markup: string, sourceInsights: string}> {
 
     const metricDefinitions = await getSubscribedMetricDefinitions();
     const url = `${appServer}/api/-/pulse/insights/brief`
@@ -134,7 +134,10 @@ export function usePulseApi() {
     });
 
     const json = await response.json();
-    return json.markup as string;
+    return {
+      markup: json.markup as string, 
+      sourceInsights: json.source_insights as string
+    };
 
   }
 

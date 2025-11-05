@@ -1,17 +1,20 @@
 import React from 'react';
 import styles from './CitationPopup.module.css';
 import EmbeddedPulse from './EmbeddedPulse';
+import VegaLite from 'react-vega/lib/VegaLite';
+import { VisualizationSpec } from 'react-vega';
 
 interface CitationPopupProps {
   metricId: string;
+  sourceInsights: any | null;
   citationNumber: number;
   jwt: string;
   onClose: () => void;
 }
 
-const CitationPopup: React.FC<CitationPopupProps> = ({ metricId, citationNumber, jwt, onClose }) => {
+const CitationPopup: React.FC<CitationPopupProps> = ({ metricId, sourceInsights, citationNumber, jwt, onClose }) => {
 
-    const pulseUrl = `https://10ay.online.tableau.com/pulse/site/ehofman/metrics/${metricId}`;
+  const pulseUrl = `https://10ay.online.tableau.com/pulse/site/ehofman/metrics/${metricId}`;
 
   return (
     <div className={styles.overlay} onClick={onClose}>
@@ -23,7 +26,11 @@ const CitationPopup: React.FC<CitationPopupProps> = ({ metricId, citationNumber,
           </button>
         </div>
         <div className={styles.content}>
-          <EmbeddedPulse key={'card'} url={pulseUrl} jwt={jwt} layout={'card'} theme={'none'} />
+          {
+            sourceInsights
+              ? <VegaLite spec={sourceInsights.viz} style={{height: '100%', width: '100%'}} />
+              : <EmbeddedPulse key={'card'} url={pulseUrl} jwt={jwt} layout={'card'} theme={'none'} />
+          }
         </div>
       </div>
     </div>

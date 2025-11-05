@@ -19,7 +19,7 @@ const PulseEnhancedQA: React.FC<{
   const [question, setQuestion] = useState<string>(Q1);
   const [userInput, setUserInput] = useState<string>(Q1);
   const [selectedCitation, setSelectedCitation] = useState<{ metricId: string; insightId: string; number: number } | null>(null);
-
+  const [sourceInsights, setSourceInsights] = useState<any | null>(null);
   // Convert citations from [[n]](randomguid|id) to clickable links that open popup
   const convertCitations = (content: string): string => {
     // Pattern matches [[n]](randomguid|id) where n is a number, we capture both randomguid and id
@@ -55,8 +55,9 @@ const PulseEnhancedQA: React.FC<{
     }
 
     (async () => {
-      const markup = await getPulseEnhancedQAInsights(question);
-      setPulseEnhancedQAInsights(markup);
+      const response = await getPulseEnhancedQAInsights(question);
+      setPulseEnhancedQAInsights(response.markup);
+      setSourceInsights(response.sourceInsights);
     })();
 
   }, [jwt, question]);
@@ -121,6 +122,7 @@ const PulseEnhancedQA: React.FC<{
         {selectedCitation && (
           <CitationPopup
             metricId={selectedCitation.metricId}
+            sourceInsights={sourceInsights ? sourceInsights[selectedCitation.number] : null}
             citationNumber={selectedCitation.number}
             jwt={jwt}
             onClose={() => setSelectedCitation(null)}
