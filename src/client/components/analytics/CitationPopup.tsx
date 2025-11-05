@@ -2,7 +2,6 @@ import React from 'react';
 import styles from './CitationPopup.module.css';
 import EmbeddedPulse from './EmbeddedPulse';
 import VegaLite from 'react-vega/lib/VegaLite';
-import { VisualizationSpec } from 'react-vega';
 
 interface CitationPopupProps {
   metricId: string;
