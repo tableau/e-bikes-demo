@@ -1,7 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
+import { useParams } from 'react-router-dom';
 import styles from './AIAssistent.module.css';
 import AIAssistentDataVisuzliation from './AIAssistentDataVisuzliation';
+import SalesforceAnalyticsAgent from './SalesforceAnalyticsAgent';
+import { salesforceAgentConfig } from '../../config/salesforceConfig';
 
 interface ChatMessage {
   role: 'user' | 'assistant' | 'system';
@@ -160,6 +163,19 @@ interface AIAssistentProps {
 function AIAssistent({
   isSidePane = false
 }: AIAssistentProps = {}) {
+  const { userId } = useParams<{ userId: string }>();
+  
+  // For McKenzie, show only Salesforce Analytics Agent (centered, half width, responsive)
+  if (userId === 'McKenzie') {
+    return (
+      <div className={styles.mckenzieAgentWrapper}>
+        <div className={styles.mckenzieAgentContainer}>
+          <SalesforceAnalyticsAgent {...salesforceAgentConfig} />
+        </div>
+      </div>
+    );
+  }
+
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [currentQuery, setCurrentQuery] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -589,8 +605,11 @@ function AIAssistent({
     );
   };
 
+  // Determine if we should show side-by-side layout (desktop and not side pane)
+  const showSplitLayout = !isSidePane && windowWidth > 1200;
+
   return (
-    <div className={styles.root}>
+    <div className={showSplitLayout ? styles.rootSplit : styles.root}>
       <div className={styles.header}>
         <div className={styles.headerTop}>
           <h1 className={styles.title}>Tableau AI Assistant</h1>
@@ -646,7 +665,8 @@ function AIAssistent({
         )}
       </div>
 
-      <div className={styles.chatContainer}>
+      <div className={showSplitLayout ? styles.splitContainer : styles.chatContainer}>
+        <div className={showSplitLayout ? styles.chatSection : styles.chatContainer}>
         <div className={styles.messagesContainer}>
           {messages.length === 0 && !isLoading ? (
             <div className={styles.emptyState}>
@@ -781,6 +801,13 @@ function AIAssistent({
             {isLoading ? 'Sending...' : 'Send'}
           </button>
         </div>
+        </div>
+
+        {showSplitLayout && (
+          <div className={styles.analyticsSection}>
+            <SalesforceAnalyticsAgent {...salesforceAgentConfig} />
+          </div>
+        )}
       </div>
 
       {/* System Prompt Popup */}

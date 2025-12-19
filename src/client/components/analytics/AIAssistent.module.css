@@ -11,6 +11,26 @@
     box-shadow: 0 0 20px rgba(0,0,0,0.1);
 }
 
+.rootSplit {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: #f8f9fa;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    overflow: hidden;
+}
+
+.rootSplit ::selection {
+    background: rgba(0, 123, 255, 0.2);
+    color: #333;
+}
+
+.rootSplit ::-moz-selection {
+    background: rgba(0, 123, 255, 0.2);
+    color: #333;
+}
+
 .root ::selection {
     background: rgba(0, 123, 255, 0.2);
     color: #333;
@@ -139,6 +159,34 @@
     flex-direction: column;
     min-height: 0;
     overflow: hidden; /* Ensure content doesn't overflow container */
+}
+
+.splitContainer {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    min-height: 0;
+    overflow: hidden;
+    gap: 0;
+}
+
+.chatSection {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+    border-right: 1px solid #e9ecef;
+    background: #f8f9fa;
+}
+
+.analyticsSection {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+    background: #ffffff;
 }
 
 .messagesContainer {
@@ -577,11 +625,25 @@
 
 /* Mobile Responsive Styles */
 @media (max-width: 768px) {
-    .root {
+    .root,
+    .rootSplit {
         max-width: 100%;
         height: 100vh;
         box-shadow: none;
         border-radius: 0;
+    }
+
+    .splitContainer {
+        flex-direction: column;
+    }
+
+    .chatSection {
+        border-right: none;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .analyticsSection {
+        min-height: 400px;
     }
 
     .header {
@@ -758,6 +820,10 @@
 
 /* Very small screens */
 @media (max-width: 480px) {
+    .analyticsSection {
+        min-height: 300px;
+    }
+
     .header {
         padding: 12px;
     }
@@ -1008,5 +1074,44 @@
         width: 20px;
         height: 20px;
         font-size: 10px;
+    }
+}
+
+/* McKenzie Salesforce Agent Container - Matches Tableau AI Assistant layout */
+.mckenzieAgentWrapper {
+    width: 100%;
+    height: calc(100vh - 80px);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow: auto;
+    background: #f8f9fa;
+}
+
+.mckenzieAgentContainer {
+    width: 100%;
+    max-width: 800px;
+    height: calc(100vh - 120px);
+    min-height: 600px;
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+@media (max-width: 768px) {
+    .mckenzieAgentWrapper {
+        padding: 10px;
+    }
+    
+    .mckenzieAgentContainer {
+        max-width: 100%;
+        height: calc(100vh - 100px);
+        border-radius: 0;
+        box-shadow: none;
     }
 } 

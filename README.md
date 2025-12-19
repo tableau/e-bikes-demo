@@ -39,6 +39,7 @@ Learn how to embed dashboards and Pulse metrics into your applications using the
 | PulseCustom.tsx | n/a | Executes the Pulse API and creates a custom rendering with the information provided by the Pulse API |
 | PulseEnhancedQA.tsx | n/a | Uses the Enhanced Q&A API to allow users to ask any question on a series of metrics. In the sample application, those metrics are the Bike Sales and Bike Returns metrics |
 | PulseStandard.tsx | n/a | Uses the TableauPulse web component to embed a Pulse metric in the provided layout |
+| SalesforceAnalyticsAgent.tsx | [AI Assistant for McKenzie](https://ebikes-demo-a4370287451d.herokuapp.com/McKenzie/ai-assistant) | Embeds Salesforce Analytics Agent using the [Salesforce Analytics Embedding SDK](https://www.npmjs.com/package/@salesforce/analytics-embedding-sdk/v/0.0.7-beta). Uses JWT Bearer Flow authentication with Lightning Out for secure embedding. See `docs/SALESFORCE_ANALYTICS_SETUP.md` for configuration details. |
 | usePulseAPI.tsx | n/a | hook to provide support for executing the Pulse API requests |
 | WebAuthoring.tsx | n/a | Uses the TableauAuthoringViz web component to embed an authoring experience |
 
