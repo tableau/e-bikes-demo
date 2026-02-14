@@ -24,7 +24,7 @@ function Performance() {
     <div className={styles.root}>
       <EmbeddedDashboard
         sheet={'SalesAnalysis'}
-        width={1000}
+        width={1400}
         showDashboardNarratives={true}
       />
     </div>
