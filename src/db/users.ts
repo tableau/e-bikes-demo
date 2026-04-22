@@ -1,5 +1,10 @@
 export type LicenseType = 'Basic' | 'Premium';
 
+/** Persona allowed to use the Analyze experience (nav + `/…/analyze` route). */
+export function isMcKenziePersona(user: User | undefined): boolean {
+  return user?.username === 'McKenzie';
+}
+
 export interface User {
     username: string;
     company: string;

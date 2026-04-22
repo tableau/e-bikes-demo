@@ -1,0 +1,275 @@
+.root {
+  width: 100%;
+  flex: 1;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  position: relative;
+  /* Fill viewport below header (nav ~100px desktop, ~70px mobile) */
+  height: calc(100dvh - 100px);
+  min-height: calc(100dvh - 100px);
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .root {
+    height: calc(100dvh - 70px);
+    min-height: calc(100dvh - 70px);
+  }
+}
+
+/* Tabnext SalesCloud.js: .dashboard-page */
+.dashboardPage {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  box-sizing: border-box;
+}
+
+.pageHeader {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+.pageTitle {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.embeddingRow {
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+/* Tabnext App.css: .dashboard-embedding-container */
+.dashboardEmbeddingContainer {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  flex-grow: 1;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #e0e0e0;
+  overflow: auto;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  color: #666;
+}
+
+.loadingOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  color: #666;
+}
+
+.error {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  text-align: center;
+  color: #c00;
+}
+
+.retryButton {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  background: #0066cc;
+  color: white;
+  border: none;
+  border-radius: 4px;
+}
+
+.retryButton:hover {
+  background: #0052a3;
+}
+
+/* Tabnext ChatAgent.js + App.css — floating launcher + overlay panel */
+.chatButton {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 56px;
+  height: 56px;
+  background-color: #0066cc;
+  border-radius: 50%;
+  border: none;
+  color: #fff;
+  font-size: 1.35rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+  transition: transform 0.2s ease-in-out;
+  z-index: 1000;
+}
+
+.chatButton:hover {
+  transform: scale(1.08);
+}
+
+.chatButton:focus {
+  outline: 2px solid #0066cc;
+  outline-offset: 3px;
+}
+
+.chatButtonIcon {
+  line-height: 1;
+}
+
+.chatPulse {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 14px;
+  height: 14px;
+  background-color: #e74c3c;
+  border-radius: 50%;
+  animation: analyticsChatPulse 1.5s infinite;
+  pointer-events: none;
+}
+
+@keyframes analyticsChatPulse {
+  0% {
+    transform: scale(0.9);
+    box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.6);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 10px rgba(231, 76, 60, 0);
+  }
+  100% {
+    transform: scale(0.9);
+    box-shadow: 0 0 0 0 rgba(231, 76, 60, 0);
+  }
+}
+
+.chatOverlay {
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
+  width: min(450px, calc(100vw - 40px));
+  height: min(70vh, 640px);
+  max-height: calc(100dvh - 120px);
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  transform-origin: bottom right;
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  transform: scale(0.95);
+  opacity: 0;
+  visibility: hidden;
+  border: 1px solid #e0e0e0;
+  box-sizing: border-box;
+}
+
+.chatOverlayOpen {
+  transform: scale(1);
+  opacity: 1;
+  visibility: visible;
+}
+
+.chatHeader {
+  padding: 1rem;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e8e8e8;
+  flex-shrink: 0;
+  background: #fafafa;
+}
+
+.chatHeaderTitle {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.chatCloseBtn {
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.chatCloseBtn:hover {
+  color: #111;
+}
+
+.chatBody {
+  flex: 1;
+  min-height: 0;
+  padding: 0.75rem;
+  overflow: hidden;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  width: 100%;
+}
+
+.chatBody > * {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  flex: 1 1 auto;
+  box-sizing: border-box;
+}
+
+.agentConfigHint {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  left: 16px;
+  margin: 0;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  color: #555;
+  background: #f8f8f8;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  z-index: 50;
+  text-align: center;
+}
+
+.agentConfigHint code {
+  font-size: 0.85em;
+}

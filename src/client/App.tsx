@@ -7,9 +7,11 @@ import Performance from './components/analytics/Performance';
 import Login from './components/auth/Login';
 import ProductCatalog from './components/productCatalog/ProductCatalog';
 import { NotificationItem } from './components/header/NotificationWindow';
-import { LicenseType, User } from '../db/users';
+import { isMcKenziePersona, LicenseType, User } from '../db/users';
 import Analyze from './components/analytics/Analyze';
+import Metrics from './components/analytics/Metrics';
 import AIAssistent from './components/analytics/AIAssistent';
+import Analytics from './components/analytics/Analytics';
 import DemoScript from './components/auth/DemoScript';
 import MobileRouteGuard from './components/MobileRouteGuard';
 import { useGA } from './hooks/useGA';
@@ -21,7 +23,7 @@ interface AppContextType {
   updateUserLicense: (license: LicenseType) => void;
 }
 
-export type Pages = 'Home' | 'Product Catalog' | 'Performance' | 'Analyze' | 'AI Assistant';
+export type Pages = 'Home' | 'Product Catalog' | 'Performance' | 'Metrics' | 'Analyze' | 'AI Assistant' | 'Analytics';
 
 export const userPages = ((user: User): Pages[] => {
   // Use mobile detection inside the component context
@@ -29,16 +31,23 @@ export const userPages = ((user: User): Pages[] => {
     (window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))
     : false;
 
-  // On mobile, only show AI Assistant
+  // On mobile, only show AI Assistant (or Analytics for Mario)
   if (isMobile) {
-    return ['AI Assistant'];
+    return user.isRetailer ? ['AI Assistant'] : ['Analytics'];
   }
 
   // On desktop, show pages based on user type
+  // Mario (non-retailer): Home, Analytics (same as AI Assistant)
+  // McKenzie (retailer): Home, Product Catalog, Metrics, Analyze (McKenzie only), AI Assistant
   if (user.isRetailer) {
-    return ['Home', 'Product Catalog', 'Analyze', 'AI Assistant'];
+    const pages: Pages[] = ['Home', 'Product Catalog', 'Metrics'];
+    if (isMcKenziePersona(user)) {
+      pages.push('Analyze');
+    }
+    pages.push('AI Assistant');
+    return pages;
   } else {
-    return ['Home', 'Performance', 'Analyze', 'AI Assistant'] as Pages[];
+    return ['Home', 'Analytics'] as Pages[];
   }
 });
 
@@ -96,8 +105,10 @@ function App() {
             <Route path="performance" element={
                 <Performance />
             } />
+            <Route path="metrics" element={<Metrics />} />
             <Route path="analyze" element={<Analyze />} />
             <Route path="ai-assistant" element={<AIAssistent isSidePane={false} />} />
+            <Route path="analytics" element={<Analytics />} />
           </Route>
         </Routes>
       </UserProvider>

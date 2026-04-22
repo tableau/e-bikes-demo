@@ -53,7 +53,7 @@ const EmbeddedDashboardUpsellable: React.FC<{ selectedProduct: ProductInfo | nul
         <div className={styles.insights}>
           {insights}
             <div className={styles.actions}>
-              <a className={styles.analyze} onClick={() => navigate(`/${userId}/Analyze`)}>Analyze</a>
+              <a className={styles.analyze} onClick={() => navigate(`/${userId}/analyze`)}>Analyze</a>
             </div>
         </div>
       }

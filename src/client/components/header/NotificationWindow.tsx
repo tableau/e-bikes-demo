@@ -1,17 +1,21 @@
 import React, { useEffect } from 'react';
 import styles from './NotificationWindow.module.css';
 import { useNavigate, useParams } from 'react-router-dom';
+import { users, isMcKenziePersona } from '../../../db/users';
 
 export type NotificationItem = { title: string, message: string };
 
 const NotificationWindow: React.FC<{ notifications: NotificationItem[], onClose: () => void }> = ({ notifications, onClose }) => {
 
     const { userId } = useParams<{ userId: string }>();
-  
+    const sessionUser = users.find((u) => u.username === userId);
+
     const navigate = useNavigate();
 
     const analyze = () => {
-        navigate(`/${userId}/Analyze`);
+        // Analyze route is McKenzie-only; others land on Metrics (Pulse).
+        const path = isMcKenziePersona(sessionUser) ? 'analyze' : 'metrics';
+        navigate(`/${userId}/${path}`);
         onClose();
     }
 

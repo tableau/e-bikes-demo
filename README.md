@@ -16,6 +16,68 @@ The application has a Vite React client, using the [Tableau Embedding API React 
 
 Although this application uses React as its platform, Tableau Embedding is not limited to React. Tableau provides a Javascript SDK ([Tableau Embedding API v3](https://help.tableau.com/current/api/embedding_api/en-us/index.html)) which allows you to embed Tableau in any application that accepts HTML and JavaScript.
 
+## Tableau Next (Analytics) for Mario
+
+Mario’s **Analytics** tab uses the [Salesforce Analytics Embedding SDK](https://www.npmjs.com/package/@salesforce/analytics-embedding-sdk) (Tableau Next) with frontdoor authentication. The server performs the JWT bearer flow and single-access call so the client never sees credentials.
+
+### User flow
+
+1. Mario logs in to the application.
+2. He switches to the **Analytics** tab.
+3. The Tableau Next dashboard with ID **Ebike_Sales** is shown.
+4. He clicks the agent chat button (bottom-right) to open the Analytics agent and ask questions about the metrics.
+
+### Architecture
+
+```mermaid
+sequenceDiagram
+  participant Mario
+  participant AnalyticsTab
+  participant Express
+  participant Salesforce
+
+  Mario->>AnalyticsTab: Opens Analytics tab
+  AnalyticsTab->>Express: GET /salesforce-auth
+  Express->>Express: JWT Bearer exchange (ECA credentials)
+  Express->>Salesforce: POST .../oauth2/token (assertion=JWT)
+  Salesforce-->>Express: access_token, instance_url
+  Express->>Salesforce: POST instance_url/services/oauth2/singleaccess (Bearer access_token)
+  Salesforce-->>Express: frontdoor_uri
+  Express-->>AnalyticsTab: frontdoorUrl, orgUrl
+  AnalyticsTab->>AnalyticsTab: initializeAnalyticsSdk(authCredential, orgUrl)
+  AnalyticsTab->>AnalyticsTab: AnalyticsDashboard(idOrApiName: Ebike_Sales).render()
+  Mario->>AnalyticsTab: Sees dashboard
+  Mario->>AnalyticsTab: Clicks chat button
+  AnalyticsTab->>AnalyticsTab: Show Analytics agent (SDK component or placeholder)
+  Mario->>AnalyticsTab: Asks query about metrics
+```
+
+### Prerequisites
+
+- A Salesforce org with Tableau Next enabled and a Tableau+ or Tableau Next Creator license.
+- An [External Client App (ECA)](https://developer.salesforce.com/docs/analytics/sdk/guide/sdk-setup-auth.html) with JWT Bearer flow (public certificate uploaded, admin-approved users, custom Tableau Next Consumer permission set).
+- A Tableau Next dashboard with API name **Ebike_Sales** in that org.
+- (Optional) An Analytics and Visualization agent component in the org; its Salesforce ID is used for the chat button (see env below).
+
+### Environment variables (server-only)
+
+All Salesforce-related variables are **server-side only** (no `VITE_` prefix). See [.env.example](.env.example) for the full list:
+
+- `SALESFORCE_CLIENT_ID` – ECA consumer key  
+- `SALESFORCE_LOGIN_URL` – `https://login.salesforce.com` or `https://test.salesforce.com`  
+- `SALESFORCE_USER` – Salesforce username (JWT subject)  
+- `SALESFORCE_PRIVATE_KEY` – PEM private key for JWT signing (or `SALESFORCE_PRIVATE_KEY_PATH` to a key file)
+
+These work both locally (e.g. in `.env`) and on Heroku (config vars). For the optional in-app agent chat, set `VITE_SALESFORCE_ANALYTICS_AGENT_ID` in the build environment to the Salesforce ID of your Analytics agent component.
+
+### References
+
+- [Frontdoor single access](https://help.salesforce.com/s/articleView?language=en_US&id=xcloud.frontdoor_singleaccess.htm&type=5)
+- [Tableau Next Embedding SDK – Setup and auth](https://developer.salesforce.com/docs/analytics/sdk/guide/sdk-setup-auth.html)
+- [Analytics Embedding SDK reference](https://developer.salesforce.com/docs/analytics/sdk/references)
+
+---
+
 In the client folder, you will find multiple folders, which are explained below
 
 ### Agent folder
