@@ -35,7 +35,7 @@ const hasVegaLiteSpecs = (message: ChatMessage): boolean => {
       if (isVegaLite) {
         return true;
       }
-    } catch (e) {
+    } catch {
       // Invalid JSON, continue checking
     }
   }
@@ -59,7 +59,7 @@ const hasVegaLiteSpecs = (message: ChatMessage): boolean => {
                   }
                 }
               }
-            } catch (e) {
+            } catch {
               // Parsing failed, continue
             }
           }
@@ -103,7 +103,7 @@ const filterVegaLiteFromContent = (content: string): string => {
         // Remove this JSON block since it will be rendered as a chart
         return '';
       }
-    } catch (e) {
+    } catch {
       // Invalid JSON, keep as is
     }
 
