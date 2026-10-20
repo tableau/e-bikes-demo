@@ -35,7 +35,7 @@ export async function signinAsync({ tableauServer, apiVersion, jwt, site }: Sign
     const parsed = JSON.parse(raw);
     const token = parsed?.credentials?.token;
     return token ? new Ok(token) : new Err(raw);
-  } catch (e: unknown) {
+  } catch {
     return new Err(raw);
   }
 }
